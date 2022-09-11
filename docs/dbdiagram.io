@@ -10,7 +10,7 @@ Table category_groups {
 Table categories {
   id int [pk]
   name varchar
-  amount numeric(19,4)
+  planned_amount numeric(19,4)
   category_group_id int
   budget_date date
   indexes {
@@ -26,7 +26,7 @@ Table categories_transactions {
   }
 }
 
-Table transactions {
+Table transactionDtos {
   id int [pk]
   amount numeric(19,4)
   timestamp timestamp
@@ -35,4 +35,4 @@ Table transactions {
 
 Ref: categories.category_group_id > category_groups.id
 Ref: categories.id > categories_transactions.category_id
-Ref: transactions.id < categories_transactions.transaction_id
+Ref: transactionDtos.id < categories_transactions.transaction_id

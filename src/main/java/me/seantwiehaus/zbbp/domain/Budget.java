@@ -4,13 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @AllArgsConstructor
-public class CategoryGroup {
-    private final Long id;
-    private final String name;
+public class Budget {
     private final LocalDate budgetDate;
-    private final List<Category> categories;
+    private final Set<CategoryGroup> categoryGroups;
 }

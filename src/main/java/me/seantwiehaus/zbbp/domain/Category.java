@@ -1,26 +1,30 @@
 package me.seantwiehaus.zbbp.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
 public class Category {
-    @NotNull
-    private Long id;
-    @NotBlank
-    private String name;
-    @NotNull
-    private BigDecimal amount;
-    @NotNull
-    private LocalDate budgetDate;
-    @NotNull
-    private CategoryGroup categoryGroup;
-    private List<Transaction> transactions;
+    private final Long id;
+    private final String name;
+    private final BigDecimal plannedAmount;
+    private final LocalDate budgetDate;
+    private final List<Transaction> transactions;
+
+    public Category(Long id, String name, BigDecimal plannedAmount, LocalDate budgetDate, List<Transaction> transactions) {
+        this.id = id;
+        this.name = name;
+        this.plannedAmount = plannedAmount;
+        this.budgetDate = budgetDate;
+        this.transactions = transactions;
+    }
+
+    public BigDecimal calculateTransactionAmountTotal() {
+        return transactions.stream()
+                .map(Transaction::getAmount)
+                .reduce(BigDecimal.valueOf(0.00), BigDecimal::add);
+    }
 }

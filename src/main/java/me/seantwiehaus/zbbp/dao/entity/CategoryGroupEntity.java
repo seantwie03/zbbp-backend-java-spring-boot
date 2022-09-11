@@ -8,12 +8,19 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Data
 @Table(name = "category_groups")
 @NoArgsConstructor
+@NamedEntityGraph(name = "group.categories.transactions", attributeNodes = {
+        @NamedAttributeNode(value = "categoryEntities", subgraph = "transactions"),
+}, subgraphs = {
+        @NamedSubgraph(name = "transactions", attributeNodes = {
+                @NamedAttributeNode("transactionEntities")
+        })
+})
 public class CategoryGroupEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -23,8 +30,18 @@ public class CategoryGroupEntity {
     private String name;
     @NotNull
     private LocalDate budgetDate;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryGroupEntity")
-    Set<CategoryEntity> categoryEntities;
+    @OneToMany(mappedBy = "categoryGroupEntity")
+    private List<CategoryEntity> categoryEntities;
+
+    public void addCategoryEntity(CategoryEntity categoryEntity) {
+        categoryEntities.add(categoryEntity);
+        categoryEntity.setCategoryGroupEntity(this);
+    }
+
+    public void removeCategoryEntity(CategoryEntity categoryEntity) {
+        categoryEntities.remove(categoryEntity);
+        categoryEntity.setCategoryGroupEntity(null);
+    }
 
     public CategoryGroup convertToCategoryGroup() {
         return new CategoryGroup(

@@ -8,7 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -21,7 +21,7 @@ public class TransactionEntity {
     @NotNull
     private BigDecimal amount;
     @NotNull
-    private Instant timestamp;
+    private LocalDate date;
     @NotNull
     @NotBlank
     private String description;
@@ -35,9 +35,8 @@ public class TransactionEntity {
         return new Transaction(
                 id,
                 amount,
-                timestamp,
-                description,
-                categoryEntity.convertToCategory()
+                date,
+                description
         );
     }
 }

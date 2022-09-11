@@ -1,0 +1,34 @@
+package me.seantwiehaus.zbbp.controller;
+
+import me.seantwiehaus.zbbp.dto.TransactionDto;
+import me.seantwiehaus.zbbp.service.TransactionService;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+public class TransactionController {
+
+    TransactionService service;
+
+    public TransactionController(TransactionService service) {
+        this.service = service;
+    }
+
+    @GetMapping("/transactions")
+    public List<TransactionDto> getAllTransactionsBetween(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                                          Optional<LocalDate> startDate,
+                                                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                                          Optional<LocalDate> endDate) {
+        LocalDate start = startDate.orElse(LocalDate.now().minusYears(100));
+        LocalDate end = endDate.orElse(LocalDate.now().plusYears(100));
+        return service.getAllTransactionsBetween(start, end).stream()
+                .map(TransactionDto::new)
+                .toList();
+    }
+}
