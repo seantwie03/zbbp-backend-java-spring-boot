@@ -2,6 +2,7 @@ package me.seantwiehaus.zbbp.dao.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.seantwiehaus.zbbp.domain.BudgetDate;
 import me.seantwiehaus.zbbp.domain.CategoryGroup;
 
 import javax.persistence.*;
@@ -28,10 +29,28 @@ public class CategoryGroupEntity {
     @NotNull
     @NotBlank
     private String name;
+    /**
+     * BudgetDates only need the Year and Month; however, storing only the Year and Month in the database can be
+     * tedious. Instead, the date is always set to the 1st.
+     */
     @NotNull
     private LocalDate budgetDate;
     @OneToMany(mappedBy = "categoryGroupEntity")
     private List<CategoryEntity> categoryEntities;
+
+    public CategoryGroupEntity(Long id,
+                               String name,
+                               LocalDate budgetDate,
+                               List<CategoryEntity> categoryEntities) {
+        this.id = id;
+        this.name = name;
+        setBudgetDate(budgetDate);
+        this.categoryEntities = categoryEntities;
+    }
+
+    public void setBudgetDate(LocalDate budgetDate) {
+        this.budgetDate = budgetDate.withDayOfMonth(1);
+    }
 
     public void addCategoryEntity(CategoryEntity categoryEntity) {
         categoryEntities.add(categoryEntity);
@@ -47,7 +66,7 @@ public class CategoryGroupEntity {
         return new CategoryGroup(
                 id,
                 name,
-                budgetDate,
+                BudgetDate.from(budgetDate),
                 categoryEntities.stream()
                         .map(CategoryEntity::convertToCategory)
                         .toList()

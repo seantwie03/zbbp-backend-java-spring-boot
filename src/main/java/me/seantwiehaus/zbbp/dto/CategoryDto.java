@@ -21,7 +21,7 @@ public record CategoryDto(
         this(category.getId(),
                 category.getName(),
                 category.getPlannedAmount(),
-                category.getBudgetDate(),
+                category.getBudgetDate().asLocalDate(),
                 category.calculateTransactionAmountTotal(),
                 new ArrayList<>(
                         category.getTransactions().stream()

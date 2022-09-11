@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,12 +38,12 @@ public class CategoryGroupController {
                                                               @RequestParam
                                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                                               Optional<LocalDate> endBudgetDate) {
-        LocalDate start = startBudgetDate
-                .map(s -> s.withDayOfMonth(1))
-                .orElse(LocalDate.now().withDayOfMonth(1).minusYears(100));
-        LocalDate end = endBudgetDate
-                .map(e -> e.withDayOfMonth(1))
-                .orElse(LocalDate.now().withDayOfMonth(1).plusYears(100));
+        YearMonth start = startBudgetDate
+                .map(YearMonth::from)
+                .orElse(YearMonth.from(LocalDate.now().minusYears(100)));
+        YearMonth end = endBudgetDate
+                .map(YearMonth::from)
+                .orElse(YearMonth.from(LocalDate.now().plusYears(100)));
         return service.getAllCategoryGroupsBetween(start, end).stream()
                 .map(CategoryGroupDto::new)
                 .toList();

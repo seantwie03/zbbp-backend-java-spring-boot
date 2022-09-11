@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,18 +39,12 @@ public class CategoryController {
                                                      @RequestParam
                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                                      Optional<LocalDate> endBudgetDate) {
-//        YearMonth start = startBudgetDate
-//                .map(s -> YearMonth.of(s.getYear(), s.getMonth()))
-//                .orElse(YearMonth.of(LocalDate.now().minusYears(100).getYear(), LocalDate.now().getMonth()));
-        LocalDate start = startBudgetDate
-                .map(s -> s.withDayOfMonth(1))
-                .orElse(LocalDate.now().withDayOfMonth(1).minusYears(100));
-//        YearMonth end = endBudgetDate
-//                .map(e -> YearMonth.of(e.getYear(), e.getMonth()))
-//                .orElse(YearMonth.of(LocalDate.now().plusYears(100).getYear(), LocalDate.now().getMonth()));
-        LocalDate end = endBudgetDate
-                .map(e -> e.withDayOfMonth(1))
-                .orElse(LocalDate.now().withDayOfMonth(1).plusYears(100));
+        YearMonth start = startBudgetDate
+                .map(YearMonth::from)
+                .orElse(YearMonth.from(LocalDate.now().minusYears(100)));
+        YearMonth end = endBudgetDate
+                .map(YearMonth::from)
+                .orElse(YearMonth.from(LocalDate.now().plusYears(100)));
         return service.getAllCategoriesBetween(start, end).stream()
                 .map(CategoryDto::new)
                 .toList();

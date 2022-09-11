@@ -17,7 +17,7 @@ public record CategoryGroupDto(
     public CategoryGroupDto(CategoryGroup categoryGroup) {
         this(categoryGroup.getId(),
                 categoryGroup.getName(),
-                categoryGroup.getBudgetDate(),
+                categoryGroup.getBudgetDate().asLocalDate(),
                 new ArrayList<>(
                         categoryGroup.getCategories().stream()
                                 .map(CategoryDto::new)

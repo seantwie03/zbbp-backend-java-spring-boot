@@ -5,7 +5,7 @@ import me.seantwiehaus.zbbp.dao.repository.CategoryGroupRepository;
 import me.seantwiehaus.zbbp.domain.CategoryGroup;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 @Service
@@ -17,18 +17,12 @@ public class CategoryGroupService {
     }
 
     /**
-     * @param startBudgetDate Include all CategoryGroups with budgetDates greater-than-or-equal to this budgetDate.
-     *                        BudgetDates are always on the 1st day of the month.
-     *                        If no value is supplied, the default value will be the first day of the current month
-     *                        100 years in the past.
-     * @param endBudgetDate   Include all CategoryGroups with budgetDates less-than-or-equal-to this budgetDate.
-     *                        BudgetDates are always on the 1st day of the month.
-     *                        If no value is supplied, the default value will be the first day of the current month
-     *                        100 years in the future.
-     * @return All CategoryGroups with budgetDates between the start and end budgetDates (inclusive).
+     * @param startBudgetYM Include all CategoryGroups with budgetDates greater-than-or-equal to this YearMonth.
+     * @param endBudgetYM   Include all CategoryGroups with budgetDates less-than-or-equal-to this YearMonth.
+     * @return All CategoryGroups with budgetDates between the start and end YearMonths (inclusive).
      */
-    public List<CategoryGroup> getAllCategoryGroupsBetween(LocalDate startBudgetDate, LocalDate endBudgetDate) {
-        return repository.findAllByBudgetDateBetween(startBudgetDate, endBudgetDate).stream()
+    public List<CategoryGroup> getAllCategoryGroupsBetween(YearMonth startBudgetYM, YearMonth endBudgetYM) {
+        return repository.findAllByBudgetDateBetween(startBudgetYM.atDay(1), endBudgetYM.atDay(1)).stream()
                 .map(CategoryGroupEntity::convertToCategoryGroup)
                 .toList();
     }
