@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record CategoryDto(
-        @NotNull Long id,
+        Long id,
         @NotBlank String name,
         @NotNull BigDecimal plannedAmount,
         @NotNull LocalDate budgetDate,

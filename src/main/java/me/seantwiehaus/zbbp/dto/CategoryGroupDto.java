@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record CategoryGroupDto(
-        @NotNull Long id,
+        Long id,
         @NotBlank String name,
         @NotNull LocalDate budgetDate,
         @NotNull List<CategoryDto> categories
