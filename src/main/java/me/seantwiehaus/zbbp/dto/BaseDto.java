@@ -7,13 +7,13 @@ import java.time.Instant;
 @Getter
 public class BaseDto {
 
-    protected int version;
+    protected Integer version;
 
     protected Instant createdAt;
 
     protected Instant modifiedAt;
 
-    public BaseDto(int version,
+    public BaseDto(Integer version,
                    Instant createdAt,
                    Instant modifiedAt) {
         this.version = version;

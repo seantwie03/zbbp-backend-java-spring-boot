@@ -19,7 +19,13 @@ public class TransactionDto extends BaseDto {
     @NotBlank
     private final String description;
 
-    public TransactionDto(int version,
+    public TransactionDto(BigDecimal amount,
+                          LocalDate date,
+                          String description) {
+        this(null, null, null, null, amount, date, description);
+    }
+
+    public TransactionDto(Integer version,
                           Instant createdAt,
                           Instant modifiedAt,
                           Long id,

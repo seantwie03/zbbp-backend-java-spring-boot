@@ -26,7 +26,13 @@ public class CategoryGroupDto extends BaseDto {
     @NotNull
     private final List<CategoryDto> categories;
 
-    public CategoryGroupDto(int version,
+    public CategoryGroupDto(String name,
+                            LocalDate budgetDate,
+                            List<CategoryDto> categories) {
+        this(null, null, null, null, name, budgetDate, categories);
+    }
+
+    public CategoryGroupDto(Integer version,
                             Instant createdAt,
                             Instant modifiedAt,
                             Long id,

@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Getter
+@SuppressWarnings("java:S107")
 public class CategoryDto extends BaseDto {
     private final Long id;
     @NotBlank
@@ -23,7 +24,6 @@ public class CategoryDto extends BaseDto {
      */
     @NotNull
     private final LocalDate budgetDate;
-    @NotNull
     private final BigDecimal transactionTotal;
     /**
      * Unmodifiable List
@@ -31,7 +31,14 @@ public class CategoryDto extends BaseDto {
     @NotNull
     private final List<TransactionDto> transactionDtos;
 
-    public CategoryDto(int version,
+    public CategoryDto(String name,
+                       BigDecimal plannedAmount,
+                       LocalDate budgetDate,
+                       List<TransactionDto> transactionDtos) {
+        this(null, null, null, null, name, plannedAmount, budgetDate, null, transactionDtos);
+    }
+
+    public CategoryDto(Integer version,
                        Instant createdAt,
                        Instant modifiedAt,
                        Long id,
