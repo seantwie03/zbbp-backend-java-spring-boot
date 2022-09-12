@@ -3,11 +3,11 @@ package me.seantwiehaus.zbbp.service;
 import me.seantwiehaus.zbbp.dao.entity.CategoryEntity;
 import me.seantwiehaus.zbbp.dao.repository.CategoryRepository;
 import me.seantwiehaus.zbbp.domain.Category;
-import me.seantwiehaus.zbbp.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService {
@@ -28,9 +28,8 @@ public class CategoryService {
                 .toList();
     }
 
-    public Category findCategoryById(Long id) {
+    public Optional<Category> findCategoryById(Long id) {
         return repository.findCategoryEntityById(id)
-                .map(CategoryEntity::convertToCategory)
-                .orElseThrow(() -> new NotFoundException("Unable to locate CategoryEntity with ID: " + id));
+                .map(CategoryEntity::convertToCategory);
     }
 }

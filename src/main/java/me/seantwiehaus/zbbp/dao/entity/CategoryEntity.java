@@ -1,7 +1,8 @@
 package me.seantwiehaus.zbbp.dao.entity;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import me.seantwiehaus.zbbp.domain.BudgetDate;
 import me.seantwiehaus.zbbp.domain.Category;
 
@@ -11,15 +12,16 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
-@Entity
-@Data
-@Table(name = "categories")
+@Getter
+@Setter
 @NoArgsConstructor
+@Entity
+@Table(name = "categories")
 @NamedEntityGraph(name = "category.group.transactions", attributeNodes = {
         @NamedAttributeNode("categoryGroupEntity"),
         @NamedAttributeNode("transactionEntities"),
 })
-public class CategoryEntity {
+public class CategoryEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -59,6 +61,9 @@ public class CategoryEntity {
 
     public Category convertToCategory() {
         return new Category(
+                version,
+                createdAt,
+                lastModifiedAt,
                 id,
                 name,
                 plannedAmount,

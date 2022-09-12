@@ -1,15 +1,28 @@
 package me.seantwiehaus.zbbp.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.Instant;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
-public class CategoryGroup {
+public class CategoryGroup extends BaseDomain {
     private final Long id;
     private final String name;
     private final BudgetDate budgetDate;
     private final List<Category> categories;
+
+    public CategoryGroup(int version,
+                         Instant createdAt,
+                         Instant lastModifiedAt,
+                         Long id,
+                         String name,
+                         BudgetDate budgetDate,
+                         List<Category> categories) {
+        super(version, createdAt, lastModifiedAt);
+        this.id = id;
+        this.name = name;
+        this.budgetDate = budgetDate;
+        this.categories = categories;
+    }
 }

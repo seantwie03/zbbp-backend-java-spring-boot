@@ -1,7 +1,8 @@
 package me.seantwiehaus.zbbp.dao.entity;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import me.seantwiehaus.zbbp.domain.Transaction;
 
 import javax.persistence.*;
@@ -10,11 +11,12 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Entity
-@Data
-@Table(name = "transactions")
+@Getter
+@Setter
 @NoArgsConstructor
-public class TransactionEntity {
+@Entity
+@Table(name = "transactions")
+public class TransactionEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -33,6 +35,9 @@ public class TransactionEntity {
 
     public Transaction convertToTransaction() {
         return new Transaction(
+                version,
+                createdAt,
+                lastModifiedAt,
                 id,
                 amount,
                 date,

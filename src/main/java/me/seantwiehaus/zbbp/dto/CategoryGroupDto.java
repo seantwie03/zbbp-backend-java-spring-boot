@@ -1,26 +1,52 @@
 package me.seantwiehaus.zbbp.dto;
 
+import lombok.Getter;
 import me.seantwiehaus.zbbp.domain.CategoryGroup;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public record CategoryGroupDto(
-        Long id,
-        @NotBlank String name,
-        @NotNull LocalDate budgetDate,
-        @NotNull List<CategoryDto> categories
-) {
+@Getter
+public class CategoryGroupDto extends BaseDto {
+    private final Long id;
+    @NotBlank
+    private final String name;
+    /**
+     * Day of Month will be set to the 1st
+     */
+    @NotNull
+    private final LocalDate budgetDate;
+    /**
+     * Unmodifiable List
+     */
+    @NotNull
+    private final List<CategoryDto> categories;
+
+    public CategoryGroupDto(int version,
+                            Instant createdAt,
+                            Instant modifiedAt,
+                            Long id,
+                            String name,
+                            LocalDate budgetDate,
+                            List<CategoryDto> categories) {
+        super(version, createdAt, modifiedAt);
+        this.id = id;
+        this.name = name;
+        this.budgetDate = budgetDate.withDayOfMonth(1);
+        this.categories = Collections.unmodifiableList(categories);
+    }
+
     public CategoryGroupDto(CategoryGroup categoryGroup) {
-        this(categoryGroup.getId(),
-                categoryGroup.getName(),
-                categoryGroup.getBudgetDate().asLocalDate(),
-                new ArrayList<>(
-                        categoryGroup.getCategories().stream()
-                                .map(CategoryDto::new)
-                                .toList()));
+        super(categoryGroup.getVersion(), categoryGroup.getCreatedAt(), categoryGroup.getLastModifiedAt());
+        this.id = categoryGroup.getId();
+        this.name = categoryGroup.getName();
+        this.budgetDate = categoryGroup.getBudgetDate().asLocalDate().withDayOfMonth(1);
+        this.categories = categoryGroup.getCategories().stream()
+                .map(CategoryDto::new)
+                .toList();
     }
 }
