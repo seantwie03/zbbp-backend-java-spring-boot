@@ -34,10 +34,7 @@ public class TransactionEntity extends BaseEntity {
     private CategoryEntity categoryEntity;
 
     public Transaction convertToTransaction() {
-        return new Transaction(
-                version,
-                createdAt,
-                lastModifiedAt,
+        return new Transaction(lastModifiedAt,
                 id,
                 amount,
                 date,

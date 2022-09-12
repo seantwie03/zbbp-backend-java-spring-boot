@@ -29,17 +29,15 @@ public class CategoryGroupDto extends BaseDto {
     public CategoryGroupDto(String name,
                             LocalDate budgetDate,
                             List<CategoryDto> categories) {
-        this(null, null, null, null, name, budgetDate, categories);
+        this(null, null, name, budgetDate, categories);
     }
 
-    public CategoryGroupDto(Integer version,
-                            Instant createdAt,
-                            Instant modifiedAt,
+    public CategoryGroupDto(Instant modifiedAt,
                             Long id,
                             String name,
                             LocalDate budgetDate,
                             List<CategoryDto> categories) {
-        super(version, createdAt, modifiedAt);
+        super(modifiedAt);
         this.id = id;
         this.name = name;
         this.budgetDate = budgetDate.withDayOfMonth(1);
@@ -47,7 +45,7 @@ public class CategoryGroupDto extends BaseDto {
     }
 
     public CategoryGroupDto(CategoryGroup categoryGroup) {
-        super(categoryGroup.getVersion(), categoryGroup.getCreatedAt(), categoryGroup.getLastModifiedAt());
+        super(categoryGroup.getLastModifiedAt());
         this.id = categoryGroup.getId();
         this.name = categoryGroup.getName();
         this.budgetDate = categoryGroup.getBudgetDate().asLocalDate();

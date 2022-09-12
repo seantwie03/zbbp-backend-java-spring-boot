@@ -12,9 +12,7 @@ create table category_groups
     id               bigint       not null,
     name             varchar(255) not null,
     budget_date      date         not null,
-    version          int          not null,
-    created_at       timestamp    not null,
-    last_modified_at timestamp,
+    last_modified_at timestamp    not null,
     primary key (id),
     unique (name, budget_date)
 );
@@ -26,9 +24,7 @@ create table categories
     budget_date       date           not null,
     planned_amount    numeric(19, 2) not null,
     category_group_id bigint         not null,
-    version           int            not null,
-    created_at        timestamp      not null,
-    last_modified_at  timestamp,
+    last_modified_at  timestamp      not null,
     primary key (id),
     unique (name, budget_date)
 );
@@ -47,9 +43,7 @@ create table transactions
     date             date           not null,
     amount           numeric(19, 2) not null,
     is_deposit       boolean        not null default false,
-    version          int            not null,
-    created_at       timestamp      not null,
-    last_modified_at timestamp,
+    last_modified_at timestamp      not null,
     primary key (id)
 );
 

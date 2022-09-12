@@ -12,14 +12,12 @@ public class CategoryGroup extends BaseDomain {
     private final BudgetDate budgetDate;
     private final List<Category> categories;
 
-    public CategoryGroup(int version,
-                         Instant createdAt,
-                         Instant lastModifiedAt,
+    public CategoryGroup(Instant lastModifiedAt,
                          Long id,
                          String name,
                          BudgetDate budgetDate,
                          List<Category> categories) {
-        super(version, createdAt, lastModifiedAt);
+        super(lastModifiedAt);
         this.id = id;
         this.name = name;
         this.budgetDate = budgetDate;

@@ -6,18 +6,9 @@ import java.time.Instant;
 
 @Getter
 public class BaseDto {
-
-    protected Integer version;
-
-    protected Instant createdAt;
-
     protected Instant modifiedAt;
 
-    public BaseDto(Integer version,
-                   Instant createdAt,
-                   Instant modifiedAt) {
-        this.version = version;
-        this.createdAt = createdAt;
+    public BaseDto(Instant modifiedAt) {
         this.modifiedAt = modifiedAt;
     }
 }

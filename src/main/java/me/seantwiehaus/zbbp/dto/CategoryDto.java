@@ -35,19 +35,17 @@ public class CategoryDto extends BaseDto {
                        BigDecimal plannedAmount,
                        LocalDate budgetDate,
                        List<TransactionDto> transactionDtos) {
-        this(null, null, null, null, name, plannedAmount, budgetDate, null, transactionDtos);
+        this(null, null, name, plannedAmount, budgetDate, null, transactionDtos);
     }
 
-    public CategoryDto(Integer version,
-                       Instant createdAt,
-                       Instant modifiedAt,
+    public CategoryDto(Instant modifiedAt,
                        Long id,
                        String name,
                        BigDecimal plannedAmount,
                        LocalDate budgetDate,
                        BigDecimal transactionTotal,
                        List<TransactionDto> transactionDtos) {
-        super(version, createdAt, modifiedAt);
+        super(modifiedAt);
         this.id = id;
         this.name = name;
         this.plannedAmount = plannedAmount;
@@ -57,7 +55,7 @@ public class CategoryDto extends BaseDto {
     }
 
     public CategoryDto(Category category) {
-        super(category.getVersion(), category.getCreatedAt(), category.getLastModifiedAt());
+        super(category.getLastModifiedAt());
         this.id = category.getId();
         this.name = category.getName();
         this.plannedAmount = category.getPlannedAmount();

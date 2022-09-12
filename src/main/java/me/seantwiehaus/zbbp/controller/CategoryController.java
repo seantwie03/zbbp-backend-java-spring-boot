@@ -2,18 +2,14 @@ package me.seantwiehaus.zbbp.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dto.CategoryDto;
-import me.seantwiehaus.zbbp.exception.InternalServerException;
 import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.service.CategoryService;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -58,21 +54,9 @@ public class CategoryController {
     }
 
     @GetMapping("/category/{id}")
-    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long id) {
+    public CategoryDto getCategoryById(@PathVariable Long id) {
         return service.findCategoryById(id)
                 .map(CategoryDto::new)
-                .map(categoryDto -> {
-                    try {
-                        return ResponseEntity
-                                .ok()
-                                .eTag(Long.toString(categoryDto.getVersion()))
-                                .location(new URI("/category/" + categoryDto.getId()))
-                                .body(categoryDto);
-                    } catch (URISyntaxException e) {
-                        throw new InternalServerException(
-                                "Unable to create URI with the following arguments: /category/" + categoryDto.getId());
-                    }
-                })
                 .orElseThrow(() -> new NotFoundException("Unable to locate CategoryEntity with ID: " + id));
     }
 }

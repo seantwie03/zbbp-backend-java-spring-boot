@@ -13,14 +13,12 @@ public class Transaction extends BaseDomain {
     private final LocalDate date;
     private final String description;
 
-    public Transaction(int version,
-                       Instant createdAt,
-                       Instant lastModifiedAt,
+    public Transaction(Instant lastModifiedAt,
                        Long id,
                        BigDecimal amount,
                        LocalDate date,
                        String description) {
-        super(version, createdAt, lastModifiedAt);
+        super(lastModifiedAt);
         this.id = id;
         this.amount = amount;
         this.date = date;

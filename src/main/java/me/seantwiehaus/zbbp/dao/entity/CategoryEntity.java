@@ -61,8 +61,6 @@ public class CategoryEntity extends BaseEntity {
 
     public Category convertToCategory() {
         return new Category(
-                version,
-                createdAt,
                 lastModifiedAt,
                 id,
                 name,

@@ -15,16 +15,13 @@ public class Category extends BaseDomain {
     private final BudgetDate budgetDate;
     private final List<Transaction> transactions;
 
-    public Category(
-            int version,
-            Instant createdAt,
-            Instant lastModifiedAt,
-            Long id,
-            String name,
-            BigDecimal plannedAmount,
-            BudgetDate budgetDate,
-            List<Transaction> transactions) {
-        super(version, createdAt, lastModifiedAt);
+    public Category(Instant lastModifiedAt,
+                    Long id,
+                    String name,
+                    BigDecimal plannedAmount,
+                    BudgetDate budgetDate,
+                    List<Transaction> transactions) {
+        super(lastModifiedAt);
         this.id = id;
         this.name = name;
         this.plannedAmount = plannedAmount;

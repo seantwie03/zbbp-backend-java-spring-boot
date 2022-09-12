@@ -22,17 +22,15 @@ public class TransactionDto extends BaseDto {
     public TransactionDto(BigDecimal amount,
                           LocalDate date,
                           String description) {
-        this(null, null, null, null, amount, date, description);
+        this(null, null, amount, date, description);
     }
 
-    public TransactionDto(Integer version,
-                          Instant createdAt,
-                          Instant modifiedAt,
+    public TransactionDto(Instant modifiedAt,
                           Long id,
                           BigDecimal amount,
                           LocalDate date,
                           String description) {
-        super(version, createdAt, modifiedAt);
+        super(modifiedAt);
         this.id = id;
         this.amount = amount;
         this.date = date;
@@ -40,7 +38,7 @@ public class TransactionDto extends BaseDto {
     }
 
     public TransactionDto(Transaction transaction) {
-        super(transaction.getVersion(), transaction.getCreatedAt(), transaction.getLastModifiedAt());
+        super(transaction.getLastModifiedAt());
         this.id = transaction.getId();
         this.amount = transaction.getAmount();
         this.date = transaction.getDate();
