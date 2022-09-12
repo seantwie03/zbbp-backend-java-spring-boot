@@ -1,6 +1,7 @@
 package me.seantwiehaus.zbbp.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import me.seantwiehaus.zbbp.domain.BudgetDate;
 import me.seantwiehaus.zbbp.dto.CategoryDto;
 import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.service.CategoryService;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,12 +42,12 @@ public class CategoryController {
                                                      @RequestParam
                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                                      Optional<LocalDate> endBudgetDate) {
-        YearMonth start = startBudgetDate
-                .map(YearMonth::from)
-                .orElse(YearMonth.from(LocalDate.now().minusYears(100)));
-        YearMonth end = endBudgetDate
-                .map(YearMonth::from)
-                .orElse(YearMonth.from(LocalDate.now().plusYears(100)));
+        BudgetDate start = startBudgetDate
+                .map(BudgetDate::from)
+                .orElse(BudgetDate.from(LocalDate.now().minusYears(100)));
+        BudgetDate end = endBudgetDate
+                .map(BudgetDate::from)
+                .orElse(BudgetDate.from(LocalDate.now().plusYears(100)));
         return service.getAllCategoriesBetween(start, end).stream()
                 .map(CategoryDto::new)
                 .toList();

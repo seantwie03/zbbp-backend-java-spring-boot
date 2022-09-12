@@ -2,10 +2,11 @@ package me.seantwiehaus.zbbp.service;
 
 import me.seantwiehaus.zbbp.dao.entity.CategoryGroupEntity;
 import me.seantwiehaus.zbbp.dao.repository.CategoryGroupRepository;
+import me.seantwiehaus.zbbp.domain.BudgetDate;
 import me.seantwiehaus.zbbp.domain.CategoryGroup;
 import org.springframework.stereotype.Service;
 
-import java.time.YearMonth;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
@@ -17,12 +18,13 @@ public class CategoryGroupService {
     }
 
     /**
-     * @param startBudgetYM Include all CategoryGroups with budgetDates greater-than-or-equal to this YearMonth.
-     * @param endBudgetYM   Include all CategoryGroups with budgetDates less-than-or-equal-to this YearMonth.
-     * @return All CategoryGroups with budgetDates between the start and end YearMonths (inclusive).
+     * @param start Include all CategoryGroups with budgetDates greater-than-or-equal to this BudgetDate.
+     * @param end   Include all CategoryGroups with budgetDates less-than-or-equal-to this BudgetDate.
+     * @return All CategoryGroups with budgetDates between the start and end BudgetDates (inclusive).
      */
-    public List<CategoryGroup> getAllCategoryGroupsBetween(YearMonth startBudgetYM, YearMonth endBudgetYM) {
-        return repository.findAllByBudgetDateBetween(startBudgetYM.atDay(1), endBudgetYM.atDay(1)).stream()
+    public List<CategoryGroup> getAllCategoryGroupsBetween(@NotNull BudgetDate start, @NotNull BudgetDate end) {
+        return repository.findAllByBudgetDateBetween(start.asLocalDate(), end.asLocalDate())
+                .stream()
                 .map(CategoryGroupEntity::convertToCategoryGroup)
                 .toList();
     }
