@@ -1,6 +1,8 @@
 package me.seantwiehaus.zbbp.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
+import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.Transaction;
 
 import javax.validation.constraints.NotBlank;
@@ -10,6 +12,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 
 @Getter
+@ToString
 public class TransactionDto extends BaseDto {
     private final Long id;
     @NotNull
@@ -19,6 +22,7 @@ public class TransactionDto extends BaseDto {
     @NotBlank
     private final String description;
 
+    @JsonCreator
     public TransactionDto(BigDecimal amount,
                           LocalDate date,
                           String description) {
@@ -43,5 +47,14 @@ public class TransactionDto extends BaseDto {
         this.amount = transaction.getAmount();
         this.date = transaction.getDate();
         this.description = transaction.getDescription();
+    }
+
+    public Transaction convertToTransaction() {
+        return new Transaction(
+                modifiedAt,
+                id,
+                amount,
+                date,
+                description);
     }
 }

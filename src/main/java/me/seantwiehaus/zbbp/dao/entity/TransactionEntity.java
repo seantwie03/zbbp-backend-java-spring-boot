@@ -33,6 +33,13 @@ public class TransactionEntity extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private CategoryEntity categoryEntity;
 
+    public TransactionEntity(Transaction transaction) {
+        this.id = transaction.getId();
+        this.amount = transaction.getAmount();
+        this.date = transaction.getDate();
+        this.description = transaction.getDescription();
+    }
+
     public Transaction convertToTransaction() {
         return new Transaction(lastModifiedAt,
                 id,
