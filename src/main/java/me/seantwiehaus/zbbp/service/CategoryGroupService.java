@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryGroupService {
@@ -28,5 +29,10 @@ public class CategoryGroupService {
                 .stream()
                 .map(CategoryGroupEntity::convertToCategoryGroup)
                 .toList();
+    }
+
+    public Optional<CategoryGroup> findById(Long id) {
+        return repository.findById(id)
+                .map(CategoryGroupEntity::convertToCategoryGroup);
     }
 }

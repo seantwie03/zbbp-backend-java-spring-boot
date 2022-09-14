@@ -56,6 +56,6 @@ public class CategoryController {
     public CategoryDto getCategoryById(@PathVariable Long id) {
         return service.findCategoryById(id)
                 .map(CategoryDto::new)
-                .orElseThrow(() -> new NotFoundException("Unable to locate CategoryEntity with ID: " + id));
+                .orElseThrow(() -> new NotFoundException("Unable to locate Category with ID: " + id));
     }
 }

@@ -3,9 +3,11 @@ package me.seantwiehaus.zbbp.controller;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.BudgetMonthRange;
 import me.seantwiehaus.zbbp.dto.CategoryGroupDto;
+import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.service.CategoryGroupService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,5 +48,12 @@ public class CategoryGroupController {
                 .stream()
                 .map(CategoryGroupDto::new)
                 .toList();
+    }
+
+    @GetMapping("/category-group/{id}")
+    public CategoryGroupDto getCategoryGroupById(@PathVariable Long id) {
+        return service.findById(id)
+                .map(CategoryGroupDto::new)
+                .orElseThrow(() -> new NotFoundException("Unable to find CategoryGroup for Id: " + id));
     }
 }
