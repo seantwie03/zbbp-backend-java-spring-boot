@@ -6,6 +6,7 @@ import me.seantwiehaus.zbbp.domain.Transaction;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,5 +28,10 @@ public class TransactionService {
                 .stream()
                 .map(TransactionEntity::convertToTransaction)
                 .collect(Collectors.toSet());
+    }
+
+    public Optional<Transaction> findById(Long id) {
+        return repository.findById(id)
+                .map(TransactionEntity::convertToTransaction);
     }
 }

@@ -1,9 +1,11 @@
 package me.seantwiehaus.zbbp.controller;
 
 import me.seantwiehaus.zbbp.dto.TransactionDto;
+import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.service.TransactionService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,5 +33,12 @@ public class TransactionController {
                 .stream()
                 .map(TransactionDto::new)
                 .toList();
+    }
+
+    @GetMapping("/transaction/{id}")
+    public TransactionDto getTransactionById(@PathVariable Long id) {
+        return service.findById(id)
+                .map(TransactionDto::new)
+                .orElseThrow(() -> new NotFoundException("Unable to find Transactions for Id: " + id));
     }
 }
