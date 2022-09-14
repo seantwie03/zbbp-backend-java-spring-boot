@@ -27,7 +27,8 @@ public class TransactionController {
                                                           Optional<LocalDate> endDate) {
         LocalDate start = startDate.orElse(LocalDate.now().minusYears(100));
         LocalDate end = endDate.orElse(LocalDate.now().plusYears(100));
-        return service.getAllTransactionsBetween(start, end).stream()
+        return service.getAllTransactionsBetween(start, end)
+                .stream()
                 .map(TransactionDto::new)
                 .toList();
     }

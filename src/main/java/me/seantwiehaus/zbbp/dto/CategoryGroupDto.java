@@ -48,8 +48,9 @@ public class CategoryGroupDto extends BaseDto {
         super(categoryGroup.getLastModifiedAt());
         this.id = categoryGroup.getId();
         this.name = categoryGroup.getName();
-        this.budgetDate = categoryGroup.getBudgetDate().asLocalDate();
-        this.categories = categoryGroup.getCategories().stream()
+        this.budgetDate = categoryGroup.getBudgetMonth().asLocalDate();
+        this.categories = categoryGroup.getCategories()
+                .stream()
                 .map(CategoryDto::new)
                 .toList();
     }

@@ -12,25 +12,26 @@ public class Category extends BaseDomain {
     private final Long id;
     private final String name;
     private final BigDecimal plannedAmount;
-    private final BudgetDate budgetDate;
+    private final BudgetMonth budgetMonth;
     private final List<Transaction> transactions;
 
     public Category(Instant lastModifiedAt,
                     Long id,
                     String name,
                     BigDecimal plannedAmount,
-                    BudgetDate budgetDate,
+                    BudgetMonth budgetMonth,
                     List<Transaction> transactions) {
         super(lastModifiedAt);
         this.id = id;
         this.name = name;
         this.plannedAmount = plannedAmount;
-        this.budgetDate = budgetDate;
+        this.budgetMonth = budgetMonth;
         this.transactions = transactions;
     }
 
     public BigDecimal calculateTransactionAmountTotal() {
-        return transactions.stream()
+        return transactions
+                .stream()
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.valueOf(0), BigDecimal::add);
     }

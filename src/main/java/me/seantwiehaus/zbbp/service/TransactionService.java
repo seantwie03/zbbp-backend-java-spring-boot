@@ -23,7 +23,8 @@ public class TransactionService {
      * @return All transactions with dates between the start and end dates (inclusive)
      */
     public Set<Transaction> getAllTransactionsBetween(LocalDate startDate, LocalDate endDate) {
-        return repository.findAllByDateBetween(startDate, endDate).stream()
+        return repository.findAllByDateBetween(startDate, endDate)
+                .stream()
                 .map(TransactionEntity::convertToTransaction)
                 .collect(Collectors.toSet());
     }

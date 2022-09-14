@@ -59,9 +59,10 @@ public class CategoryDto extends BaseDto {
         this.id = category.getId();
         this.name = category.getName();
         this.plannedAmount = category.getPlannedAmount();
-        this.budgetDate = category.getBudgetDate().asLocalDate();
+        this.budgetDate = category.getBudgetMonth().asLocalDate();
         this.transactionTotal = category.calculateTransactionAmountTotal();
-        this.transactionDtos = category.getTransactions().stream()
+        this.transactionDtos = category.getTransactions()
+                .stream()
                 .map(TransactionDto::new)
                 .toList();
     }

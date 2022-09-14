@@ -3,7 +3,7 @@ package me.seantwiehaus.zbbp.dao.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import me.seantwiehaus.zbbp.domain.BudgetDate;
+import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.CategoryGroup;
 
 import javax.persistence.*;
@@ -68,8 +68,9 @@ public class CategoryGroupEntity extends BaseEntity {
         return new CategoryGroup(lastModifiedAt,
                 id,
                 name,
-                BudgetDate.from(budgetDate),
-                categoryEntities.stream()
+                new BudgetMonth(budgetDate),
+                categoryEntities
+                        .stream()
                         .map(CategoryEntity::convertToCategory)
                         .toList()
         );
