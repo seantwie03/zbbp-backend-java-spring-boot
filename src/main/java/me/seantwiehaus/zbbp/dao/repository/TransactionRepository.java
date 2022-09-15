@@ -5,9 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<TransactionEntity, Long> {
-    Set<TransactionEntity> findAllByDateBetween(LocalDate startDate, LocalDate endDate);
+    List<TransactionEntity> findAllByDateBetweenOrderByDateAsc(LocalDate startDate, LocalDate endDate);
 }

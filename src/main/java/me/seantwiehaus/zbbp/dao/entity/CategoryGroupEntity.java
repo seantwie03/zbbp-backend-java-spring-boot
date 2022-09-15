@@ -54,6 +54,10 @@ public class CategoryGroupEntity extends BaseEntity {
         this.budgetDate = budgetDate.withDayOfMonth(1);
     }
 
+    public void setBudgetDate(BudgetMonth budgetMonth) {
+        this.budgetDate = budgetMonth.asLocalDate();
+    }
+
     public void addCategoryEntity(CategoryEntity categoryEntity) {
         categoryEntities.add(categoryEntity);
         categoryEntity.setCategoryGroupEntity(this);

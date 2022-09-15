@@ -17,7 +17,7 @@ import java.time.Instant;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
-    @Column(name = "last_modified_at")
+    @Column(name = "last_modified_at", nullable = false)
     @LastModifiedDate
     protected Instant lastModifiedAt;
 }

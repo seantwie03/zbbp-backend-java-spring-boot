@@ -7,7 +7,6 @@ import java.time.Instant;
 import java.util.List;
 
 @Getter
-@SuppressWarnings("java:S107")
 public class Category extends BaseDomain {
     private final Long id;
     private final String name;

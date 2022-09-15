@@ -38,7 +38,10 @@ public class CategoryEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_group_id")
     private CategoryGroupEntity categoryGroupEntity;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryEntity")
+    @OneToMany
+    @JoinTable(name = "categories_transactions",
+            joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "transaction_id"))
     private Set<TransactionEntity> transactionEntities;
 
     public CategoryEntity(Long id,
@@ -57,6 +60,10 @@ public class CategoryEntity extends BaseEntity {
 
     public void setBudgetDate(LocalDate budgetDate) {
         this.budgetDate = budgetDate.withDayOfMonth(1);
+    }
+
+    public void setBudgetDate(BudgetMonth budgetMonth) {
+        this.budgetDate = budgetMonth.asLocalDate();
     }
 
     public Category convertToCategory() {

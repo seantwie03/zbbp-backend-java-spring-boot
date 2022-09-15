@@ -1,14 +1,16 @@
 package me.seantwiehaus.zbbp.dto;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 
 @Getter
+@RequiredArgsConstructor
 public class BaseDto {
-    protected Instant modifiedAt;
+    protected Instant lastModifiedAt;
 
-    public BaseDto(Instant modifiedAt) {
-        this.modifiedAt = modifiedAt;
+    public BaseDto(Instant lastModifiedAt) {
+        this.lastModifiedAt = lastModifiedAt;
     }
 }

@@ -5,10 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Slf4j
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No results found")
-public class NotFoundException extends RuntimeException {
-    public NotFoundException(String message) {
+@ResponseStatus(value = HttpStatus.CONFLICT, reason = "This record has been changed since you requested it.")
+public class ResourceConflictException extends RuntimeException {
+    public ResourceConflictException(String message) {
         super(message);
         log.error(message);
     }
+
 }

@@ -1,6 +1,7 @@
 package me.seantwiehaus.zbbp.dto;
 
 import lombok.Getter;
+import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.Category;
 
 import javax.validation.constraints.NotBlank;
@@ -12,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 
 @Getter
-@SuppressWarnings("java:S107")
 public class CategoryDto extends BaseDto {
     private final Long id;
     @NotBlank
@@ -31,13 +31,6 @@ public class CategoryDto extends BaseDto {
     @NotNull
     private final List<TransactionDto> transactionDtos;
 
-    public CategoryDto(String name,
-                       BigDecimal plannedAmount,
-                       LocalDate budgetDate,
-                       List<TransactionDto> transactionDtos) {
-        this(null, null, name, plannedAmount, budgetDate, null, transactionDtos);
-    }
-
     public CategoryDto(Instant modifiedAt,
                        Long id,
                        String name,
@@ -49,7 +42,7 @@ public class CategoryDto extends BaseDto {
         this.id = id;
         this.name = name;
         this.plannedAmount = plannedAmount;
-        this.budgetDate = budgetDate.withDayOfMonth(1);
+        this.budgetDate = new BudgetMonth(budgetDate).asLocalDate();
         this.transactionTotal = transactionTotal;
         this.transactionDtos = Collections.unmodifiableList(transactionDtos);
     }

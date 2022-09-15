@@ -41,12 +41,22 @@ public class TransactionController {
     public TransactionDto getTransactionById(@PathVariable Long id) {
         return service.findById(id)
                 .map(TransactionDto::new)
-                .orElseThrow(() -> new NotFoundException("Unable to find Transactions for Id: " + id));
+                .orElseThrow(() -> new NotFoundException("Unable to find Transactions with Id: " + id));
     }
 
     @PostMapping("/transaction")
     public TransactionDto createTransaction(@RequestBody @Valid TransactionDto transactionDto) {
         log.info("Creating new Transaction: " + transactionDto.toString());
         return new TransactionDto(service.create(transactionDto.convertToTransaction()));
+    }
+
+    @PutMapping("/transaction/{id}")
+    public TransactionDto updateTransaction(@RequestBody @Valid TransactionDto transactionDto,
+                                            @PathVariable Long id) {
+        log.info("Updating transaction with Id: " + id);
+        log.info(transactionDto.getLastModifiedAt().toString());
+        return service.update(id, transactionDto.convertToTransaction())
+                .map(TransactionDto::new)
+                .orElseThrow(() -> new NotFoundException("Unable to find Transactions with Id: " + id));
     }
 }
