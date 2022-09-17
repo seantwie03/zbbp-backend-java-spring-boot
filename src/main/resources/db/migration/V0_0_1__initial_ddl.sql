@@ -29,13 +29,6 @@ create table categories
     unique (name, budget_date)
 );
 
-create table categories_transactions
-(
-    category_id    bigint,
-    transaction_id bigint not null,
-    primary key (transaction_id, category_id)
-);
-
 create table transactions
 (
     id               bigint         not null,
@@ -44,6 +37,7 @@ create table transactions
     amount           numeric(19, 2) not null,
     is_deposit       boolean        not null default false,
     last_modified_at timestamptz    not null,
+    category_id      bigint,
     primary key (id)
 );
 
@@ -52,12 +46,7 @@ alter table categories
         foreign key (category_group_id)
             references category_groups;
 
-alter table categories_transactions
+alter table transactions
     add constraint FK_category_id
         foreign key (category_id)
             references categories;
-
-alter table categories_transactions
-    add constraint FK_transaction_id
-        foreign key (transaction_id)
-            references transactions;

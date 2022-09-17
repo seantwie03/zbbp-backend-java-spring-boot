@@ -3,6 +3,7 @@ package me.seantwiehaus.zbbp.dao.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.Transaction;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 @Entity
 @Table(name = "transactions")
 public class TransactionEntity extends BaseEntity {
@@ -25,6 +27,8 @@ public class TransactionEntity extends BaseEntity {
     private LocalDate date;
     @NotNull
     private String description;
+    @Column(name = "category_id")
+    private Long categoryId;
 
     public TransactionEntity(Transaction transaction) {
         this.id = transaction.getId();
@@ -38,7 +42,8 @@ public class TransactionEntity extends BaseEntity {
                 id,
                 amount,
                 date,
-                description
+                description,
+                categoryId
         );
     }
 }

@@ -3,6 +3,7 @@ package me.seantwiehaus.zbbp.dao.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.Category;
 
@@ -10,17 +11,18 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 @Entity
-@Table(name = "categories")
 @NamedEntityGraph(name = "category.group.transactions", attributeNodes = {
         @NamedAttributeNode("categoryGroupEntity"),
         @NamedAttributeNode("transactionEntities"),
 })
+@Table(name = "categories")
 public class CategoryEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -39,17 +41,16 @@ public class CategoryEntity extends BaseEntity {
     @JoinColumn(name = "category_group_id")
     private CategoryGroupEntity categoryGroupEntity;
     @OneToMany
-    @JoinTable(name = "categories_transactions",
-            joinColumns = @JoinColumn(name = "category_id"),
-            inverseJoinColumns = @JoinColumn(name = "transaction_id"))
-    private Set<TransactionEntity> transactionEntities;
+    @JoinColumn(name = "category_id")
+    @OrderBy("date asc")
+    private List<TransactionEntity> transactionEntities;
 
     public CategoryEntity(Long id,
                           String name,
                           BigDecimal plannedAmount,
                           LocalDate budgetDate,
                           CategoryGroupEntity categoryGroupEntity,
-                          Set<TransactionEntity> transactionEntities) {
+                          List<TransactionEntity> transactionEntities) {
         this.id = id;
         this.name = name;
         this.plannedAmount = plannedAmount;
@@ -76,20 +77,6 @@ public class CategoryEntity extends BaseEntity {
                 transactionEntities
                         .stream()
                         .map(TransactionEntity::convertToTransaction)
-                        .toList()
-        );
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CategoryEntity that = (CategoryEntity) o;
-        return id != null && id.equals(that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+                        .toList());
     }
 }

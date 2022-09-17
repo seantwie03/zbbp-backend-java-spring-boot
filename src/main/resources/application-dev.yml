@@ -15,6 +15,7 @@ spring:
     locations: classpath:/db/migration,classpath:/db/testdata
 logging:
   level:
+    root: info
     org:
       hibernate:
         type: trace

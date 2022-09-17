@@ -3,6 +3,7 @@ package me.seantwiehaus.zbbp.dao.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.CategoryGroup;
 
@@ -15,8 +16,8 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 @Entity
-@Table(name = "category_groups")
 @NamedEntityGraph(name = "group.categories.transactions", attributeNodes = {
         @NamedAttributeNode(value = "categoryEntities", subgraph = "transactions"),
 }, subgraphs = {
@@ -24,6 +25,7 @@ import java.util.List;
                 @NamedAttributeNode("transactionEntities")
         })
 })
+@Table(name = "category_groups")
 public class CategoryGroupEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -75,8 +77,6 @@ public class CategoryGroupEntity extends BaseEntity {
                 new BudgetMonth(budgetDate),
                 categoryEntities
                         .stream()
-                        .map(CategoryEntity::convertToCategory)
-                        .toList()
-        );
+                        .map(CategoryEntity::convertToCategory));
     }
 }

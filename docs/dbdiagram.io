@@ -2,6 +2,7 @@ Table category_groups {
   id int [pk]
   name varchar
   budget_date date
+  last_modified_at timestamptz
     indexes {
       (name, budget_date) [unique]
   }
@@ -10,29 +11,24 @@ Table category_groups {
 Table categories {
   id int [pk]
   name varchar
-  planned_amount numeric(19,4)
-  category_group_id int
   budget_date date
+  planned_amount numeric(19,4)
+  last_modified_at timestamptz
+  category_group_id int
   indexes {
       (name, budget_date) [unique]
   }
 }
 
-Table categories_transactions {
-  category_id int
-  transaction_id int
-  indexes {
-      (category_id, transaction_id) [pk]
-  }
-}
-
-Table transactionDtos {
+Table transactions {
   id int [pk]
   amount numeric(19,4)
   timestamp timestamp
   description varchar
+  is_deposit boolean
+  last_modified_at timestamptz
+  category_id int
 }
 
 Ref: categories.category_group_id > category_groups.id
-Ref: categories.id > categories_transactions.category_id
-Ref: transactionDtos.id < categories_transactions.transaction_id
+Ref: transactions.category_id > categories.id
