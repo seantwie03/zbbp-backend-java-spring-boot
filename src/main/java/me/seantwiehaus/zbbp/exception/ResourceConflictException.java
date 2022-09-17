@@ -2,13 +2,12 @@ package me.seantwiehaus.zbbp.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
-@ResponseStatus(value = HttpStatus.CONFLICT, reason = "This record has been changed since you requested it.")
-public class ResourceConflictException extends RuntimeException {
+public class ResourceConflictException extends ResponseStatusException {
     public ResourceConflictException(String message) {
-        super(message);
+        super(HttpStatus.CONFLICT, message);
         log.error(message);
     }
 
