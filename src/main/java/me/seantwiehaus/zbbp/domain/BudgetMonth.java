@@ -13,6 +13,10 @@ import java.time.LocalDate;
 public class BudgetMonth {
     private final LocalDate date;
 
+    public BudgetMonth() {
+        this(LocalDate.now());
+    }
+
     public BudgetMonth(LocalDate date) {
         this.date = date.withDayOfMonth(1);
     }
