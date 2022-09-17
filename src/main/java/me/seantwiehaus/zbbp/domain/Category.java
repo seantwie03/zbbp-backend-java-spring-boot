@@ -3,6 +3,7 @@ package me.seantwiehaus.zbbp.domain;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -13,7 +14,10 @@ public class Category extends BaseDomain {
     private final String name;
     private final BigDecimal plannedAmount;
     private final BudgetMonth budgetMonth;
-    private final BigDecimal transactionTotal;
+    private final BigDecimal spentAmount;
+    private final Double spentPercent;
+    private final BigDecimal remainingAmount;
+    private final Double remainingPercent;
     /**
      * Unmodifiable List
      */
@@ -31,13 +35,35 @@ public class Category extends BaseDomain {
         this.plannedAmount = plannedAmount;
         this.budgetMonth = budgetMonth;
         this.transactions = Collections.unmodifiableList(transactions);
-        this.transactionTotal = calculateTransactionAmountTotal(transactions);
+        this.spentAmount = calculateAmountSpent();
+        this.spentPercent = calculatePercentageSpentOfPlannedAmount();
+        this.remainingAmount = calculateAmountRemainingOfPlannedAmount();
+        this.remainingPercent = calculatePercentageRemainingOfPlannedAmount();
     }
 
-    public BigDecimal calculateTransactionAmountTotal(List<Transaction> transactions) {
+    private BigDecimal calculateAmountSpent() {
         return transactions
                 .stream()
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.valueOf(0), BigDecimal::add);
     }
+
+    private Double calculatePercentageSpentOfPlannedAmount() {
+        return spentAmount
+                .multiply(BigDecimal.valueOf(100))
+                .divide(plannedAmount, RoundingMode.DOWN)
+                .doubleValue();
+    }
+
+    private BigDecimal calculateAmountRemainingOfPlannedAmount() {
+        return plannedAmount.subtract(spentAmount);
+    }
+
+    private Double calculatePercentageRemainingOfPlannedAmount() {
+        return remainingAmount
+                .multiply(BigDecimal.valueOf(100))
+                .divide(plannedAmount, RoundingMode.DOWN)
+                .doubleValue();
+    }
+
 }

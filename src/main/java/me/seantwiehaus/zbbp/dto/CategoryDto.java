@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Getter
+@SuppressWarnings("java:S107")
 public class CategoryDto extends BaseDto {
     private final Long id;
     @NotBlank
@@ -24,7 +25,10 @@ public class CategoryDto extends BaseDto {
      */
     @NotNull
     private final LocalDate budgetDate;
-    private final BigDecimal transactionTotal;
+    private final BigDecimal spentAmount;
+    private final Double spentPercent;
+    private final BigDecimal remainingAmount;
+    private final Double remainingPercent;
     /**
      * Unmodifiable List
      */
@@ -36,14 +40,20 @@ public class CategoryDto extends BaseDto {
                        String name,
                        BigDecimal plannedAmount,
                        LocalDate budgetDate,
-                       BigDecimal transactionTotal,
+                       BigDecimal spentAmount,
+                       Double spentPercent,
+                       BigDecimal remainingAmount,
+                       Double remainingPercent,
                        List<TransactionDto> transactionDtos) {
         super(modifiedAt);
         this.id = id;
         this.name = name;
         this.plannedAmount = plannedAmount;
         this.budgetDate = new BudgetMonth(budgetDate).asLocalDate();
-        this.transactionTotal = transactionTotal;
+        this.spentAmount = spentAmount;
+        this.spentPercent = spentPercent;
+        this.remainingAmount = remainingAmount;
+        this.remainingPercent = remainingPercent;
         this.transactionDtos = Collections.unmodifiableList(transactionDtos);
     }
 
@@ -53,7 +63,10 @@ public class CategoryDto extends BaseDto {
         this.name = category.getName();
         this.plannedAmount = category.getPlannedAmount();
         this.budgetDate = category.getBudgetMonth().asLocalDate();
-        this.transactionTotal = category.getTransactionTotal();
+        this.spentAmount = category.getSpentAmount();
+        this.spentPercent = category.getSpentPercent();
+        this.remainingAmount = category.getRemainingAmount();
+        this.remainingPercent = category.getRemainingPercent();
         this.transactionDtos = category.getTransactions()
                 .stream()
                 .map(TransactionDto::new)
