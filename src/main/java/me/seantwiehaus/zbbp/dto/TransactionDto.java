@@ -22,17 +22,20 @@ public class TransactionDto extends BaseDto {
     private final LocalDate date;
     @NotBlank
     private final String description;
+    private final Long categoryId;
 
     public TransactionDto(Instant lastModifiedAt,
                           Long id,
                           BigDecimal amount,
                           LocalDate date,
-                          String description) {
+                          String description,
+                          Long categoryId) {
         super(lastModifiedAt);
         this.id = id;
         this.amount = amount;
         this.date = date;
         this.description = description;
+        this.categoryId = categoryId;
     }
 
     public TransactionDto(Transaction transaction) {
@@ -41,6 +44,7 @@ public class TransactionDto extends BaseDto {
         this.amount = transaction.getAmount();
         this.date = transaction.getDate();
         this.description = transaction.getDescription();
+        this.categoryId = transaction.getCategoryId();
     }
 
     public Transaction convertToTransaction() {
@@ -49,6 +53,7 @@ public class TransactionDto extends BaseDto {
                 id,
                 amount,
                 date,
-                description);
+                description,
+                categoryId);
     }
 }

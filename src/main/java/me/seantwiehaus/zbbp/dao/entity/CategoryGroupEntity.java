@@ -77,6 +77,7 @@ public class CategoryGroupEntity extends BaseEntity {
                 new BudgetMonth(budgetDate),
                 categoryEntities
                         .stream()
-                        .map(CategoryEntity::convertToCategory));
+                        .map(CategoryEntity::convertToCategory)
+                        .toList());
     }
 }

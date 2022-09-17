@@ -12,16 +12,19 @@ public class Transaction extends BaseDomain {
     private final BigDecimal amount;
     private final LocalDate date;
     private final String description;
+    private final Long categoryId;
 
     public Transaction(Instant lastModifiedAt,
                        Long id,
                        BigDecimal amount,
                        LocalDate date,
-                       String description) {
+                       String description,
+                       Long categoryId) {
         super(lastModifiedAt);
         this.id = id;
         this.amount = amount;
         this.date = date;
         this.description = description;
+        this.categoryId = categoryId;
     }
 }

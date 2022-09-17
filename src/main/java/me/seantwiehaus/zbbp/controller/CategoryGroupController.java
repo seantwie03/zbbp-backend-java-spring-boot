@@ -45,7 +45,6 @@ public class CategoryGroupController {
                 startBudgetDate.map(BudgetMonth::new).orElse(null),
                 endBudgetDate.map(BudgetMonth::new).orElse(null));
         return service.getAllCategoryGroupsBetween(budgetMonthRange)
-                .stream()
                 .map(CategoryGroupDto::new)
                 .toList();
     }

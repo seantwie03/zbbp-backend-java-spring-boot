@@ -6,9 +6,8 @@ import me.seantwiehaus.zbbp.domain.BudgetMonthRange;
 import me.seantwiehaus.zbbp.domain.Category;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class CategoryService {
@@ -22,13 +21,12 @@ public class CategoryService {
      * @param budgetMonthRange Range of BudgetMonths to search
      * @return All Categories with budgetDates between the start and end BudgetDates (inclusive).
      */
-    public List<Category> getAllCategoriesBetween(BudgetMonthRange budgetMonthRange) {
-        if (budgetMonthRange == null) return Collections.emptyList();
+    public Stream<Category> getAllCategoriesBetween(BudgetMonthRange budgetMonthRange) {
+        if (budgetMonthRange == null) return Stream.<Category>builder().build();
         return repository.findAllByBudgetDateBetween(budgetMonthRange.getStart().asLocalDate(),
                         budgetMonthRange.getEnd().asLocalDate())
                 .stream()
-                .map(CategoryEntity::convertToCategory)
-                .toList();
+                .map(CategoryEntity::convertToCategory);
     }
 
     public Optional<Category> findCategoryById(Long id) {
