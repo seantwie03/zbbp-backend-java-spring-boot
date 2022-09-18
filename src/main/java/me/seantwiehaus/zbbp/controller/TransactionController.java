@@ -6,9 +6,9 @@ import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.service.TransactionService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
@@ -17,10 +17,9 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@Validated
 public class TransactionController {
 
-    private static final String TRANSACTION_URI = "/transaction/";
+    private static final String URI = "/transaction/";
     private final TransactionService service;
 
     public TransactionController(TransactionService service) {
@@ -40,41 +39,41 @@ public class TransactionController {
 
     @GetMapping("/transaction/{id}")
     public ResponseEntity<TransactionResponse> getTransactionById(@PathVariable Long id) throws URISyntaxException {
-        TransactionResponse transactionResponseDto = service.findById(id)
+        TransactionResponse response = service.findById(id)
                 .map(TransactionResponse::new)
                 .orElseThrow(() -> new NotFoundException("Unable to find a Transaction with Id: " + id));
         return ResponseEntity
                 .ok()
-                .location(new URI(TRANSACTION_URI + transactionResponseDto.getId()))
-                .lastModified(transactionResponseDto.getLastModifiedAt())
-                .body(transactionResponseDto);
+                .location(new URI(URI + response.getId()))
+                .lastModified(response.getLastModifiedAt())
+                .body(response);
     }
 
     @PostMapping("/transaction")
     public ResponseEntity<TransactionResponse> createTransaction(
-            @RequestBody TransactionRequest transactionRequest) throws URISyntaxException {
-        TransactionResponse transactionResponseDto =
+            @RequestBody @Valid TransactionRequest transactionRequest) throws URISyntaxException {
+        TransactionResponse response =
                 new TransactionResponse(service.create(transactionRequest.convertToTransaction()));
 
         return ResponseEntity
-                .created(new URI(TRANSACTION_URI + transactionResponseDto.getId()))
-                .lastModified(transactionResponseDto.getLastModifiedAt())
-                .body(transactionResponseDto);
+                .created(new URI(URI + response.getId()))
+                .lastModified(response.getLastModifiedAt())
+                .body(response);
     }
 
     @PutMapping("/transaction/{id}")
     public ResponseEntity<TransactionResponse> updateTransaction(
             @RequestBody TransactionRequest transactionRequest,
             @PathVariable Long id,
-            @RequestHeader("If-Modified-Since") Instant ifModifiedSince) throws URISyntaxException {
-        TransactionResponse transactionResponseDto =
-                service.update(id, ifModifiedSince, transactionRequest.convertToTransaction())
+            @RequestHeader("If-Unmodified-Since") Instant ifUnmodifiedSince) throws URISyntaxException {
+        TransactionResponse response =
+                service.update(id, ifUnmodifiedSince, transactionRequest.convertToTransaction())
                         .map(TransactionResponse::new)
                         .orElseThrow(() -> new NotFoundException("Unable to find a Transaction with Id: " + id));
         return ResponseEntity
                 .ok()
-                .location(new URI(TRANSACTION_URI + transactionResponseDto.getId()))
-                .lastModified(transactionResponseDto.getLastModifiedAt())
-                .body(transactionResponseDto);
+                .location(new URI(URI + response.getId()))
+                .lastModified(response.getLastModifiedAt())
+                .body(response);
     }
 }

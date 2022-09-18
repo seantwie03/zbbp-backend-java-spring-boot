@@ -1,26 +1,32 @@
 package me.seantwiehaus.zbbp.dto.request;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Getter
+@Setter
 @ToString
-@AllArgsConstructor
+@NoArgsConstructor
 public class CategoryRequest {
     @NotBlank
-    private final String name;
+    private String name;
     @NotNull
-    private final Long categoryGroupId;
+    private Long categoryGroupId;
     @NotNull
-    private final Double plannedAmount;
+    private Double plannedAmount;
     /**
      * Day of Month will be set to the 1st
      */
     @NotNull
-    private final LocalDate budgetDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate budgetDate;
 }
