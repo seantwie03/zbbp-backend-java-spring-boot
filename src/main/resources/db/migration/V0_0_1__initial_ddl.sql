@@ -19,24 +19,24 @@ create table category_groups
 
 create table categories
 (
-    id                bigint         not null,
-    name              varchar(255)   not null,
-    budget_date       date           not null,
-    planned_amount    numeric(19, 2) not null,
-    category_group_id bigint         not null,
-    last_modified_at  timestamptz    not null,
+    id                bigint       not null,
+    name              varchar(255) not null,
+    budget_date       date         not null,
+    planned_amount    int          not null,
+    category_group_id bigint       not null,
+    last_modified_at  timestamptz  not null,
     primary key (id),
     unique (name, budget_date)
 );
 
 create table transactions
 (
-    id               bigint         not null,
-    description      varchar(255)   not null,
-    date             date           not null,
-    amount           numeric(19, 2) not null,
-    is_deposit       boolean        not null default false,
-    last_modified_at timestamptz    not null,
+    id               bigint       not null,
+    description      varchar(255) not null,
+    date             date         not null,
+    amount           int          not null,
+    is_deposit       boolean      not null default false,
+    last_modified_at timestamptz  not null,
     category_id      bigint,
     primary key (id)
 );

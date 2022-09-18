@@ -3,9 +3,7 @@ package me.seantwiehaus.zbbp.dto.response;
 import lombok.Getter;
 import me.seantwiehaus.zbbp.domain.CategoryGroup;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -20,24 +18,6 @@ public class CategoryGroupResponse extends BaseResponse {
      * Unmodifiable List
      */
     private final List<CategoryResponse> categories;
-
-    public CategoryGroupResponse(String name,
-                                 LocalDate budgetDate,
-                                 List<CategoryResponse> categories) {
-        this(null, null, name, budgetDate, categories);
-    }
-
-    public CategoryGroupResponse(Instant modifiedAt,
-                                 Long id,
-                                 String name,
-                                 LocalDate budgetDate,
-                                 List<CategoryResponse> categories) {
-        super(modifiedAt);
-        this.id = id;
-        this.name = name;
-        this.budgetDate = budgetDate.withDayOfMonth(1);
-        this.categories = Collections.unmodifiableList(categories);
-    }
 
     public CategoryGroupResponse(CategoryGroup categoryGroup) {
         super(categoryGroup.getLastModifiedAt());

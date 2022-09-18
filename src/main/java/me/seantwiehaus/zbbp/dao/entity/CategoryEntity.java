@@ -6,9 +6,9 @@ import lombok.Setter;
 import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.Category;
+import me.seantwiehaus.zbbp.domain.Money;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class CategoryEntity extends BaseEntity {
     private Long id;
     private String name;
     @Column(name = "planned_amount", nullable = false)
-    private BigDecimal plannedAmount;
+    private Integer plannedAmount;
     /**
      * BudgetDates only need the Year and Month; however, storing only the Year and Month in the database can be
      * tedious. Instead, the date is always set to the 1st.
@@ -47,7 +47,7 @@ public class CategoryEntity extends BaseEntity {
         this.id = category.getId();
         this.name = category.getName();
         this.categoryGroupId = category.getCategoryGroupId();
-        this.plannedAmount = category.getPlannedAmount();
+        this.plannedAmount = category.getPlannedAmount().inCents();
         this.budgetDate = category.getBudgetMonth().asLocalDate();
         this.categoryGroupId = category.getCategoryGroupId();
     }
@@ -66,7 +66,7 @@ public class CategoryEntity extends BaseEntity {
                 id,
                 name,
                 categoryGroupId,
-                plannedAmount,
+                new Money(plannedAmount),
                 new BudgetMonth(budgetDate),
                 transactionEntities
                         .stream()

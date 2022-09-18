@@ -3,8 +3,6 @@ package me.seantwiehaus.zbbp.domain;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -15,11 +13,11 @@ public class Category extends BaseDomain {
     private final Long id;
     private final String name;
     private final Long categoryGroupId;
-    private final BigDecimal plannedAmount;
+    private final Money plannedAmount;
     private final BudgetMonth budgetMonth;
-    private final BigDecimal spentAmount;
+    private final Money spentAmount;
     private final Double spentPercent;
-    private final BigDecimal remainingAmount;
+    private final Money remainingAmount;
     private final Double remainingPercent;
     /**
      * Unmodifiable List
@@ -30,7 +28,7 @@ public class Category extends BaseDomain {
                     Long id,
                     String name,
                     Long categoryGroupId,
-                    BigDecimal plannedAmount,
+                    Money plannedAmount,
                     BudgetMonth budgetMonth,
                     List<Transaction> transactions) {
         super(lastModifiedAt);
@@ -46,29 +44,24 @@ public class Category extends BaseDomain {
         this.remainingPercent = calculatePercentageRemainingOfPlannedAmount();
     }
 
-    private BigDecimal calculateAmountSpent() {
-        return transactions
-                .stream()
-                .map(Transaction::getAmount)
-                .reduce(BigDecimal.valueOf(0), BigDecimal::add);
+    private Money calculateAmountSpent() {
+        return new Money(
+                transactions
+                        .stream()
+                        .map(Transaction::getAmount)
+                        .map(Money::inCents)
+                        .reduce(0, Integer::sum));
     }
 
     private Double calculatePercentageSpentOfPlannedAmount() {
-        return spentAmount
-                .multiply(BigDecimal.valueOf(100))
-                .divide(plannedAmount, RoundingMode.DOWN)
-                .doubleValue();
+        return spentAmount.inCents() * 100.0 / plannedAmount.inCents();
     }
 
-    private BigDecimal calculateAmountRemainingOfPlannedAmount() {
-        return plannedAmount.subtract(spentAmount);
+    private Money calculateAmountRemainingOfPlannedAmount() {
+        return new Money(plannedAmount.inCents() - spentAmount.inCents());
     }
 
     private Double calculatePercentageRemainingOfPlannedAmount() {
-        return remainingAmount
-                .multiply(BigDecimal.valueOf(100))
-                .divide(plannedAmount, RoundingMode.DOWN)
-                .doubleValue();
+        return remainingAmount.inCents() * 100.0 / plannedAmount.inCents();
     }
-
 }

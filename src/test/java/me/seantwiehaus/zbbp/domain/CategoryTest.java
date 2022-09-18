@@ -3,7 +3,6 @@ package me.seantwiehaus.zbbp.domain;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,19 +17,19 @@ class CategoryTest {
         List<Transaction> transactions = List.of(
                 new Transaction(null,
                         1L,
-                        BigDecimal.valueOf(10.50),
+                        new Money(10.50),
                         LocalDate.now(),
                         "Transaction 1",
                         null),
                 new Transaction(null,
                         1L,
-                        BigDecimal.valueOf(11.00),
+                        new Money(11.00),
                         LocalDate.now(),
                         "Transaction 2",
                         null),
                 new Transaction(null,
                         1L,
-                        BigDecimal.valueOf(4.00),
+                        new Money(4.00),
                         LocalDate.now(),
                         "Transaction 3",
                         null)
@@ -39,14 +38,14 @@ class CategoryTest {
                 1L,
                 "Groceries",
                 1L,
-                BigDecimal.valueOf(50),
+                new Money(50.0),
                 new BudgetMonth(),
                 transactions);
     }
 
     @Test
     void shouldCalculateCorrectTotal() {
-        assertEquals(BigDecimal.valueOf(25.50), category.getSpentAmount());
+        assertEquals(new Money(25.50), category.getSpentAmount());
     }
 
     @Test
@@ -56,7 +55,7 @@ class CategoryTest {
 
     @Test
     void shouldCalculateCorrectAmountRemaining() {
-        assertEquals(BigDecimal.valueOf(24.50), category.getRemainingAmount());
+        assertEquals(new Money(24.50), category.getRemainingAmount());
     }
 
     @Test

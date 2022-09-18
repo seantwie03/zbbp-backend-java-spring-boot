@@ -58,7 +58,7 @@ public class TransactionService {
                         throw new ResourceConflictException(
                                 "Transaction with ID: " + id + " has been modified since this client requested it.");
                     }
-                    entity.setAmount(transaction.getAmount());
+                    entity.setAmount(transaction.getAmount().inCents());
                     entity.setDate(transaction.getDate());
                     entity.setDescription(transaction.getDescription());
                     entity.setCategoryId(transaction.getCategoryId());

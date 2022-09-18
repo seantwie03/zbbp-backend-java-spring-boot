@@ -7,7 +7,6 @@ import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.Transaction;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -22,7 +21,7 @@ public class TransactionEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     @Column(name = "amount", nullable = false)
-    private BigDecimal amount;
+    private Integer amount;
     @Column(name = "date", nullable = false)
     private LocalDate date;
     @Column(name = "description", nullable = false)
@@ -32,7 +31,7 @@ public class TransactionEntity extends BaseEntity {
 
     public TransactionEntity(Transaction transaction) {
         this.id = transaction.getId();
-        this.amount = transaction.getAmount();
+        this.amount = transaction.getAmount().inCents();
         this.date = transaction.getDate();
         this.description = transaction.getDescription();
     }
