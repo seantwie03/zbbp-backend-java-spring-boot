@@ -1,7 +1,7 @@
 drop table if exists categories CASCADE;
 drop table if exists categories_transactions CASCADE;
 drop table if exists category_groups CASCADE;
-drop table if exists transactionDtos CASCADE;
+drop table if exists transactionResponseDtos CASCADE;
 drop sequence if exists hibernate_sequence;
 
 
