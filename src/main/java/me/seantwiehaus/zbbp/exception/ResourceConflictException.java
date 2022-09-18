@@ -1,13 +1,11 @@
 package me.seantwiehaus.zbbp.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
-public class ResourceConflictException extends ResponseStatusException {
+public class ResourceConflictException extends RuntimeException {
     public ResourceConflictException(String message) {
-        super(HttpStatus.CONFLICT, message);
+        super(message);
         log.error(message);
     }
 
