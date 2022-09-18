@@ -1,6 +1,7 @@
 package me.seantwiehaus.zbbp.domain;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -9,9 +10,11 @@ import java.util.Collections;
 import java.util.List;
 
 @Getter
+@ToString
 public class Category extends BaseDomain {
     private final Long id;
     private final String name;
+    private final Long categoryGroupId;
     private final BigDecimal plannedAmount;
     private final BudgetMonth budgetMonth;
     private final BigDecimal spentAmount;
@@ -26,12 +29,14 @@ public class Category extends BaseDomain {
     public Category(Instant lastModifiedAt,
                     Long id,
                     String name,
+                    Long categoryGroupId,
                     BigDecimal plannedAmount,
                     BudgetMonth budgetMonth,
                     List<Transaction> transactions) {
         super(lastModifiedAt);
         this.id = id;
         this.name = name;
+        this.categoryGroupId = categoryGroupId;
         this.plannedAmount = plannedAmount;
         this.budgetMonth = budgetMonth;
         this.transactions = Collections.unmodifiableList(transactions);

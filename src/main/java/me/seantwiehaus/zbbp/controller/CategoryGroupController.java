@@ -2,7 +2,7 @@ package me.seantwiehaus.zbbp.controller;
 
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.BudgetMonthRange;
-import me.seantwiehaus.zbbp.dto.CategoryGroupDto;
+import me.seantwiehaus.zbbp.dto.response.CategoryGroupResponse;
 import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.service.CategoryGroupService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -35,24 +35,24 @@ public class CategoryGroupController {
      * @return All CategoryGroups with budgetDates between the startBudgetDate and endBudgetDate (inclusive).
      */
     @GetMapping("/category-groups")
-    public List<CategoryGroupDto> getAllCategoryGroupsBetween(@RequestParam
-                                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                              Optional<LocalDate> startBudgetDate,
-                                                              @RequestParam
-                                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                              Optional<LocalDate> endBudgetDate) {
+    public List<CategoryGroupResponse> getAllCategoryGroupsBetween(@RequestParam
+                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                                                   Optional<LocalDate> startBudgetDate,
+                                                                   @RequestParam
+                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                                                   Optional<LocalDate> endBudgetDate) {
         BudgetMonthRange budgetMonthRange = new BudgetMonthRange(
                 startBudgetDate.map(BudgetMonth::new).orElse(null),
                 endBudgetDate.map(BudgetMonth::new).orElse(null));
         return service.getAllCategoryGroupsBetween(budgetMonthRange)
-                .map(CategoryGroupDto::new)
+                .map(CategoryGroupResponse::new)
                 .toList();
     }
 
     @GetMapping("/category-group/{id}")
-    public CategoryGroupDto getCategoryGroupById(@PathVariable Long id) {
+    public CategoryGroupResponse getCategoryGroupById(@PathVariable Long id) {
         return service.findById(id)
-                .map(CategoryGroupDto::new)
+                .map(CategoryGroupResponse::new)
                 .orElseThrow(() -> new NotFoundException("Unable to find CategoryGroup for Id: " + id));
     }
 }

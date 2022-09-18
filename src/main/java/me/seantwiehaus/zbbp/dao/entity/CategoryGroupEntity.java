@@ -8,10 +8,10 @@ import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.CategoryGroup;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -30,27 +30,17 @@ public class CategoryGroupEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @NotNull
-    @NotBlank
+    @Column(name = "name", nullable = false)
     private String name;
     /**
      * BudgetDates only need the Year and Month; however, storing only the Year and Month in the database can be
      * tedious. Instead, the date is always set to the 1st.
      */
-    @NotNull
+    @Column(name = "budget_date", nullable = false)
     private LocalDate budgetDate;
-    @OneToMany(mappedBy = "categoryGroupEntity")
-    private List<CategoryEntity> categoryEntities;
-
-    public CategoryGroupEntity(Long id,
-                               String name,
-                               LocalDate budgetDate,
-                               List<CategoryEntity> categoryEntities) {
-        this.id = id;
-        this.name = name;
-        setBudgetDate(budgetDate);
-        this.categoryEntities = categoryEntities;
-    }
+    @OneToMany
+    @JoinColumn(name = "category_group_id")
+    private List<CategoryEntity> categoryEntities = new ArrayList<>();
 
     public void setBudgetDate(LocalDate budgetDate) {
         this.budgetDate = budgetDate.withDayOfMonth(1);
@@ -58,16 +48,6 @@ public class CategoryGroupEntity extends BaseEntity {
 
     public void setBudgetDate(BudgetMonth budgetMonth) {
         this.budgetDate = budgetMonth.asLocalDate();
-    }
-
-    public void addCategoryEntity(CategoryEntity categoryEntity) {
-        categoryEntities.add(categoryEntity);
-        categoryEntity.setCategoryGroupEntity(this);
-    }
-
-    public void removeCategoryEntity(CategoryEntity categoryEntity) {
-        categoryEntities.remove(categoryEntity);
-        categoryEntity.setCategoryGroupEntity(null);
     }
 
     public CategoryGroup convertToCategoryGroup() {
@@ -79,5 +59,18 @@ public class CategoryGroupEntity extends BaseEntity {
                         .stream()
                         .map(CategoryEntity::convertToCategory)
                         .toList());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CategoryGroupEntity that = (CategoryGroupEntity) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

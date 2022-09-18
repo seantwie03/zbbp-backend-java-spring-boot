@@ -1,6 +1,7 @@
 package me.seantwiehaus.zbbp.domain;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
  * ensure that if a Day portion of the date is needed, it will always be set to the 1st.
  */
 @Getter
+@ToString
 public class BudgetMonth {
     private final LocalDate date;
 

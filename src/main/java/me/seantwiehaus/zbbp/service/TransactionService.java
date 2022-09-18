@@ -7,6 +7,7 @@ import me.seantwiehaus.zbbp.domain.Transaction;
 import me.seantwiehaus.zbbp.exception.ResourceConflictException;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -49,17 +50,18 @@ public class TransactionService {
      * @param transaction The values to update
      * @return The updated Transaction
      */
-    public Optional<Transaction> update(Long id, Transaction transaction) {
+    public Optional<Transaction> update(Long id, Instant ifModifiedSince, Transaction transaction) {
         Optional<TransactionEntity> existingEntity = repository.findById(id);
         return existingEntity
                 .map(entity -> {
-                    if (entity.getLastModifiedAt().isAfter(transaction.getLastModifiedAt())) {
+                    if (entity.getLastModifiedAt().isAfter(ifModifiedSince)) {
                         throw new ResourceConflictException(
                                 "Transaction with ID: " + id + " has been modified since this client requested it.");
                     }
                     entity.setAmount(transaction.getAmount());
                     entity.setDate(transaction.getDate());
                     entity.setDescription(transaction.getDescription());
+                    entity.setCategoryId(transaction.getCategoryId());
                     log.info("Updating transaction with ID=" + id + " -> " + entity);
                     return Optional.of(
                             repository.save(entity)

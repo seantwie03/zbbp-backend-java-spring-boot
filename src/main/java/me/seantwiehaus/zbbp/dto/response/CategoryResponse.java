@@ -1,11 +1,9 @@
-package me.seantwiehaus.zbbp.dto;
+package me.seantwiehaus.zbbp.dto.response;
 
 import lombok.Getter;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.Category;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -14,16 +12,14 @@ import java.util.List;
 
 @Getter
 @SuppressWarnings("java:S107")
-public class CategoryDto extends BaseDto {
+public class CategoryResponse extends BaseResponse {
     private final Long id;
-    @NotBlank
     private final String name;
-    @NotNull
+    private final Long categoryGroupId;
     private final BigDecimal plannedAmount;
     /**
      * Day of Month will be set to the 1st
      */
-    @NotNull
     private final LocalDate budgetDate;
     private final BigDecimal spentAmount;
     private final Double spentPercent;
@@ -32,44 +28,59 @@ public class CategoryDto extends BaseDto {
     /**
      * Unmodifiable List
      */
-    @NotNull
-    private final List<TransactionDto> transactionDtos;
+    private final List<TransactionResponse> transactionResponseDtos;
 
-    public CategoryDto(Instant modifiedAt,
-                       Long id,
-                       String name,
-                       BigDecimal plannedAmount,
-                       LocalDate budgetDate,
-                       BigDecimal spentAmount,
-                       Double spentPercent,
-                       BigDecimal remainingAmount,
-                       Double remainingPercent,
-                       List<TransactionDto> transactionDtos) {
+    public CategoryResponse(Instant modifiedAt,
+                            Long id,
+                            String name,
+                            Long categoryGroupId,
+                            BigDecimal plannedAmount,
+                            LocalDate budgetDate,
+                            BigDecimal spentAmount,
+                            Double spentPercent,
+                            BigDecimal remainingAmount,
+                            Double remainingPercent,
+                            List<TransactionResponse> transactionResponseDtos) {
         super(modifiedAt);
         this.id = id;
         this.name = name;
+        this.categoryGroupId = categoryGroupId;
         this.plannedAmount = plannedAmount;
         this.budgetDate = new BudgetMonth(budgetDate).asLocalDate();
         this.spentAmount = spentAmount;
         this.spentPercent = spentPercent;
         this.remainingAmount = remainingAmount;
         this.remainingPercent = remainingPercent;
-        this.transactionDtos = Collections.unmodifiableList(transactionDtos);
+        this.transactionResponseDtos = Collections.unmodifiableList(transactionResponseDtos);
     }
 
-    public CategoryDto(Category category) {
+    public CategoryResponse(Category category) {
         super(category.getLastModifiedAt());
         this.id = category.getId();
         this.name = category.getName();
+        this.categoryGroupId = category.getCategoryGroupId();
         this.plannedAmount = category.getPlannedAmount();
         this.budgetDate = category.getBudgetMonth().asLocalDate();
         this.spentAmount = category.getSpentAmount();
         this.spentPercent = category.getSpentPercent();
         this.remainingAmount = category.getRemainingAmount();
         this.remainingPercent = category.getRemainingPercent();
-        this.transactionDtos = category.getTransactions()
+        this.transactionResponseDtos = category.getTransactions()
                 .stream()
-                .map(TransactionDto::new)
+                .map(TransactionResponse::new)
                 .toList();
+    }
+
+    public Category convertToCategory() {
+        return new Category(lastModifiedAt,
+                id,
+                name,
+                categoryGroupId,
+                plannedAmount,
+                new BudgetMonth(budgetDate),
+                transactionResponseDtos.stream()
+                        .map(TransactionResponse::convertToTransaction)
+                        .toList()
+        );
     }
 }

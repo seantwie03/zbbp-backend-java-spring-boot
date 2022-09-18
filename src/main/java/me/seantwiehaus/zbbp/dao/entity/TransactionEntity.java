@@ -7,9 +7,9 @@ import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.Transaction;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -21,11 +21,11 @@ public class TransactionEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @NotNull
+    @Column(name = "amount", nullable = false)
     private BigDecimal amount;
-    @NotNull
+    @Column(name = "date", nullable = false)
     private LocalDate date;
-    @NotNull
+    @Column(name = "description", nullable = false)
     private String description;
     @Column(name = "category_id")
     private Long categoryId;
@@ -45,5 +45,18 @@ public class TransactionEntity extends BaseEntity {
                 description,
                 categoryId
         );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TransactionEntity that = (TransactionEntity) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

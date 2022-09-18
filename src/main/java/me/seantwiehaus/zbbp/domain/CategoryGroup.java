@@ -1,12 +1,14 @@
 package me.seantwiehaus.zbbp.domain;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
 @Getter
+@ToString
 public class CategoryGroup extends BaseDomain {
     private final Long id;
     private final String name;

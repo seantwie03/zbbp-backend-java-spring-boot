@@ -38,6 +38,7 @@ class CategoryTest {
         category = new Category(null,
                 1L,
                 "Groceries",
+                1L,
                 BigDecimal.valueOf(50),
                 new BudgetMonth(),
                 transactions);

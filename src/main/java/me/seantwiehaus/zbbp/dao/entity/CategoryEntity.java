@@ -8,10 +8,11 @@ import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.Category;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -19,7 +20,6 @@ import java.util.List;
 @ToString
 @Entity
 @NamedEntityGraph(name = "category.group.transactions", attributeNodes = {
-        @NamedAttributeNode("categoryGroupEntity"),
         @NamedAttributeNode("transactionEntities"),
 })
 @Table(name = "categories")
@@ -27,36 +27,29 @@ public class CategoryEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @NotNull
     private String name;
-    @NotNull
+    @Column(name = "planned_amount", nullable = false)
     private BigDecimal plannedAmount;
     /**
      * BudgetDates only need the Year and Month; however, storing only the Year and Month in the database can be
      * tedious. Instead, the date is always set to the 1st.
      */
-    @NotNull
+    @Column(name = "budget_date", nullable = false)
     private LocalDate budgetDate;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "category_group_id")
-    private CategoryGroupEntity categoryGroupEntity;
+    @Column(name = "category_group_id", nullable = false)
+    private Long categoryGroupId;
     @OneToMany
     @JoinColumn(name = "category_id")
-    @OrderBy("date asc")
-    private List<TransactionEntity> transactionEntities;
+    @OrderBy("date asc, amount asc")
+    private List<TransactionEntity> transactionEntities = new ArrayList<>();
 
-    public CategoryEntity(Long id,
-                          String name,
-                          BigDecimal plannedAmount,
-                          LocalDate budgetDate,
-                          CategoryGroupEntity categoryGroupEntity,
-                          List<TransactionEntity> transactionEntities) {
-        this.id = id;
-        this.name = name;
-        this.plannedAmount = plannedAmount;
-        setBudgetDate(budgetDate);
-        this.categoryGroupEntity = categoryGroupEntity;
-        this.transactionEntities = transactionEntities;
+    public CategoryEntity(Category category) {
+        this.id = category.getId();
+        this.name = category.getName();
+        this.categoryGroupId = category.getCategoryGroupId();
+        this.plannedAmount = category.getPlannedAmount();
+        this.budgetDate = category.getBudgetMonth().asLocalDate();
+        this.categoryGroupId = category.getCategoryGroupId();
     }
 
     public void setBudgetDate(LocalDate budgetDate) {
@@ -72,11 +65,25 @@ public class CategoryEntity extends BaseEntity {
                 lastModifiedAt,
                 id,
                 name,
+                categoryGroupId,
                 plannedAmount,
                 new BudgetMonth(budgetDate),
                 transactionEntities
                         .stream()
                         .map(TransactionEntity::convertToTransaction)
                         .toList());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CategoryEntity that = (CategoryEntity) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

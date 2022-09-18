@@ -1,12 +1,14 @@
 package me.seantwiehaus.zbbp.domain;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 
 @Getter
+@ToString
 public class Transaction extends BaseDomain {
     private final Long id;
     private final BigDecimal amount;
