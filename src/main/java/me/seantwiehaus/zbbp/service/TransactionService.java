@@ -39,17 +39,9 @@ public class TransactionService {
 
     public Transaction create(Transaction transaction) {
         log.info("Creating new transaction -> " + transaction);
-        return repository.save(new TransactionEntity(transaction))
-                .convertToTransaction();
+        return repository.save(new TransactionEntity(transaction)).convertToTransaction();
     }
 
-    /**
-     * Updates the fields in the specified transaction
-     *
-     * @param id          The ID of the transaction to update
-     * @param transaction The values to update
-     * @return The updated Transaction
-     */
     public Optional<Transaction> update(Long id, Instant ifModifiedSince, Transaction transaction) {
         Optional<TransactionEntity> existingEntity = repository.findById(id);
         return existingEntity
@@ -63,10 +55,17 @@ public class TransactionService {
                     entity.setDescription(transaction.getDescription());
                     entity.setCategoryId(transaction.getCategoryId());
                     log.info("Updating transaction with ID=" + id + " -> " + entity);
-                    return Optional.of(
-                            repository.save(entity)
-                                    .convertToTransaction());
+                    return Optional.of(repository.save(entity).convertToTransaction());
                 })
                 .orElse(Optional.empty());
+    }
+
+    public Optional<Long> delete(Long id) {
+        return repository.findById(id)
+                .map(entity -> {
+                    log.info("Deleting transaction with ID=" + id + " -> " + entity);
+                    repository.delete(entity);
+                    return id;
+                });
     }
 }

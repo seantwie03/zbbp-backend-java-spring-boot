@@ -18,8 +18,8 @@ import java.util.Optional;
 
 @RestController
 public class TransactionController {
-
     private static final String URI = "/transaction/";
+    private static final String TRANSACTION = "Transaction";
     private final TransactionService service;
 
     public TransactionController(TransactionService service) {
@@ -41,7 +41,7 @@ public class TransactionController {
     public ResponseEntity<TransactionResponse> getTransactionById(@PathVariable Long id) throws URISyntaxException {
         TransactionResponse response = service.findById(id)
                 .map(TransactionResponse::new)
-                .orElseThrow(() -> new NotFoundException("Unable to find a Transaction with Id: " + id));
+                .orElseThrow(() -> new NotFoundException(TRANSACTION, id));
         return ResponseEntity
                 .ok()
                 .location(new URI(URI + response.getId()))
@@ -54,7 +54,6 @@ public class TransactionController {
             @RequestBody @Valid TransactionRequest transactionRequest) throws URISyntaxException {
         TransactionResponse response =
                 new TransactionResponse(service.create(transactionRequest.convertToTransaction()));
-
         return ResponseEntity
                 .created(new URI(URI + response.getId()))
                 .lastModified(response.getLastModifiedAt())
@@ -69,11 +68,18 @@ public class TransactionController {
         TransactionResponse response =
                 service.update(id, ifUnmodifiedSince, transactionRequest.convertToTransaction())
                         .map(TransactionResponse::new)
-                        .orElseThrow(() -> new NotFoundException("Unable to find a Transaction with Id: " + id));
+                        .orElseThrow(() -> new NotFoundException(TRANSACTION, id));
         return ResponseEntity
                 .ok()
                 .location(new URI(URI + response.getId()))
                 .lastModified(response.getLastModifiedAt())
                 .body(response);
+    }
+
+    @DeleteMapping("/transaction/{id}")
+    public ResponseEntity<Long> deleteTransaction(@PathVariable Long id) {
+        return service.delete(id)
+                .map(i -> ResponseEntity.ok(id))
+                .orElseThrow(() -> new NotFoundException(TRANSACTION, id));
     }
 }
