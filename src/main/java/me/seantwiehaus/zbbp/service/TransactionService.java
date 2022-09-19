@@ -4,13 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dao.entity.TransactionEntity;
 import me.seantwiehaus.zbbp.dao.repository.TransactionRepository;
 import me.seantwiehaus.zbbp.domain.Transaction;
+import me.seantwiehaus.zbbp.exception.InternalServerException;
 import me.seantwiehaus.zbbp.exception.ResourceConflictException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -26,23 +28,36 @@ public class TransactionService {
      * @param endDate   Include transactions with dates less-than-or-equal-to this day
      * @return All transactions with dates between the start and end dates (inclusive)
      */
-    public Stream<Transaction> getAllBetween(LocalDate startDate, LocalDate endDate) {
+    public List<Transaction> getAllBetween(LocalDate startDate, LocalDate endDate) {
+        if (startDate == null || endDate == null) {
+            log.warn("TransactionService::getAllBetween was called with null startDate and/or endDate.");
+            return Collections.emptyList();
+        }
         return repository.findAllByDateBetweenOrderByDateAsc(startDate, endDate)
                 .stream()
-                .map(TransactionEntity::convertToTransaction);
+                .map(TransactionEntity::convertToTransaction)
+                .toList();
     }
 
     public Optional<Transaction> findById(Long id) {
+        if (id == null) {
+            log.warn("TransactionService::findById was called with null ID");
+            return Optional.empty();
+        }
         return repository.findById(id)
                 .map(TransactionEntity::convertToTransaction);
     }
 
     public Transaction create(Transaction transaction) {
-        log.info("Creating new transaction -> " + transaction);
+        if (transaction == null) throw new InternalServerException("Unable to create null Transaction.");
+        log.info("Creating new Transaction -> " + transaction);
         return repository.save(new TransactionEntity(transaction)).convertToTransaction();
     }
 
     public Optional<Transaction> update(Long id, Instant ifModifiedSince, Transaction transaction) {
+        if (id == null || ifModifiedSince == null || transaction == null) {
+            throw new InternalServerException("Unable to update Transaction. One or more parameters is null");
+        }
         Optional<TransactionEntity> existingEntity = repository.findById(id);
         return existingEntity
                 .map(entity -> {
@@ -61,6 +76,7 @@ public class TransactionService {
     }
 
     public Optional<Long> delete(Long id) {
+        if (id == null) throw new InternalServerException("Unable to delete Transaction. ID is null");
         return repository.findById(id)
                 .map(entity -> {
                     log.info("Deleting transaction with ID=" + id + " -> " + entity);

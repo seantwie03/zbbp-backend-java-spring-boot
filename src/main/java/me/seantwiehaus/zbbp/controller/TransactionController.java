@@ -26,6 +26,15 @@ public class TransactionController {
         this.service = service;
     }
 
+    /**
+     * @param startDate Include transactions with dates greater-than-or-equal-to this day.
+     *                  If no value is supplied, the default value will be the current day of the current month
+     *                  100 years in the past.
+     * @param endDate   Include transactions with dates less-than-or-equal-to this day.
+     *                  If no value is supplied, the default value will be the current day of the current month
+     *                  100 years in the future.
+     * @return All transactions with dates between the start and end dates (inclusive)
+     */
     @GetMapping("/transactions")
     public List<TransactionResponse> getAllTransactionsBetween(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> startDate,
@@ -33,6 +42,7 @@ public class TransactionController {
         LocalDate start = startDate.orElse(LocalDate.now().minusYears(100));
         LocalDate end = endDate.orElse(LocalDate.now().plusYears(100));
         return service.getAllBetween(start, end)
+                .stream()
                 .map(TransactionResponse::new)
                 .toList();
     }
