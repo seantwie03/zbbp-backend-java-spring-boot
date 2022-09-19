@@ -6,21 +6,21 @@ import java.util.Objects;
 
 @ToString
 public class Money {
-    private final Integer amountInCents;
+    private final int amountInCents;
 
-    public Money(Double amountInDollars) {
+    public Money(double amountInDollars) {
         this.amountInCents = Math.toIntExact(Math.round(amountInDollars * 100));
     }
 
-    public Money(Integer amountInCents) {
+    public Money(int amountInCents) {
         this.amountInCents = amountInCents;
     }
 
-    public Integer inCents() {
+    public int inCents() {
         return amountInCents;
     }
 
-    public Double inDollars() {
+    public double inDollars() {
         return amountInCents / 100.0;
     }
 
@@ -29,7 +29,7 @@ public class Money {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Money money = (Money) o;
-        return amountInCents.equals(money.amountInCents);
+        return amountInCents == money.amountInCents;
     }
 
     @Override
