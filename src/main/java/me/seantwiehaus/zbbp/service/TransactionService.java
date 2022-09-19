@@ -54,14 +54,14 @@ public class TransactionService {
         return repository.save(new TransactionEntity(transaction)).convertToTransaction();
     }
 
-    public Optional<Transaction> update(Long id, Instant ifModifiedSince, Transaction transaction) {
-        if (id == null || ifModifiedSince == null || transaction == null) {
+    public Optional<Transaction> update(Long id, Instant ifUnmodifiedSince, Transaction transaction) {
+        if (id == null || ifUnmodifiedSince == null || transaction == null) {
             throw new InternalServerException("Unable to update Transaction. One or more parameters is null");
         }
         Optional<TransactionEntity> existingEntity = repository.findById(id);
         return existingEntity
                 .map(entity -> {
-                    if (entity.getLastModifiedAt().isAfter(ifModifiedSince)) {
+                    if (entity.getLastModifiedAt().isAfter(ifUnmodifiedSince)) {
                         throw new ResourceConflictException(
                                 "Transaction with ID: " + id + " has been modified since this client requested it.");
                     }
@@ -69,7 +69,7 @@ public class TransactionService {
                     entity.setDate(transaction.getDate());
                     entity.setDescription(transaction.getDescription());
                     entity.setCategoryId(transaction.getCategoryId());
-                    log.info("Updating transaction with ID=" + id + " -> " + entity);
+                    log.info("Updating Transaction with ID=" + id + " -> " + entity);
                     return Optional.of(repository.save(entity).convertToTransaction());
                 })
                 .orElse(Optional.empty());

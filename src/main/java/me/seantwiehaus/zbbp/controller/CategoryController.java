@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -72,6 +73,20 @@ public class CategoryController {
         return ResponseEntity
                 .created(new URI(URI + response.getId()))
                 .lastModified(response.getLastModifiedAt())
+                .body(response);
+    }
+
+    @PutMapping("/category/{id}")
+    public ResponseEntity<CategoryResponse> updateCategory(
+            @RequestBody @Valid CategoryRequest request,
+            @PathVariable Long id,
+            @RequestHeader("If-Unmodified-Since") Instant ifUnmodifiedSince) throws URISyntaxException {
+        CategoryResponse response = service.update(id, ifUnmodifiedSince, request.convertToCategory())
+                .map(CategoryResponse::new)
+                .orElseThrow(() -> new NotFoundException(CATEGORY, id));
+        return ResponseEntity
+                .ok()
+                .location(new URI(URI + response.getId()))
                 .body(response);
     }
 }

@@ -72,7 +72,7 @@ public class TransactionController {
 
     @PutMapping("/transaction/{id}")
     public ResponseEntity<TransactionResponse> updateTransaction(
-            @RequestBody TransactionRequest request,
+            @RequestBody @Valid TransactionRequest request,
             @PathVariable Long id,
             @RequestHeader("If-Unmodified-Since") Instant ifUnmodifiedSince) throws URISyntaxException {
         TransactionResponse response =
