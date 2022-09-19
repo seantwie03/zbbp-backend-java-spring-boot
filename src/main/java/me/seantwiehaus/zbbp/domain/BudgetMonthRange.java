@@ -15,9 +15,9 @@ public class BudgetMonthRange {
     private BudgetMonth end = new BudgetMonth(LocalDate.now().plusYears(100));
 
     /**
-     * @param start The starting budgetDate in a range. If null, this property will be set to the current year and
+     * @param start The starting budgetDate in a range. If null, this property will be set to the current day and
      *              month minus 100 years.
-     * @param end   The ending budgetDate in a range. If null, this property will be set to the current year and
+     * @param end   The ending budgetDate in a range. If null, this property will be set to the current day and
      *              month plus 100 years
      */
     public BudgetMonthRange(BudgetMonth start, BudgetMonth end) {

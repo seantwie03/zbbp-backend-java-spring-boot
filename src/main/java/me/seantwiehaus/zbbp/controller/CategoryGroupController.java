@@ -17,6 +17,8 @@ import java.util.Optional;
 
 @RestController
 public class CategoryGroupController {
+    private static final String URI = "/category-group/";
+    private static final String CATEGORY_GROUP = "CategoryGroup";
     private final CategoryGroupService service;
 
     public CategoryGroupController(CategoryGroupService service) {
@@ -53,6 +55,6 @@ public class CategoryGroupController {
     public CategoryGroupResponse getCategoryGroupById(@PathVariable Long id) {
         return service.findById(id)
                 .map(CategoryGroupResponse::new)
-                .orElseThrow(() -> new NotFoundException("Unable to find CategoryGroup for Id: " + id));
+                .orElseThrow(() -> new NotFoundException(CATEGORY_GROUP, id));
     }
 }

@@ -17,6 +17,8 @@ import java.util.Optional;
 @Slf4j
 @RestController
 public class CategoryController {
+    private static final String URI = "/category/";
+    private static final String CATEGORY = "Category";
     CategoryService service;
 
     public CategoryController(CategoryService service) {
@@ -35,25 +37,23 @@ public class CategoryController {
      * @return All Categories with BudgetDates between the startBudgetDate and endBudgetDate (inclusive).
      */
     @GetMapping("/categories")
-    public List<CategoryResponse> getAllCategoriesBetween(@RequestParam
-                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                          Optional<LocalDate> startBudgetDate,
-                                                          @RequestParam
-                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                          Optional<LocalDate> endBudgetDate) {
+    public List<CategoryResponse> getAllCategoriesBetween(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> startBudgetDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> endBudgetDate) {
         BudgetMonthRange budgetMonthRange = new BudgetMonthRange(
                 startBudgetDate.map(BudgetMonth::new).orElse(null),
                 endBudgetDate.map(BudgetMonth::new).orElse(null));
-        return service.getAllCategoriesBetween(budgetMonthRange)
+        return service.getAllBetween(budgetMonthRange)
+                .stream()
                 .map(CategoryResponse::new)
                 .toList();
     }
 
     @GetMapping("/category/{id}")
     public CategoryResponse getCategoryById(@PathVariable Long id) {
-        return service.findCategoryById(id)
+        return service.findById(id)
                 .map(CategoryResponse::new)
-                .orElseThrow(() -> new NotFoundException("Unable to locate Category with ID: " + id));
+                .orElseThrow(() -> new NotFoundException(CATEGORY, id));
     }
 
     @PostMapping("/category")
