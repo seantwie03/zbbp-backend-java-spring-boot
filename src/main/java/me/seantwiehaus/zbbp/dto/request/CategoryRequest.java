@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import me.seantwiehaus.zbbp.domain.BudgetMonth;
+import me.seantwiehaus.zbbp.domain.Category;
+import me.seantwiehaus.zbbp.domain.Money;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
@@ -29,4 +32,16 @@ public class CategoryRequest {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate budgetDate;
+
+    public Category convertToCategory() {
+        return new Category(
+                null,
+                null,
+                name,
+                categoryGroupId,
+                new Money(plannedAmount),
+                new BudgetMonth(budgetDate),
+                null);
+
+    }
 }

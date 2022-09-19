@@ -25,7 +25,7 @@ public class CategoryResponse extends BaseResponse {
     /**
      * Unmodifiable List
      */
-    private final List<TransactionResponse> transactionResponseDtos;
+    private final List<TransactionResponse> transactionResponses;
 
     public CategoryResponse(Category category) {
         super(category.getLastModifiedAt());
@@ -38,7 +38,7 @@ public class CategoryResponse extends BaseResponse {
         this.spentPercent = category.getSpentPercent();
         this.remainingAmount = category.getRemainingAmount().inDollars();
         this.remainingPercent = category.getRemainingPercent();
-        this.transactionResponseDtos = category.getTransactions()
+        this.transactionResponses = category.getTransactions()
                 .stream()
                 .map(TransactionResponse::new)
                 .toList();
@@ -51,7 +51,7 @@ public class CategoryResponse extends BaseResponse {
                 categoryGroupId,
                 new Money(plannedAmount),
                 new BudgetMonth(budgetDate),
-                transactionResponseDtos.stream()
+                transactionResponses.stream()
                         .map(TransactionResponse::convertToTransaction)
                         .toList()
         );

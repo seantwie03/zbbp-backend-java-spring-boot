@@ -61,9 +61,9 @@ public class TransactionController {
 
     @PostMapping("/transaction")
     public ResponseEntity<TransactionResponse> createTransaction(
-            @RequestBody @Valid TransactionRequest transactionRequest) throws URISyntaxException {
+            @RequestBody @Valid TransactionRequest request) throws URISyntaxException {
         TransactionResponse response =
-                new TransactionResponse(service.create(transactionRequest.convertToTransaction()));
+                new TransactionResponse(service.create(request.convertToTransaction()));
         return ResponseEntity
                 .created(new URI(URI + response.getId()))
                 .lastModified(response.getLastModifiedAt())
@@ -72,11 +72,11 @@ public class TransactionController {
 
     @PutMapping("/transaction/{id}")
     public ResponseEntity<TransactionResponse> updateTransaction(
-            @RequestBody TransactionRequest transactionRequest,
+            @RequestBody TransactionRequest request,
             @PathVariable Long id,
             @RequestHeader("If-Unmodified-Since") Instant ifUnmodifiedSince) throws URISyntaxException {
         TransactionResponse response =
-                service.update(id, ifUnmodifiedSince, transactionRequest.convertToTransaction())
+                service.update(id, ifUnmodifiedSince, request.convertToTransaction())
                         .map(TransactionResponse::new)
                         .orElseThrow(() -> new NotFoundException(TRANSACTION, id));
         return ResponseEntity

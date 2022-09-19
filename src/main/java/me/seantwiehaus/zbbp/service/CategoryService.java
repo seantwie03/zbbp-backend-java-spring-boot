@@ -7,8 +7,9 @@ import me.seantwiehaus.zbbp.domain.BudgetMonthRange;
 import me.seantwiehaus.zbbp.domain.Category;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -21,24 +22,31 @@ public class CategoryService {
 
     /**
      * @param budgetMonthRange Range of BudgetMonths to search
-     * @return All Categories with budgetDates between the start and end BudgetDates (inclusive).
+     * @return All Categories within budgetMonthRange (inclusive).
      */
-    public Stream<Category> getAllCategoriesBetween(BudgetMonthRange budgetMonthRange) {
-        if (budgetMonthRange == null) return Stream.<Category>builder().build();
-        return repository.findAllByBudgetDateBetween(budgetMonthRange.getStart().asLocalDate(),
-                        budgetMonthRange.getEnd().asLocalDate())
+    public List<Category> getAllBetween(BudgetMonthRange budgetMonthRange) {
+        if (budgetMonthRange == null) {
+            log.warn("CategoryService::getAllBetween was called with null BudgetMonthRange.");
+            return Collections.emptyList();
+        }
+        return repository.findAllByBudgetDateBetween(
+                        budgetMonthRange.getStart().asLocalDate(), budgetMonthRange.getEnd().asLocalDate())
                 .stream()
-                .map(CategoryEntity::convertToCategory);
+                .map(CategoryEntity::convertToCategory)
+                .toList();
     }
 
-    public Optional<Category> findCategoryById(Long id) {
-        if (id == null) return Optional.empty();
+    public Optional<Category> findById(Long id) {
+        if (id == null) {
+            log.warn("CategoryService::findById was called with null ID");
+            return Optional.empty();
+        }
         return repository.findCategoryEntityById(id)
                 .map(CategoryEntity::convertToCategory);
     }
 
     public Category create(Category category) {
-        log.info("Creating new transaction -> " + category);
+        log.info("Creating new Category -> " + category);
         return repository.save(new CategoryEntity(category)).convertToCategory();
     }
 }

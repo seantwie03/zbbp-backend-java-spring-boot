@@ -3,13 +3,17 @@ package me.seantwiehaus.zbbp.controller;
 import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.BudgetMonthRange;
+import me.seantwiehaus.zbbp.dto.request.CategoryRequest;
 import me.seantwiehaus.zbbp.dto.response.CategoryResponse;
 import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.service.CategoryService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -50,14 +54,24 @@ public class CategoryController {
     }
 
     @GetMapping("/category/{id}")
-    public CategoryResponse getCategoryById(@PathVariable Long id) {
-        return service.findById(id)
+    public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Long id) throws URISyntaxException {
+        CategoryResponse response = service.findById(id)
                 .map(CategoryResponse::new)
                 .orElseThrow(() -> new NotFoundException(CATEGORY, id));
+        return ResponseEntity
+                .ok()
+                .location(new URI(URI + response.getId()))
+                .lastModified(response.getLastModifiedAt())
+                .body(response);
     }
 
     @PostMapping("/category")
-    public CategoryResponse createCategory(@RequestBody @Valid CategoryResponse categoryResponseDto) {
-        return new CategoryResponse(service.create(categoryResponseDto.convertToCategory()));
+    public ResponseEntity<CategoryResponse> createCategory(
+            @RequestBody @Valid CategoryRequest request) throws URISyntaxException {
+        CategoryResponse response = new CategoryResponse(service.create(request.convertToCategory()));
+        return ResponseEntity
+                .created(new URI(URI + response.getId()))
+                .lastModified(response.getLastModifiedAt())
+                .body(response);
     }
 }

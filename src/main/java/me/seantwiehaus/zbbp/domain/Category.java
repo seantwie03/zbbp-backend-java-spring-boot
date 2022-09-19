@@ -37,7 +37,7 @@ public class Category extends BaseDomain {
         this.categoryGroupId = categoryGroupId;
         this.plannedAmount = plannedAmount;
         this.budgetMonth = budgetMonth;
-        this.transactions = Collections.unmodifiableList(transactions);
+        this.transactions = transactions != null ? Collections.unmodifiableList(transactions) : List.of();
         this.spentAmount = calculateAmountSpent();
         this.spentPercent = calculatePercentageSpentOfPlannedAmount();
         this.remainingAmount = calculateAmountRemainingOfPlannedAmount();
