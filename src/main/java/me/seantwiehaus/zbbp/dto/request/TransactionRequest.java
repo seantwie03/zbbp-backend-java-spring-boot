@@ -19,24 +19,24 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 public class TransactionRequest {
-    @NotNull
-    @Min(0)
-    private Double amount;
-    @NotNull
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate date;
-    @NotBlank
-    private String description;
-    private Long categoryId;
+  @NotNull
+  @Min(0)
+  private Double amount;
+  @NotNull
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+  @JsonFormat(pattern = "yyyy-MM-dd")
+  private LocalDate date;
+  @NotBlank
+  private String description;
+  private Long categoryId;
 
-    public Transaction convertToTransaction() {
-        return new Transaction(
-                null,
-                null,
-                new Money(amount),
-                date,
-                description,
-                categoryId);
-    }
+  public Transaction convertToTransaction() {
+    return new Transaction(
+        null,
+        null,
+        new Money(amount),
+        date,
+        description,
+        categoryId);
+  }
 }

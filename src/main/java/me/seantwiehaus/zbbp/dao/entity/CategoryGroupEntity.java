@@ -19,58 +19,58 @@ import java.util.Objects;
 @ToString
 @Entity
 @NamedEntityGraph(name = "group.categories.transactions", attributeNodes = {
-        @NamedAttributeNode(value = "categoryEntities", subgraph = "transactions"),
+    @NamedAttributeNode(value = "categoryEntities", subgraph = "transactions"),
 }, subgraphs = {
-        @NamedSubgraph(name = "transactions", attributeNodes = {
-                @NamedAttributeNode("transactionEntities")
-        })
+    @NamedSubgraph(name = "transactions", attributeNodes = {
+        @NamedAttributeNode("transactionEntities")
+    })
 })
 @Table(name = "category_groups")
 public class CategoryGroupEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @Column(name = "name", nullable = false)
-    private String name;
-    /**
-     * BudgetDates only need the Year and Month; however, storing only the Year and Month in the database can be
-     * tedious. Instead, the date is always set to the 1st.
-     */
-    @Column(name = "budget_date", nullable = false)
-    private LocalDate budgetDate;
-    @OneToMany
-    @JoinColumn(name = "category_group_id")
-    private List<CategoryEntity> categoryEntities = new ArrayList<>();
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  private Long id;
+  @Column(name = "name", nullable = false)
+  private String name;
+  /**
+   * BudgetDates only need the Year and Month; however, storing only the Year and Month in the database can be
+   * tedious. Instead, the date is always set to the 1st.
+   */
+  @Column(name = "budget_date", nullable = false)
+  private LocalDate budgetDate;
+  @OneToMany
+  @JoinColumn(name = "category_group_id")
+  private List<CategoryEntity> categoryEntities = new ArrayList<>();
 
-    public void setBudgetDate(LocalDate budgetDate) {
-        this.budgetDate = budgetDate.withDayOfMonth(1);
-    }
+  public void setBudgetDate(LocalDate budgetDate) {
+    this.budgetDate = budgetDate.withDayOfMonth(1);
+  }
 
-    public void setBudgetDate(BudgetMonth budgetMonth) {
-        this.budgetDate = budgetMonth.asLocalDate();
-    }
+  public void setBudgetDate(BudgetMonth budgetMonth) {
+    this.budgetDate = budgetMonth.asLocalDate();
+  }
 
-    public CategoryGroup convertToCategoryGroup() {
-        return new CategoryGroup(lastModifiedAt,
-                id,
-                name,
-                new BudgetMonth(budgetDate),
-                categoryEntities
-                        .stream()
-                        .map(CategoryEntity::convertToCategory)
-                        .toList());
-    }
+  public CategoryGroup convertToCategoryGroup() {
+    return new CategoryGroup(lastModifiedAt,
+        id,
+        name,
+        new BudgetMonth(budgetDate),
+        categoryEntities
+            .stream()
+            .map(CategoryEntity::convertToCategory)
+            .toList());
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CategoryGroupEntity that = (CategoryGroupEntity) o;
-        return Objects.equals(id, that.id);
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    CategoryGroupEntity that = (CategoryGroupEntity) o;
+    return Objects.equals(id, that.id);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
+  }
 }

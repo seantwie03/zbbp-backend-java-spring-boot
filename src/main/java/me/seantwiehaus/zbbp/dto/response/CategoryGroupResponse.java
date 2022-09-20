@@ -8,25 +8,25 @@ import java.util.List;
 
 @Getter
 public class CategoryGroupResponse extends BaseResponse {
-    private final Long id;
-    private final String name;
-    /**
-     * Day of Month will be set to the 1st
-     */
-    private final LocalDate budgetDate;
-    /**
-     * Unmodifiable List
-     */
-    private final List<CategoryResponse> categories;
+  private final Long id;
+  private final String name;
+  /**
+   * Day of Month will be set to the 1st
+   */
+  private final LocalDate budgetDate;
+  /**
+   * Unmodifiable List
+   */
+  private final List<CategoryResponse> categories;
 
-    public CategoryGroupResponse(CategoryGroup categoryGroup) {
-        super(categoryGroup.getLastModifiedAt());
-        this.id = categoryGroup.getId();
-        this.name = categoryGroup.getName();
-        this.budgetDate = categoryGroup.getBudgetMonth().asLocalDate();
-        this.categories = categoryGroup.getCategories()
-                .stream()
-                .map(CategoryResponse::new)
-                .toList();
-    }
+  public CategoryGroupResponse(CategoryGroup categoryGroup) {
+    super(categoryGroup.getLastModifiedAt());
+    this.id = categoryGroup.getId();
+    this.name = categoryGroup.getName();
+    this.budgetDate = categoryGroup.getBudgetMonth().asLocalDate();
+    this.categories = categoryGroup.getCategories()
+        .stream()
+        .map(CategoryResponse::new)
+        .toList();
+  }
 }

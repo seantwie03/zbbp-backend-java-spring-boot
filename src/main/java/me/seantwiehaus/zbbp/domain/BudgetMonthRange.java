@@ -11,18 +11,18 @@ import java.time.LocalDate;
  */
 @Getter
 public class BudgetMonthRange {
-    private BudgetMonth start = new BudgetMonth(LocalDate.now().minusYears(100));
-    private BudgetMonth end = new BudgetMonth(LocalDate.now().plusYears(100));
+  private BudgetMonth start = new BudgetMonth(LocalDate.now().minusYears(100));
+  private BudgetMonth end = new BudgetMonth(LocalDate.now().plusYears(100));
 
-    /**
-     * @param start The starting budgetDate in a range. If null, this property will be set to the current day and
-     *              month minus 100 years.
-     * @param end   The ending budgetDate in a range. If null, this property will be set to the current day and
-     *              month plus 100 years
-     */
-    public BudgetMonthRange(BudgetMonth start, BudgetMonth end) {
-        if (start != null) this.start = start;
-        if (end != null) this.end = end;
-    }
+  /**
+   * @param start The starting budgetDate in a range. If null, this property will be set to the current day and
+   *              month minus 100 years.
+   * @param end   The ending budgetDate in a range. If null, this property will be set to the current day and
+   *              month plus 100 years
+   */
+  public BudgetMonthRange(BudgetMonth start, BudgetMonth end) {
+    if (start != null) this.start = start;
+    if (end != null) this.end = end;
+  }
 
 }

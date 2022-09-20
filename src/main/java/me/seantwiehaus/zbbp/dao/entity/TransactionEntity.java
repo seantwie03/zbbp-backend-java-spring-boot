@@ -17,46 +17,46 @@ import java.util.Objects;
 @Entity
 @Table(name = "transactions")
 public class TransactionEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @Column(name = "amount", nullable = false)
-    private Integer amount;
-    @Column(name = "date", nullable = false)
-    private LocalDate date;
-    @Column(name = "description", nullable = false)
-    private String description;
-    @Column(name = "category_id")
-    private Long categoryId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  private Long id;
+  @Column(name = "amount", nullable = false)
+  private Integer amount;
+  @Column(name = "date", nullable = false)
+  private LocalDate date;
+  @Column(name = "description", nullable = false)
+  private String description;
+  @Column(name = "category_id")
+  private Long categoryId;
 
-    public TransactionEntity(Transaction transaction) {
-        this.id = transaction.getId();
-        this.amount = transaction.getAmount().inCents();
-        this.date = transaction.getDate();
-        this.description = transaction.getDescription();
-        this.setCategoryId(transaction.getCategoryId());
-    }
+  public TransactionEntity(Transaction transaction) {
+    this.id = transaction.getId();
+    this.amount = transaction.getAmount().inCents();
+    this.date = transaction.getDate();
+    this.description = transaction.getDescription();
+    this.setCategoryId(transaction.getCategoryId());
+  }
 
-    public Transaction convertToTransaction() {
-        return new Transaction(lastModifiedAt,
-                id,
-                amount,
-                date,
-                description,
-                categoryId
-        );
-    }
+  public Transaction convertToTransaction() {
+    return new Transaction(lastModifiedAt,
+        id,
+        amount,
+        date,
+        description,
+        categoryId
+    );
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TransactionEntity that = (TransactionEntity) o;
-        return Objects.equals(id, that.id);
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    TransactionEntity that = (TransactionEntity) o;
+    return Objects.equals(id, that.id);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
+  }
 }

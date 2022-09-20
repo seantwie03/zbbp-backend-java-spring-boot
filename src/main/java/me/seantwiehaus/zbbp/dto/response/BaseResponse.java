@@ -6,9 +6,9 @@ import java.time.Instant;
 
 @Getter
 public class BaseResponse {
-    protected Instant lastModifiedAt;
+  protected Instant lastModifiedAt;
 
-    public BaseResponse(Instant lastModifiedAt) {
-        this.lastModifiedAt = lastModifiedAt;
-    }
+  public BaseResponse(Instant lastModifiedAt) {
+    this.lastModifiedAt = lastModifiedAt;
+  }
 }

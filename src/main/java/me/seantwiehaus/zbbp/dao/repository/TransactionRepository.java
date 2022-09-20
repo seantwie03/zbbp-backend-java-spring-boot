@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<TransactionEntity, Long> {
-    List<TransactionEntity> findAllByDateBetweenOrderByDateAsc(LocalDate startDate, LocalDate endDate);
+  List<TransactionEntity> findAllByDateBetweenOrderByDateAsc(LocalDate startDate, LocalDate endDate);
 }

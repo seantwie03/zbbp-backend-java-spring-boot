@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface CategoryGroupRepository extends JpaRepository<CategoryGroupEntity, Long> {
-    @EntityGraph("group.categories.transactions")
-    List<CategoryGroupEntity> findAllByBudgetDateBetween(LocalDate startDate, LocalDate endDate);
+  @EntityGraph("group.categories.transactions")
+  List<CategoryGroupEntity> findAllByBudgetDateBetween(LocalDate startDate, LocalDate endDate);
 }

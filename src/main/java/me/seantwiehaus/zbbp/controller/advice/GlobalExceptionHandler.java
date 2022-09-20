@@ -19,65 +19,65 @@ import java.net.URISyntaxException;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(URISyntaxException.class)
-    protected ResponseEntity<ExceptionResponse> handleURISyntaxException(URISyntaxException exception,
-                                                                         HttpServletRequest request) {
-        String message = "Unable to create URI for: " + exception.getInput()
-                + ". Reason: " + exception.getReason()
-                + ". Message: " + exception.getMessage();
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ExceptionResponse(500, message, formatFullPath(request)));
-    }
+  @ExceptionHandler(URISyntaxException.class)
+  protected ResponseEntity<ExceptionResponse> handleURISyntaxException(URISyntaxException exception,
+                                                                       HttpServletRequest request) {
+    String message = "Unable to create URI for: " + exception.getInput()
+        + ". Reason: " + exception.getReason()
+        + ". Message: " + exception.getMessage();
+    return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(new ExceptionResponse(500, message, formatFullPath(request)));
+  }
 
-    @ExceptionHandler(InternalServerException.class)
-    protected ResponseEntity<ExceptionResponse> handleInternalServerException(InternalServerException exception,
+  @ExceptionHandler(InternalServerException.class)
+  protected ResponseEntity<ExceptionResponse> handleInternalServerException(InternalServerException exception,
+                                                                            HttpServletRequest request) {
+    return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(new ExceptionResponse(500, exception.getMessage(), formatFullPath(request)));
+  }
+
+  @ExceptionHandler(NotFoundException.class)
+  protected ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException exception,
+                                                                      HttpServletRequest request) {
+    return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body(new ExceptionResponse(404, exception.getMessage(), formatFullPath(request)));
+  }
+
+  @ExceptionHandler(ResourceConflictException.class)
+  protected ResponseEntity<ExceptionResponse> handleResourceConflictException(ResourceConflictException exception,
                                                                               HttpServletRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ExceptionResponse(500, exception.getMessage(), formatFullPath(request)));
-    }
+    return ResponseEntity
+        .status(HttpStatus.CONFLICT)
+        .body(new ExceptionResponse(409, exception.getMessage(), formatFullPath(request)));
+  }
 
-    @ExceptionHandler(NotFoundException.class)
-    protected ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException exception,
-                                                                        HttpServletRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(new ExceptionResponse(404, exception.getMessage(), formatFullPath(request)));
-    }
+  @ExceptionHandler(BadRequestException.class)
+  protected ResponseEntity<ExceptionResponse> handleResourceConflictException(BadRequestException exception,
+                                                                              HttpServletRequest request) {
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(new ExceptionResponse(400, exception.getMessage(), formatFullPath(request)));
+  }
 
-    @ExceptionHandler(ResourceConflictException.class)
-    protected ResponseEntity<ExceptionResponse> handleResourceConflictException(ResourceConflictException exception,
-                                                                                HttpServletRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(new ExceptionResponse(409, exception.getMessage(), formatFullPath(request)));
-    }
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  protected ResponseEntity<ExceptionResponse> handMethodArgumentNotValidException(
+      MethodArgumentNotValidException exception, HttpServletRequest request) {
+    String message = exception.getAllErrors()
+        .stream()
+        .map(ObjectError::toString)
+        .reduce("", String::concat);
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(new ExceptionResponse(400, message, formatFullPath(request)));
+  }
 
-    @ExceptionHandler(BadRequestException.class)
-    protected ResponseEntity<ExceptionResponse> handleResourceConflictException(BadRequestException exception,
-                                                                                HttpServletRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ExceptionResponse(400, exception.getMessage(), formatFullPath(request)));
+  private String formatFullPath(HttpServletRequest request) {
+    if (request.getQueryString() == null) {
+      return request.getContextPath() + request.getServletPath();
     }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<ExceptionResponse> handMethodArgumentNotValidException(
-            MethodArgumentNotValidException exception, HttpServletRequest request) {
-        String message = exception.getAllErrors()
-                .stream()
-                .map(ObjectError::toString)
-                .reduce("", String::concat);
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ExceptionResponse(400, message, formatFullPath(request)));
-    }
-
-    private String formatFullPath(HttpServletRequest request) {
-        if (request.getQueryString() == null) {
-            return request.getContextPath() + request.getServletPath();
-        }
-        return request.getContextPath() + request.getServletPath() + "?" + request.getQueryString();
-    }
+    return request.getContextPath() + request.getServletPath() + "?" + request.getQueryString();
+  }
 }

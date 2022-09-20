@@ -11,9 +11,9 @@ import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
-    @EntityGraph("category.group.transactions")
-    Optional<CategoryEntity> findCategoryEntityById(Long id);
+  @EntityGraph("category.group.transactions")
+  Optional<CategoryEntity> findCategoryEntityById(Long id);
 
-    @EntityGraph("category.group.transactions")
-    List<CategoryEntity> findAllByBudgetDateBetween(LocalDate startDate, LocalDate endDate);
+  @EntityGraph("category.group.transactions")
+  List<CategoryEntity> findAllByBudgetDateBetween(LocalDate startDate, LocalDate endDate);
 }

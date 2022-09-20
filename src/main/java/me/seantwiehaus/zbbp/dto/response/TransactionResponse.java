@@ -9,28 +9,28 @@ import java.time.LocalDate;
 @Getter
 @ToString
 public class TransactionResponse extends BaseResponse {
-    private final Long id;
-    private final Double amount;
-    private final LocalDate date;
-    private final String description;
-    private final Long categoryId;
+  private final Long id;
+  private final Double amount;
+  private final LocalDate date;
+  private final String description;
+  private final Long categoryId;
 
-    public TransactionResponse(Transaction transaction) {
-        super(transaction.getLastModifiedAt());
-        this.id = transaction.getId();
-        this.amount = transaction.getAmount().inDollars();
-        this.date = transaction.getDate();
-        this.description = transaction.getDescription();
-        this.categoryId = transaction.getCategoryId();
-    }
+  public TransactionResponse(Transaction transaction) {
+    super(transaction.getLastModifiedAt());
+    this.id = transaction.getId();
+    this.amount = transaction.getAmount().inDollars();
+    this.date = transaction.getDate();
+    this.description = transaction.getDescription();
+    this.categoryId = transaction.getCategoryId();
+  }
 
-    public Transaction convertToTransaction() {
-        return new Transaction(
-                lastModifiedAt,
-                id,
-                amount,
-                date,
-                description,
-                categoryId);
-    }
+  public Transaction convertToTransaction() {
+    return new Transaction(
+        lastModifiedAt,
+        id,
+        amount,
+        date,
+        description,
+        categoryId);
+  }
 }

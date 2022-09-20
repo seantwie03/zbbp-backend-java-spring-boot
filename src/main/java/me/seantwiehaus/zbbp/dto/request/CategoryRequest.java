@@ -19,29 +19,29 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 public class CategoryRequest {
-    @NotBlank
-    private String name;
-    @NotNull
-    private Long categoryGroupId;
-    @NotNull
-    private Double plannedAmount;
-    /**
-     * Day of Month will be set to the 1st
-     */
-    @NotNull
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate budgetDate;
+  @NotBlank
+  private String name;
+  @NotNull
+  private Long categoryGroupId;
+  @NotNull
+  private Double plannedAmount;
+  /**
+   * Day of Month will be set to the 1st
+   */
+  @NotNull
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+  @JsonFormat(pattern = "yyyy-MM-dd")
+  private LocalDate budgetDate;
 
-    public Category convertToCategory() {
-        return new Category(
-                null,
-                null,
-                name,
-                categoryGroupId,
-                new Money(plannedAmount),
-                new BudgetMonth(budgetDate),
-                null);
+  public Category convertToCategory() {
+    return new Category(
+        null,
+        null,
+        name,
+        categoryGroupId,
+        new Money(plannedAmount),
+        new BudgetMonth(budgetDate),
+        null);
 
-    }
+  }
 }

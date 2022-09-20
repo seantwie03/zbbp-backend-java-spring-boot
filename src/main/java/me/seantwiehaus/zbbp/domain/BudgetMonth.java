@@ -15,29 +15,29 @@ import java.util.Objects;
 @Getter
 @ToString
 public class BudgetMonth {
-    private YearMonth date = YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonth());
+  private YearMonth date = YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonth());
 
-    public BudgetMonth() {
-    }
+  public BudgetMonth() {
+  }
 
-    public BudgetMonth(LocalDate date) {
-        if (date != null) this.date = YearMonth.of(date.getYear(), date.getMonth());
-    }
+  public BudgetMonth(LocalDate date) {
+    if (date != null) this.date = YearMonth.of(date.getYear(), date.getMonth());
+  }
 
-    public LocalDate asLocalDate() {
-        return date.atDay(1);
-    }
+  public LocalDate asLocalDate() {
+    return date.atDay(1);
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BudgetMonth that = (BudgetMonth) o;
-        return date.equals(that.date);
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    BudgetMonth that = (BudgetMonth) o;
+    return date.equals(that.date);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(date);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(date);
+  }
 }

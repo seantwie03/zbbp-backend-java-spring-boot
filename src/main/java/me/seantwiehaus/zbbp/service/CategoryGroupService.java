@@ -11,26 +11,26 @@ import java.util.stream.Stream;
 
 @Service
 public class CategoryGroupService {
-    private final CategoryGroupRepository repository;
+  private final CategoryGroupRepository repository;
 
-    public CategoryGroupService(CategoryGroupRepository repository) {
-        this.repository = repository;
-    }
+  public CategoryGroupService(CategoryGroupRepository repository) {
+    this.repository = repository;
+  }
 
-    /**
-     * @param budgetMonthRange Range of BudgetMonths to search
-     * @return All CategoryGroups with budgetDates between the start and end BudgetDates (inclusive).
-     */
-    public Stream<CategoryGroup> getAllCategoryGroupsBetween(BudgetMonthRange budgetMonthRange) {
-        if (budgetMonthRange == null) return Stream.<CategoryGroup>builder().build();
-        return repository.findAllByBudgetDateBetween(budgetMonthRange.getStart().asLocalDate(),
-                        budgetMonthRange.getEnd().asLocalDate())
-                .stream()
-                .map(CategoryGroupEntity::convertToCategoryGroup);
-    }
+  /**
+   * @param budgetMonthRange Range of BudgetMonths to search
+   * @return All CategoryGroups with budgetDates between the start and end BudgetDates (inclusive).
+   */
+  public Stream<CategoryGroup> getAllCategoryGroupsBetween(BudgetMonthRange budgetMonthRange) {
+    if (budgetMonthRange == null) return Stream.<CategoryGroup>builder().build();
+    return repository.findAllByBudgetDateBetween(budgetMonthRange.getStart().asLocalDate(),
+            budgetMonthRange.getEnd().asLocalDate())
+        .stream()
+        .map(CategoryGroupEntity::convertToCategoryGroup);
+  }
 
-    public Optional<CategoryGroup> findById(Long id) {
-        return repository.findById(id)
-                .map(CategoryGroupEntity::convertToCategoryGroup);
-    }
+  public Optional<CategoryGroup> findById(Long id) {
+    return repository.findById(id)
+        .map(CategoryGroupEntity::convertToCategoryGroup);
+  }
 }
