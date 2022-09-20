@@ -37,12 +37,9 @@ public class CategoryGroupController {
    * @return All CategoryGroups with budgetDates between the startBudgetDate and endBudgetDate (inclusive).
    */
   @GetMapping("/category-groups")
-  public List<CategoryGroupResponse> getAllCategoryGroupsBetween(@RequestParam
-                                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                                 Optional<LocalDate> startBudgetDate,
-                                                                 @RequestParam
-                                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                                 Optional<LocalDate> endBudgetDate) {
+  public List<CategoryGroupResponse> getAllCategoryGroupsBetween(
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> startBudgetDate,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> endBudgetDate) {
     BudgetMonthRange budgetMonthRange = new BudgetMonthRange(
         startBudgetDate.map(BudgetMonth::new).orElse(null),
         endBudgetDate.map(BudgetMonth::new).orElse(null));

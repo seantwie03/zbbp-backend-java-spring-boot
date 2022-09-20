@@ -35,7 +35,8 @@ public class CategoryService {
       return Collections.emptyList();
     }
     return repository.findAllByBudgetDateBetween(
-            budgetMonthRange.getStart().asLocalDate(), budgetMonthRange.getEnd().asLocalDate())
+            budgetMonthRange.getStart().asLocalDate(),
+            budgetMonthRange.getEnd().asLocalDate())
         .stream()
         .map(CategoryEntity::convertToCategory)
         .toList();

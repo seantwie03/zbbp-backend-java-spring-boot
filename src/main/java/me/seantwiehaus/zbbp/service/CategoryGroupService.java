@@ -23,7 +23,8 @@ public class CategoryGroupService {
    */
   public Stream<CategoryGroup> getAllCategoryGroupsBetween(BudgetMonthRange budgetMonthRange) {
     if (budgetMonthRange == null) return Stream.<CategoryGroup>builder().build();
-    return repository.findAllByBudgetDateBetween(budgetMonthRange.getStart().asLocalDate(),
+    return repository.findAllByBudgetDateBetween(
+            budgetMonthRange.getStart().asLocalDate(),
             budgetMonthRange.getEnd().asLocalDate())
         .stream()
         .map(CategoryGroupEntity::convertToCategoryGroup);

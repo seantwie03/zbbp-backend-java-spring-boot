@@ -38,13 +38,13 @@ public class TransactionEntity extends BaseEntity {
   }
 
   public Transaction convertToTransaction() {
-    return new Transaction(lastModifiedAt,
+    return new Transaction(
+        lastModifiedAt,
         id,
         amount,
         date,
         description,
-        categoryId
-    );
+        categoryId);
   }
 
   @Override

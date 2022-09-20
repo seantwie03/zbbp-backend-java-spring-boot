@@ -51,7 +51,8 @@ public class CategoryGroupEntity extends BaseEntity {
   }
 
   public CategoryGroup convertToCategoryGroup() {
-    return new CategoryGroup(lastModifiedAt,
+    return new CategoryGroup(
+        lastModifiedAt,
         id,
         name,
         new BudgetMonth(budgetDate),

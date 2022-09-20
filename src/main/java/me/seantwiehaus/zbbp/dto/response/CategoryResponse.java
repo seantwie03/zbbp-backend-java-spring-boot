@@ -45,7 +45,8 @@ public class CategoryResponse extends BaseResponse {
   }
 
   public Category convertToCategory() {
-    return new Category(lastModifiedAt,
+    return new Category(
+        lastModifiedAt,
         id,
         name,
         categoryGroupId,
