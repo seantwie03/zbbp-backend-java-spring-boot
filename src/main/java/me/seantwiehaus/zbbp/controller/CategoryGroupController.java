@@ -6,11 +6,14 @@ import me.seantwiehaus.zbbp.dto.response.CategoryGroupResponse;
 import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.service.CategoryGroupService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -43,15 +46,21 @@ public class CategoryGroupController {
     BudgetMonthRange budgetMonthRange = new BudgetMonthRange(
         startBudgetDate.map(BudgetMonth::new).orElse(null),
         endBudgetDate.map(BudgetMonth::new).orElse(null));
-    return service.getAllCategoryGroupsBetween(budgetMonthRange)
+    return service.getAllBetween(budgetMonthRange)
+        .stream()
         .map(CategoryGroupResponse::new)
         .toList();
   }
 
   @GetMapping("/category-group/{id}")
-  public CategoryGroupResponse getCategoryGroupById(@PathVariable Long id) {
-    return service.findById(id)
+  public ResponseEntity<CategoryGroupResponse> getCategoryGroupById(@PathVariable Long id) throws URISyntaxException {
+    CategoryGroupResponse response = service.findById(id)
         .map(CategoryGroupResponse::new)
         .orElseThrow(() -> new NotFoundException(CATEGORY_GROUP, id));
+    return ResponseEntity
+        .ok()
+        .location(new URI(URI + response.getId()))
+        .lastModified(response.getLastModifiedAt())
+        .body(response);
   }
 }
