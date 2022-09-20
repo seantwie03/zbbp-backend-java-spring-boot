@@ -5,8 +5,10 @@ import me.seantwiehaus.zbbp.dao.entity.CategoryEntity;
 import me.seantwiehaus.zbbp.dao.repository.CategoryRepository;
 import me.seantwiehaus.zbbp.domain.BudgetMonthRange;
 import me.seantwiehaus.zbbp.domain.Category;
+import me.seantwiehaus.zbbp.exception.BadRequestException;
 import me.seantwiehaus.zbbp.exception.InternalServerException;
 import me.seantwiehaus.zbbp.exception.ResourceConflictException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -50,7 +52,12 @@ public class CategoryService {
 
     public Category create(Category category) {
         log.info("Creating new Category -> " + category);
-        return repository.save(new CategoryEntity(category)).convertToCategory();
+        try {
+            return repository.save(new CategoryEntity(category)).convertToCategory();
+        } catch (DataIntegrityViolationException e) {
+            log.error("DataIntegrityViolationException " + e.getMessage());
+            throw new BadRequestException("A Category with that Name and BudgetDate already exists.");
+        }
     }
 
     public Optional<Category> update(Long id, Instant ifUnmodifiedSince, Category category) {
@@ -69,8 +76,12 @@ public class CategoryService {
                     entity.setPlannedAmount(category.getPlannedAmount().inCents());
                     entity.setBudgetDate(category.getBudgetMonth());
                     log.info("Updating Category with ID=" + id + " -> " + entity);
-                    return Optional.of(repository.save(entity).convertToCategory());
-
+                    try {
+                        return Optional.of(repository.save(new CategoryEntity(category)).convertToCategory());
+                    } catch (DataIntegrityViolationException e) {
+                        log.error("DataIntegrityViolationException: " + e.getMessage());
+                        throw new BadRequestException("A Category with that Name and BudgetDate already exists.");
+                    }
                 })
                 .orElse(Optional.empty());
     }

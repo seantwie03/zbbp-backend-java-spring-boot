@@ -4,8 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dao.entity.TransactionEntity;
 import me.seantwiehaus.zbbp.dao.repository.TransactionRepository;
 import me.seantwiehaus.zbbp.domain.Transaction;
+import me.seantwiehaus.zbbp.exception.BadRequestException;
 import me.seantwiehaus.zbbp.exception.InternalServerException;
 import me.seantwiehaus.zbbp.exception.ResourceConflictException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -51,7 +53,12 @@ public class TransactionService {
     public Transaction create(Transaction transaction) {
         if (transaction == null) throw new InternalServerException("Unable to create null Transaction.");
         log.info("Creating new Transaction -> " + transaction);
-        return repository.save(new TransactionEntity(transaction)).convertToTransaction();
+        try {
+            return repository.save(new TransactionEntity(transaction)).convertToTransaction();
+        } catch (DataIntegrityViolationException e) {
+            log.error("DataIntegrityViolationException " + e.getMessage());
+            throw new BadRequestException("The Transaction you are trying to create has an invalid categoryId.");
+        }
     }
 
     public Optional<Transaction> update(Long id, Instant ifUnmodifiedSince, Transaction transaction) {
@@ -70,7 +77,12 @@ public class TransactionService {
                     entity.setDescription(transaction.getDescription());
                     entity.setCategoryId(transaction.getCategoryId());
                     log.info("Updating Transaction with ID=" + id + " -> " + entity);
-                    return Optional.of(repository.save(entity).convertToTransaction());
+                    try {
+                        return Optional.of(repository.save(entity).convertToTransaction());
+                    } catch (DataIntegrityViolationException e) {
+                        log.error("DataIntegrityViolationException " + e.getMessage());
+                        throw new BadRequestException("Attempted to update a Transaction to an invalid categoryId.");
+                    }
                 })
                 .orElse(Optional.empty());
     }

@@ -2,6 +2,7 @@ package me.seantwiehaus.zbbp.controller.advice;
 
 import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dto.response.ExceptionResponse;
+import me.seantwiehaus.zbbp.exception.BadRequestException;
 import me.seantwiehaus.zbbp.exception.InternalServerException;
 import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.exception.ResourceConflictException;
@@ -53,6 +54,14 @@ public class GlobalExceptionHandler {
                 .body(new ExceptionResponse(409, exception.getMessage(), formatFullPath(request)));
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    protected ResponseEntity<ExceptionResponse> handleResourceConflictException(BadRequestException exception,
+                                                                                HttpServletRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ExceptionResponse(400, exception.getMessage(), formatFullPath(request)));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ExceptionResponse> handMethodArgumentNotValidException(
             MethodArgumentNotValidException exception, HttpServletRequest request) {
@@ -66,6 +75,9 @@ public class GlobalExceptionHandler {
     }
 
     private String formatFullPath(HttpServletRequest request) {
+        if (request.getQueryString() == null) {
+            return request.getContextPath() + request.getServletPath();
+        }
         return request.getContextPath() + request.getServletPath() + "?" + request.getQueryString();
     }
 }

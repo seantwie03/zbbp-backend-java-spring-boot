@@ -34,6 +34,7 @@ public class TransactionEntity extends BaseEntity {
         this.amount = transaction.getAmount().inCents();
         this.date = transaction.getDate();
         this.description = transaction.getDescription();
+        this.setCategoryId(transaction.getCategoryId());
     }
 
     public Transaction convertToTransaction() {
