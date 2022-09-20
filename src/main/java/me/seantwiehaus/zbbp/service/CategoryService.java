@@ -74,4 +74,14 @@ public class CategoryService {
                 })
                 .orElse(Optional.empty());
     }
+
+    public Optional<Long> delete(Long id) {
+        if (id == null) throw new InternalServerException("Unable to delete Category. ID is null");
+        return repository.findById(id)
+                .map(entity -> {
+                    log.info("Deleting Category with ID=" + id + " -> " + entity);
+                    repository.delete(entity);
+                    return id;
+                });
+    }
 }

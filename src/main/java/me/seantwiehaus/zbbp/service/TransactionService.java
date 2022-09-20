@@ -79,7 +79,7 @@ public class TransactionService {
         if (id == null) throw new InternalServerException("Unable to delete Transaction. ID is null");
         return repository.findById(id)
                 .map(entity -> {
-                    log.info("Deleting transaction with ID=" + id + " -> " + entity);
+                    log.info("Deleting Transaction with ID=" + id + " -> " + entity);
                     repository.delete(entity);
                     return id;
                 });

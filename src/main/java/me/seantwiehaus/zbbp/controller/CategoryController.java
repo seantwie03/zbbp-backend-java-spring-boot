@@ -89,4 +89,11 @@ public class CategoryController {
                 .location(new URI(URI + response.getId()))
                 .body(response);
     }
+
+    @DeleteMapping("/category/{id}")
+    public ResponseEntity<Long> deleteCategory(@PathVariable Long id) {
+        return service.delete(id)
+                .map(i -> ResponseEntity.ok(id))
+                .orElseThrow(() -> new NotFoundException(CATEGORY, id));
+    }
 }
