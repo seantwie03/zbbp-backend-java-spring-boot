@@ -13,7 +13,7 @@ public class TransactionResponse extends BaseResponse {
   private final Double amount;
   private final LocalDate date;
   private final String description;
-  private final Long categoryId;
+  private final Long lineItemId;
 
   public TransactionResponse(Transaction transaction) {
     super(transaction.getLastModifiedAt());
@@ -21,7 +21,7 @@ public class TransactionResponse extends BaseResponse {
     this.amount = transaction.getAmount().inDollars();
     this.date = transaction.getDate();
     this.description = transaction.getDescription();
-    this.categoryId = transaction.getCategoryId();
+    this.lineItemId = transaction.getLineItemId();
   }
 
   public Transaction convertToTransaction() {
@@ -31,6 +31,6 @@ public class TransactionResponse extends BaseResponse {
         amount,
         date,
         description,
-        categoryId);
+        lineItemId);
   }
 }

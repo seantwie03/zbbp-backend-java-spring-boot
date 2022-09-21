@@ -26,15 +26,15 @@ public class TransactionEntity extends BaseEntity {
   private LocalDate date;
   @Column(name = "description", nullable = false)
   private String description;
-  @Column(name = "category_id")
-  private Long categoryId;
+  @Column(name = "line_item_id")
+  private Long lineItemId;
 
   public TransactionEntity(Transaction transaction) {
     this.id = transaction.getId();
     this.amount = transaction.getAmount().inCents();
     this.date = transaction.getDate();
     this.description = transaction.getDescription();
-    this.setCategoryId(transaction.getCategoryId());
+    this.setLineItemId(transaction.getLineItemId());
   }
 
   public Transaction convertToTransaction() {
@@ -44,7 +44,7 @@ public class TransactionEntity extends BaseEntity {
         amount,
         date,
         description,
-        categoryId);
+        lineItemId);
   }
 
   @Override

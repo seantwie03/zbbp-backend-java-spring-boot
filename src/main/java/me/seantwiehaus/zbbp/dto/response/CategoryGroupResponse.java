@@ -17,16 +17,16 @@ public class CategoryGroupResponse extends BaseResponse {
   /**
    * Unmodifiable List
    */
-  private final List<CategoryResponse> categories;
+  private final List<LineItemResponse> lineItemResponses;
 
   public CategoryGroupResponse(CategoryGroup categoryGroup) {
     super(categoryGroup.getLastModifiedAt());
     this.id = categoryGroup.getId();
     this.name = categoryGroup.getName();
     this.budgetDate = categoryGroup.getBudgetMonth().asLocalDate();
-    this.categories = categoryGroup.getCategories()
+    this.lineItemResponses = categoryGroup.getLineItems()
         .stream()
-        .map(CategoryResponse::new)
+        .map(LineItemResponse::new)
         .toList();
   }
 }

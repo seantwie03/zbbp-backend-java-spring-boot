@@ -26,8 +26,8 @@ VALUES (3,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
--- Categories
-INSERT INTO categories (id, name, budget_date, planned_amount, category_group_id, last_modified_at)
+-- Line Items
+INSERT INTO line_items (id, name, budget_date, planned_amount, category_group_id, last_modified_at)
 VALUES (1,
         'Primary Income',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
@@ -38,7 +38,7 @@ VALUES (1,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO categories (id, name, budget_date, planned_amount, category_group_id, last_modified_at)
+INSERT INTO line_items (id, name, budget_date, planned_amount, category_group_id, last_modified_at)
 VALUES (2,
         'Secondary Income',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
@@ -49,7 +49,7 @@ VALUES (2,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO categories (id, name, budget_date, planned_amount, category_group_id, last_modified_at)
+INSERT INTO line_items (id, name, budget_date, planned_amount, category_group_id, last_modified_at)
 VALUES (3,
         'Groceries',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
@@ -60,7 +60,7 @@ VALUES (3,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO categories (id, name, budget_date, planned_amount, category_group_id, last_modified_at)
+INSERT INTO line_items (id, name, budget_date, planned_amount, category_group_id, last_modified_at)
 VALUES (4,
         'Water / Sewer',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
@@ -73,7 +73,7 @@ ON CONFLICT DO NOTHING;
 
 
 -- Transactions
-INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, category_id)
+INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 VALUES (1,
         'Primary Employer 1', -- Paycheck 1
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
@@ -85,7 +85,7 @@ VALUES (1,
         1)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, category_id)
+INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 VALUES (2,
         'Transfer to savings XXX9989888', -- Savings Deposit 1
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
@@ -97,7 +97,7 @@ VALUES (2,
         null)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, category_id)
+INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 VALUES (3,
         'Transfer to savings XXX999987', -- Savings Deposit 2
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
@@ -109,7 +109,7 @@ VALUES (3,
         null)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, category_id)
+INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 VALUES (4,
         'Groceries 1 POS xxx989823', -- Groceries
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 5),
@@ -121,7 +121,7 @@ VALUES (4,
         3)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, category_id)
+INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 VALUES (5,
         'Fuel POS xxx989823',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 5),
@@ -133,7 +133,7 @@ VALUES (5,
         null)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, category_id)
+INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 VALUES (6,
         'Sharter Communications',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 11),
@@ -145,7 +145,7 @@ VALUES (6,
         null)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, category_id)
+INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 VALUES (7,
         'AquaMillion', -- Water bill
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 13),
@@ -157,7 +157,7 @@ VALUES (7,
         4)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, category_id)
+INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 VALUES (8,
         'Silent But Deadly', -- Sewer Bill
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 14),
@@ -169,7 +169,7 @@ VALUES (8,
         null)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, category_id)
+INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 VALUES (9,
         'Primary Employer 2', -- Paycheck 2
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 15),
@@ -181,7 +181,7 @@ VALUES (9,
         1)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, category_id)
+INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 VALUES (10,
         'Transfer to savings XXX9989888', -- Savings Deposit 3
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 15),
@@ -193,7 +193,7 @@ VALUES (10,
         null)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, category_id)
+INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 VALUES (11,
         'Transfer to savings XXX999987', -- Savings Deposit 4
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 15),
@@ -205,7 +205,7 @@ VALUES (11,
         null)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, category_id)
+INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 VALUES (12,
         'Investment Maker', -- Roth IRA
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 19),
@@ -217,7 +217,7 @@ VALUES (12,
         null)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, category_id)
+INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 VALUES (13,
         'Morgage Payment 29832983', -- Mortgage
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 28),
@@ -229,7 +229,7 @@ VALUES (13,
         null)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, category_id)
+INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 VALUES (14,
         'Side Hustle Co.', -- Side Hustle Income 1
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 30),

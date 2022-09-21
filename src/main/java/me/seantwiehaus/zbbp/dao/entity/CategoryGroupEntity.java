@@ -18,14 +18,14 @@ import java.util.Objects;
 @NoArgsConstructor
 @ToString
 @Entity
-@NamedEntityGraph(name = "group.categories.transactions", attributeNodes = {
-    @NamedAttributeNode(value = "categoryEntities", subgraph = "transactions"),
+@NamedEntityGraph(name = "group.lineItems.transactions", attributeNodes = {
+    @NamedAttributeNode(value = "lineItemEntities", subgraph = "transactions"),
 }, subgraphs = {
     @NamedSubgraph(name = "transactions", attributeNodes = {
         @NamedAttributeNode("transactionEntities")
     })
 })
-@Table(name = "category_groups")
+@Table(name = "category_groups", uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "budget_date" }) })
 public class CategoryGroupEntity extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -40,7 +40,7 @@ public class CategoryGroupEntity extends BaseEntity {
   private LocalDate budgetDate;
   @OneToMany
   @JoinColumn(name = "category_group_id")
-  private List<CategoryEntity> categoryEntities = new ArrayList<>();
+  private List<LineItemEntity> lineItemEntities = new ArrayList<>();
 
   public void setBudgetDate(LocalDate budgetDate) {
     this.budgetDate = budgetDate.withDayOfMonth(1);
@@ -56,9 +56,9 @@ public class CategoryGroupEntity extends BaseEntity {
         id,
         name,
         new BudgetMonth(budgetDate),
-        categoryEntities
+        lineItemEntities
             .stream()
-            .map(CategoryEntity::convertToCategory)
+            .map(LineItemEntity::convertToLineItem)
             .toList());
   }
 

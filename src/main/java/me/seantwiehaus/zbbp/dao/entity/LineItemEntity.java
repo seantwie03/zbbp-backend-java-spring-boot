@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
-import me.seantwiehaus.zbbp.domain.Category;
+import me.seantwiehaus.zbbp.domain.LineItem;
 import me.seantwiehaus.zbbp.domain.Money;
 
 import javax.persistence.*;
@@ -19,13 +19,14 @@ import java.util.Objects;
 @NoArgsConstructor
 @ToString
 @Entity
-@NamedEntityGraph(name = "category.group.transactions", attributeNodes = {
+@NamedEntityGraph(name = "lineItem.transactions", attributeNodes = {
     @NamedAttributeNode("transactionEntities"),
 })
-@Table(name = "categories")
-public class CategoryEntity extends BaseEntity {
+@Table(name = "line_items", uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "budget_date" }) })
+public class LineItemEntity extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  @Column(name = "id", nullable = false)
   private Long id;
   private String name;
   @Column(name = "planned_amount", nullable = false)
@@ -39,17 +40,17 @@ public class CategoryEntity extends BaseEntity {
   @Column(name = "category_group_id", nullable = false)
   private Long categoryGroupId;
   @OneToMany
-  @JoinColumn(name = "category_id")
+  @JoinColumn(name = "line_item_id")
   @OrderBy("date asc, amount asc")
   private List<TransactionEntity> transactionEntities = new ArrayList<>();
 
-  public CategoryEntity(Category category) {
-    this.id = category.getId();
-    this.name = category.getName();
-    this.categoryGroupId = category.getCategoryGroupId();
-    this.plannedAmount = category.getPlannedAmount().inCents();
-    this.budgetDate = category.getBudgetMonth().asLocalDate();
-    this.categoryGroupId = category.getCategoryGroupId();
+  public LineItemEntity(LineItem lineItem) {
+    this.id = lineItem.getId();
+    this.name = lineItem.getName();
+    this.categoryGroupId = lineItem.getCategoryGroupId();
+    this.plannedAmount = lineItem.getPlannedAmount().inCents();
+    this.budgetDate = lineItem.getBudgetMonth().asLocalDate();
+    this.categoryGroupId = lineItem.getCategoryGroupId();
   }
 
   public void setBudgetDate(LocalDate budgetDate) {
@@ -60,8 +61,8 @@ public class CategoryEntity extends BaseEntity {
     this.budgetDate = budgetMonth.asLocalDate();
   }
 
-  public Category convertToCategory() {
-    return new Category(
+  public LineItem convertToLineItem() {
+    return new LineItem(
         lastModifiedAt,
         id,
         name,
@@ -78,7 +79,7 @@ public class CategoryEntity extends BaseEntity {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    CategoryEntity that = (CategoryEntity) o;
+    LineItemEntity that = (LineItemEntity) o;
     return Objects.equals(id, that.id);
   }
 

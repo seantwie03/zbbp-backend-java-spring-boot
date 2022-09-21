@@ -2,14 +2,14 @@ package me.seantwiehaus.zbbp.dto.response;
 
 import lombok.Getter;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
-import me.seantwiehaus.zbbp.domain.Category;
+import me.seantwiehaus.zbbp.domain.LineItem;
 import me.seantwiehaus.zbbp.domain.Money;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
-public class CategoryResponse extends BaseResponse {
+public class LineItemResponse extends BaseResponse {
   private final Long id;
   private final String name;
   private final Long categoryGroupId;
@@ -27,25 +27,25 @@ public class CategoryResponse extends BaseResponse {
    */
   private final List<TransactionResponse> transactionResponses;
 
-  public CategoryResponse(Category category) {
-    super(category.getLastModifiedAt());
-    this.id = category.getId();
-    this.name = category.getName();
-    this.categoryGroupId = category.getCategoryGroupId();
-    this.plannedAmount = category.getPlannedAmount().inDollars();
-    this.budgetDate = category.getBudgetMonth().asLocalDate();
-    this.spentAmount = category.getSpentAmount().inDollars();
-    this.spentPercent = category.getSpentPercent();
-    this.remainingAmount = category.getRemainingAmount().inDollars();
-    this.remainingPercent = category.getRemainingPercent();
-    this.transactionResponses = category.getTransactions()
+  public LineItemResponse(LineItem lineItem) {
+    super(lineItem.getLastModifiedAt());
+    this.id = lineItem.getId();
+    this.name = lineItem.getName();
+    this.categoryGroupId = lineItem.getCategoryGroupId();
+    this.plannedAmount = lineItem.getPlannedAmount().inDollars();
+    this.budgetDate = lineItem.getBudgetMonth().asLocalDate();
+    this.spentAmount = lineItem.getSpentAmount().inDollars();
+    this.spentPercent = lineItem.getSpentPercent();
+    this.remainingAmount = lineItem.getRemainingAmount().inDollars();
+    this.remainingPercent = lineItem.getRemainingPercent();
+    this.transactionResponses = lineItem.getTransactions()
         .stream()
         .map(TransactionResponse::new)
         .toList();
   }
 
-  public Category convertToCategory() {
-    return new Category(
+  public LineItem convertToLineItem() {
+    return new LineItem(
         lastModifiedAt,
         id,
         name,

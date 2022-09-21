@@ -16,17 +16,17 @@ public class CategoryGroup extends BaseDomain {
   /**
    * Unmodifiable List
    */
-  private final List<Category> categories;
+  private final List<LineItem> lineItems;
 
   public CategoryGroup(Instant lastModifiedAt,
                        Long id,
                        String name,
                        BudgetMonth budgetMonth,
-                       List<Category> categories) {
+                       List<LineItem> lineItems) {
     super(lastModifiedAt);
     this.id = id;
     this.name = name;
     this.budgetMonth = budgetMonth;
-    this.categories = Collections.unmodifiableList(categories);
+    this.lineItems = Collections.unmodifiableList(lineItems);
   }
 }

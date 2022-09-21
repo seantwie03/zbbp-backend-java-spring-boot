@@ -6,8 +6,8 @@ import java.time.LocalDate;
 
 /**
  * Start and Ending BudgetMonths in a Range. There are several places in this app where a range of BudgetMonths
- * are used. For example, when querying a specific budget category (i.e. "Food") over several BudgetMonths.
- * This BudgetMonthRange class is used to add type safety and consistency to this logic.
+ * are used. For example, when querying a specific Category or Line Item data over several BudgetMonths. This
+ * BudgetMonthRange class is used to add type safety and consistency to this logic.
  */
 @Getter
 public class BudgetMonthRange {

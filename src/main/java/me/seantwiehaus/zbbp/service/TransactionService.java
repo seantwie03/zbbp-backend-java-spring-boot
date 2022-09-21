@@ -57,7 +57,7 @@ public class TransactionService {
       return repository.save(new TransactionEntity(transaction)).convertToTransaction();
     } catch (DataIntegrityViolationException e) {
       log.error("DataIntegrityViolationException " + e.getMessage());
-      throw new BadRequestException("The Transaction you are trying to create has an invalid categoryId.");
+      throw new BadRequestException("The Transaction you are trying to create has an invalid lineItemId.");
     }
   }
 
@@ -75,13 +75,13 @@ public class TransactionService {
           entity.setAmount(transaction.getAmount().inCents());
           entity.setDate(transaction.getDate());
           entity.setDescription(transaction.getDescription());
-          entity.setCategoryId(transaction.getCategoryId());
+          entity.setLineItemId(transaction.getLineItemId());
           log.info("Updating Transaction with ID=" + id + " -> " + entity);
           try {
             return Optional.of(repository.save(entity).convertToTransaction());
           } catch (DataIntegrityViolationException e) {
             log.error("DataIntegrityViolationException " + e.getMessage());
-            throw new BadRequestException("Attempted to update a Transaction to an invalid categoryId.");
+            throw new BadRequestException("Attempted to update a Transaction to an invalid lineItemId.");
           }
         })
         .orElse(Optional.empty());

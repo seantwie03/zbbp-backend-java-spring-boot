@@ -13,20 +13,20 @@ public class Transaction extends BaseDomain {
   private final Money amount;
   private final LocalDate date;
   private final String description;
-  private final Long categoryId;
+  private final Long lineItemId;
 
   public Transaction(Instant lastModifiedAt,
                      Long id,
                      Money amount,
                      LocalDate date,
                      String description,
-                     Long categoryId) {
+                     Long lineItemId) {
     super(lastModifiedAt);
     this.id = id;
     this.amount = amount;
     this.date = date;
     this.description = description;
-    this.categoryId = categoryId;
+    this.lineItemId = lineItemId;
   }
 
   public Transaction(Instant lastModifiedAt,
@@ -34,13 +34,13 @@ public class Transaction extends BaseDomain {
                      Double amountInDollars,
                      LocalDate date,
                      String description,
-                     Long categoryId) {
+                     Long lineItemId) {
     super(lastModifiedAt);
     this.id = id;
     this.amount = new Money(amountInDollars);
     this.date = date;
     this.description = description;
-    this.categoryId = categoryId;
+    this.lineItemId = lineItemId;
   }
 
   public Transaction(Instant lastModifiedAt,
@@ -48,12 +48,12 @@ public class Transaction extends BaseDomain {
                      Integer amountInCents,
                      LocalDate date,
                      String description,
-                     Long categoryId) {
+                     Long lineItemId) {
     super(lastModifiedAt);
     this.id = id;
     this.amount = new Money(amountInCents);
     this.date = date;
     this.description = description;
-    this.categoryId = categoryId;
+    this.lineItemId = lineItemId;
   }
 }

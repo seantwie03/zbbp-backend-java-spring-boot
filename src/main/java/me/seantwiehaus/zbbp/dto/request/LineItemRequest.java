@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
-import me.seantwiehaus.zbbp.domain.Category;
+import me.seantwiehaus.zbbp.domain.LineItem;
 import me.seantwiehaus.zbbp.domain.Money;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @Setter
 @ToString
 @NoArgsConstructor
-public class CategoryRequest {
+public class LineItemRequest {
   @NotBlank
   private String name;
   @NotNull
@@ -33,8 +33,8 @@ public class CategoryRequest {
   @JsonFormat(pattern = "yyyy-MM-dd")
   private LocalDate budgetDate;
 
-  public Category convertToCategory() {
-    return new Category(
+  public LineItem convertToLineItem() {
+    return new LineItem(
         null,
         null,
         name,

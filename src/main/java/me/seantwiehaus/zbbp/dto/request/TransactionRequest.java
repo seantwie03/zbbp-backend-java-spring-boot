@@ -28,7 +28,7 @@ public class TransactionRequest {
   private LocalDate date;
   @NotBlank
   private String description;
-  private Long categoryId;
+  private Long lineItemId;
 
   public Transaction convertToTransaction() {
     return new Transaction(
@@ -37,6 +37,6 @@ public class TransactionRequest {
         new Money(amount),
         date,
         description,
-        categoryId);
+        lineItemId);
   }
 }

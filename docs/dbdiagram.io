@@ -8,7 +8,7 @@ Table category_groups {
   }
 }
 
-Table categories {
+Table line_items {
   id int [pk]
   name varchar
   budget_date date
@@ -27,8 +27,8 @@ Table transactions {
   description varchar
   is_deposit boolean
   last_modified_at timestamptz
-  category_id int
+  line_item_id int
 }
 
-Ref: categories.category_group_id > category_groups.id
-Ref: transactions.category_id > categories.id
+Ref: line_items.category_group_id > category_groups.id
+Ref: transactions.line_item_id > line_items.id
