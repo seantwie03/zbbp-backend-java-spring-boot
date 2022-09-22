@@ -37,8 +37,8 @@ public class LineItemEntity extends BaseEntity {
    */
   @Column(name = "budget_date", nullable = false)
   private LocalDate budgetDate;
-  @Column(name = "category_group_id", nullable = false)
-  private Long categoryGroupId;
+  @Column(name = "category_id", nullable = false)
+  private Long categoryId;
   @OneToMany
   @JoinColumn(name = "line_item_id")
   @OrderBy("date asc, amount asc")
@@ -47,10 +47,10 @@ public class LineItemEntity extends BaseEntity {
   public LineItemEntity(LineItem lineItem) {
     this.id = lineItem.getId();
     this.name = lineItem.getName();
-    this.categoryGroupId = lineItem.getCategoryGroupId();
+    this.categoryId = lineItem.getCategoryId();
     this.plannedAmount = lineItem.getPlannedAmount().inCents();
     this.budgetDate = lineItem.getBudgetMonth().asLocalDate();
-    this.categoryGroupId = lineItem.getCategoryGroupId();
+    this.categoryId = lineItem.getCategoryId();
   }
 
   public void setBudgetDate(LocalDate budgetDate) {
@@ -66,7 +66,7 @@ public class LineItemEntity extends BaseEntity {
         lastModifiedAt,
         id,
         name,
-        categoryGroupId,
+        categoryId,
         new Money(plannedAmount),
         new BudgetMonth(budgetDate),
         transactionEntities

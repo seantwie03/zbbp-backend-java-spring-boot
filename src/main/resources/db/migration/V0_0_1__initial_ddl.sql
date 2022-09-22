@@ -1,12 +1,11 @@
 drop table if exists line_items CASCADE;
-drop table if exists category_groups CASCADE;
-drop table if exists transactionResponseDtos CASCADE;
+drop table if exists categories CASCADE;
+drop table if exists transactions CASCADE;
 drop sequence if exists hibernate_sequence;
-
 
 create sequence hibernate_sequence start with 10000 increment by 1;
 
-create table category_groups
+create table categories
 (
     id               bigint       not null,
     name             varchar(255) not null,
@@ -18,12 +17,12 @@ create table category_groups
 
 create table line_items
 (
-    id                bigint       not null,
-    name              varchar(255) not null,
-    budget_date       date         not null,
-    planned_amount    int          not null,
-    category_group_id bigint       not null,
-    last_modified_at  timestamptz  not null,
+    id               bigint       not null,
+    name             varchar(255) not null,
+    budget_date      date         not null,
+    planned_amount   int          not null,
+    category_id      bigint       not null,
+    last_modified_at timestamptz  not null,
     primary key (id),
     unique (name, budget_date)
 );
@@ -41,9 +40,9 @@ create table transactions
 );
 
 alter table line_items
-    add constraint FK_category_group_id
-        foreign key (category_group_id)
-            references category_groups;
+    add constraint FK_category_id
+        foreign key (category_id)
+            references categories;
 
 alter table transactions
     add constraint FK_line_item_id

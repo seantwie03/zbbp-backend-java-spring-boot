@@ -12,7 +12,7 @@ import java.util.List;
 public class LineItemResponse extends BaseResponse {
   private final Long id;
   private final String name;
-  private final Long categoryGroupId;
+  private final Long categoryId;
   private final Double plannedAmount;
   /**
    * Day of Month will be set to the 1st
@@ -31,7 +31,7 @@ public class LineItemResponse extends BaseResponse {
     super(lineItem.getLastModifiedAt());
     this.id = lineItem.getId();
     this.name = lineItem.getName();
-    this.categoryGroupId = lineItem.getCategoryGroupId();
+    this.categoryId = lineItem.getCategoryId();
     this.plannedAmount = lineItem.getPlannedAmount().inDollars();
     this.budgetDate = lineItem.getBudgetMonth().asLocalDate();
     this.spentAmount = lineItem.getSpentAmount().inDollars();
@@ -49,7 +49,7 @@ public class LineItemResponse extends BaseResponse {
         lastModifiedAt,
         id,
         name,
-        categoryGroupId,
+        categoryId,
         new Money(plannedAmount),
         new BudgetMonth(budgetDate),
         transactionResponses.stream()

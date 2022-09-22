@@ -1,4 +1,4 @@
-Table category_groups {
+Table categories {
   id int [pk]
   name varchar
   budget_date date
@@ -14,7 +14,7 @@ Table line_items {
   budget_date date
   planned_amount numeric(19,4)
   last_modified_at timestamptz
-  category_group_id int
+  category_id int
   indexes {
       (name, budget_date) [unique]
   }
@@ -30,5 +30,5 @@ Table transactions {
   line_item_id int
 }
 
-Ref: line_items.category_group_id > category_groups.id
+Ref: line_items.category_id > categories.id
 Ref: transactions.line_item_id > line_items.id

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @ToString
-public class CategoryGroup extends BaseDomain {
+public class Category extends BaseDomain {
   private final Long id;
   private final String name;
   private final BudgetMonth budgetMonth;
@@ -18,11 +18,11 @@ public class CategoryGroup extends BaseDomain {
    */
   private final List<LineItem> lineItems;
 
-  public CategoryGroup(Instant lastModifiedAt,
-                       Long id,
-                       String name,
-                       BudgetMonth budgetMonth,
-                       List<LineItem> lineItems) {
+  public Category(Instant lastModifiedAt,
+                  Long id,
+                  String name,
+                  BudgetMonth budgetMonth,
+                  List<LineItem> lineItems) {
     super(lastModifiedAt);
     this.id = id;
     this.name = name;

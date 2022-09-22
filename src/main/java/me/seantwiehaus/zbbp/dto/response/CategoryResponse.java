@@ -1,13 +1,13 @@
 package me.seantwiehaus.zbbp.dto.response;
 
 import lombok.Getter;
-import me.seantwiehaus.zbbp.domain.CategoryGroup;
+import me.seantwiehaus.zbbp.domain.Category;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
-public class CategoryGroupResponse extends BaseResponse {
+public class CategoryResponse extends BaseResponse {
   private final Long id;
   private final String name;
   /**
@@ -19,12 +19,12 @@ public class CategoryGroupResponse extends BaseResponse {
    */
   private final List<LineItemResponse> lineItemResponses;
 
-  public CategoryGroupResponse(CategoryGroup categoryGroup) {
-    super(categoryGroup.getLastModifiedAt());
-    this.id = categoryGroup.getId();
-    this.name = categoryGroup.getName();
-    this.budgetDate = categoryGroup.getBudgetMonth().asLocalDate();
-    this.lineItemResponses = categoryGroup.getLineItems()
+  public CategoryResponse(Category category) {
+    super(category.getLastModifiedAt());
+    this.id = category.getId();
+    this.name = category.getName();
+    this.budgetDate = category.getBudgetMonth().asLocalDate();
+    this.lineItemResponses = category.getLineItems()
         .stream()
         .map(LineItemResponse::new)
         .toList();

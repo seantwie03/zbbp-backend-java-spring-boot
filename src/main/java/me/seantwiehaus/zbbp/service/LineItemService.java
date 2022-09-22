@@ -73,7 +73,7 @@ public class LineItemService {
                 "Line Item with ID: " + id + " has been modified since this client requested it.");
           }
           entity.setName(lineItem.getName());
-          entity.setCategoryGroupId(lineItem.getCategoryGroupId());
+          entity.setCategoryId(lineItem.getCategoryId());
           entity.setPlannedAmount(lineItem.getPlannedAmount().inCents());
           entity.setBudgetDate(lineItem.getBudgetMonth());
           log.info("Updating Line Item with ID=" + id + " -> " + entity);

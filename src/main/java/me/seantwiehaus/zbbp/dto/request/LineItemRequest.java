@@ -22,7 +22,7 @@ public class LineItemRequest {
   @NotBlank
   private String name;
   @NotNull
-  private Long categoryGroupId;
+  private Long categoryId;
   @NotNull
   private Double plannedAmount;
   /**
@@ -38,7 +38,7 @@ public class LineItemRequest {
         null,
         null,
         name,
-        categoryGroupId,
+        categoryId,
         new Money(plannedAmount),
         new BudgetMonth(budgetDate),
         null);

@@ -12,7 +12,7 @@ import java.util.List;
 public class LineItem extends BaseDomain {
   private final Long id;
   private final String name;
-  private final Long categoryGroupId;
+  private final Long categoryId;
   private final Money plannedAmount;
   private final BudgetMonth budgetMonth;
   private final Money spentAmount;
@@ -27,14 +27,14 @@ public class LineItem extends BaseDomain {
   public LineItem(Instant lastModifiedAt,
                   Long id,
                   String name,
-                  Long categoryGroupId,
+                  Long categoryId,
                   Money plannedAmount,
                   BudgetMonth budgetMonth,
                   List<Transaction> transactions) {
     super(lastModifiedAt);
     this.id = id;
     this.name = name;
-    this.categoryGroupId = categoryGroupId;
+    this.categoryId = categoryId;
     this.plannedAmount = plannedAmount;
     this.budgetMonth = budgetMonth;
     this.transactions = transactions != null ? Collections.unmodifiableList(transactions) : List.of();

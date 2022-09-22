@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
-import me.seantwiehaus.zbbp.domain.CategoryGroup;
+import me.seantwiehaus.zbbp.domain.Category;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -18,15 +18,15 @@ import java.util.Objects;
 @NoArgsConstructor
 @ToString
 @Entity
-@NamedEntityGraph(name = "group.lineItems.transactions", attributeNodes = {
+@NamedEntityGraph(name = "category.lineItems.transactions", attributeNodes = {
     @NamedAttributeNode(value = "lineItemEntities", subgraph = "transactions"),
 }, subgraphs = {
     @NamedSubgraph(name = "transactions", attributeNodes = {
         @NamedAttributeNode("transactionEntities")
     })
 })
-@Table(name = "category_groups", uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "budget_date" }) })
-public class CategoryGroupEntity extends BaseEntity {
+@Table(name = "categories", uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "budget_date" }) })
+public class CategoryEntity extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
@@ -39,7 +39,7 @@ public class CategoryGroupEntity extends BaseEntity {
   @Column(name = "budget_date", nullable = false)
   private LocalDate budgetDate;
   @OneToMany
-  @JoinColumn(name = "category_group_id")
+  @JoinColumn(name = "category_id")
   private List<LineItemEntity> lineItemEntities = new ArrayList<>();
 
   public void setBudgetDate(LocalDate budgetDate) {
@@ -50,8 +50,8 @@ public class CategoryGroupEntity extends BaseEntity {
     this.budgetDate = budgetMonth.asLocalDate();
   }
 
-  public CategoryGroup convertToCategoryGroup() {
-    return new CategoryGroup(
+  public Category convertToCategory() {
+    return new Category(
         lastModifiedAt,
         id,
         name,
@@ -66,7 +66,7 @@ public class CategoryGroupEntity extends BaseEntity {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    CategoryGroupEntity that = (CategoryGroupEntity) o;
+    CategoryEntity that = (CategoryEntity) o;
     return Objects.equals(id, that.id);
   }
 

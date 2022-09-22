@@ -1,5 +1,5 @@
--- CategoryGroups
-INSERT INTO category_groups (id, name, budget_date, last_modified_at)
+-- Categories
+INSERT INTO categories (id, name, budget_date, last_modified_at)
 VALUES (1,
         'Incomes',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
@@ -8,7 +8,7 @@ VALUES (1,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO category_groups (id, name, budget_date, last_modified_at)
+INSERT INTO categories (id, name, budget_date, last_modified_at)
 VALUES (2,
         'Food',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
@@ -17,7 +17,7 @@ VALUES (2,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO category_groups (id, name, budget_date, last_modified_at)
+INSERT INTO categories (id, name, budget_date, last_modified_at)
 VALUES (3,
         'Utilities',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
@@ -27,7 +27,7 @@ VALUES (3,
 ON CONFLICT DO NOTHING;
 
 -- Line Items
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_group_id, last_modified_at)
+INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
 VALUES (1,
         'Primary Income',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
@@ -38,7 +38,7 @@ VALUES (1,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_group_id, last_modified_at)
+INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
 VALUES (2,
         'Secondary Income',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
@@ -49,7 +49,7 @@ VALUES (2,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_group_id, last_modified_at)
+INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
 VALUES (3,
         'Groceries',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
@@ -60,7 +60,7 @@ VALUES (3,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_group_id, last_modified_at)
+INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
 VALUES (4,
         'Water / Sewer',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
