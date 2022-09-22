@@ -11,9 +11,9 @@ create table categories
     name             varchar(255) not null,
     budget_date      date         not null,
     last_modified_at timestamptz  not null,
-    primary key (id),
-    unique (name, budget_date)
+    primary key (id)
 );
+create unique index unique_name_budget_date_idx on categories (UPPER(name), budget_date);
 
 create table line_items
 (
@@ -23,9 +23,9 @@ create table line_items
     planned_amount   int          not null,
     category_id      bigint       not null,
     last_modified_at timestamptz  not null,
-    primary key (id),
-    unique (name, budget_date)
+    primary key (id)
 );
+create unique index unique_upper_name_budget_date_idx on line_items (UPPER(name), budget_date);
 
 create table transactions
 (
