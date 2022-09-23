@@ -7,6 +7,7 @@ import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.Transaction;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -20,31 +21,40 @@ public class TransactionEntity extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
-  @Column(name = "amount", nullable = false)
-  private Integer amount;
   @Column(name = "date", nullable = false)
   private LocalDate date;
-  @Column(name = "description", nullable = false)
-  private String description;
+  @NotBlank
+  @Column(name = "merchant", nullable = false)
+  private String merchant;
+  @Column(name = "amount", nullable = false)
+  private Integer amount;
+  @Column(name = "is_income", nullable = false)
+  private boolean isIncome;
   @Column(name = "line_item_id")
   private Long lineItemId;
+  @Column(name = "description")
+  private String description;
 
   public TransactionEntity(Transaction transaction) {
     this.id = transaction.getId();
-    this.amount = transaction.getAmount().inCents();
     this.date = transaction.getDate();
-    this.description = transaction.getDescription();
+    this.merchant = transaction.getMerchant();
+    this.amount = transaction.getAmount().inCents();
+    this.isIncome = transaction.isIncome();
     this.setLineItemId(transaction.getLineItemId());
+    this.description = transaction.getDescription();
   }
 
   public Transaction convertToTransaction() {
     return new Transaction(
-        lastModifiedAt,
         id,
-        amount,
         date,
+        merchant,
+        amount,
+        isIncome,
+        lineItemId,
         description,
-        lineItemId);
+        lastModifiedAt);
   }
 
   @Override

@@ -1,9 +1,7 @@
 package me.seantwiehaus.zbbp.dto.response;
 
 import lombok.Getter;
-import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.LineItem;
-import me.seantwiehaus.zbbp.domain.Money;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -42,19 +40,5 @@ public class LineItemResponse extends BaseResponse {
         .stream()
         .map(TransactionResponse::new)
         .toList();
-  }
-
-  public LineItem convertToLineItem() {
-    return new LineItem(
-        lastModifiedAt,
-        id,
-        name,
-        categoryId,
-        new Money(plannedAmount),
-        new BudgetMonth(budgetDate),
-        transactionResponses.stream()
-            .map(TransactionResponse::convertToTransaction)
-            .toList()
-    );
   }
 }

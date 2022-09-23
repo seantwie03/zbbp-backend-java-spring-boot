@@ -18,24 +18,27 @@ class LineItemTest {
     static void setup() {
       List<Transaction> transactions = List.of(
           new Transaction(
-              null,
               1L,
-              new Money(10.50),
               LocalDate.now(),
+              "Merchant 1",
+              new Money(10.50),
+              null,
               "Transaction 1",
               null),
           new Transaction(
-              null,
               1L,
-              new Money(11.00),
               LocalDate.now(),
+              "Merchant 2",
+              new Money(11.00),
+              null,
               "Transaction 2",
               null),
           new Transaction(
-              null,
               1L,
-              new Money(4.00),
               LocalDate.now(),
+              "Merchant 3",
+              new Money(4.00),
+              null,
               "Transaction 3",
               null)
       );

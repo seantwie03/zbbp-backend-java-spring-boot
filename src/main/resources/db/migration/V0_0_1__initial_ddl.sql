@@ -7,36 +7,46 @@ create sequence hibernate_sequence start with 10000 increment by 1;
 
 create table categories
 (
-    id               bigint       not null,
-    name             varchar(255) not null,
-    budget_date      date         not null,
-    last_modified_at timestamptz  not null,
-    primary key (id)
+    id               bigint      not null,
+    budget_date      date        not null,
+    name             varchar(50) not null,
+    last_modified_at timestamptz not null,
+    primary key (id),
+    constraint name_not_empty check (
+        not (name = '' or name = ' ')
+        )
 );
 create unique index unique_name_budget_date_idx on categories (UPPER(name), budget_date);
 
 create table line_items
 (
-    id               bigint       not null,
-    name             varchar(255) not null,
-    budget_date      date         not null,
-    planned_amount   int          not null,
-    category_id      bigint       not null,
-    last_modified_at timestamptz  not null,
-    primary key (id)
+    id               bigint      not null,
+    budget_date      date        not null,
+    name             varchar(50) not null,
+    planned_amount   int         not null,
+    category_id      bigint      not null,
+    last_modified_at timestamptz not null,
+    primary key (id),
+    constraint name_not_empty check (
+        not (name = '' or name = ' ')
+        )
 );
 create unique index unique_upper_name_budget_date_idx on line_items (UPPER(name), budget_date);
 
 create table transactions
 (
-    id               bigint       not null,
-    description      varchar(255) not null,
-    date             date         not null,
-    amount           int          not null,
-    is_deposit       boolean      not null default false,
-    last_modified_at timestamptz  not null,
+    id               bigint      not null,
+    date             date        not null,
+    merchant         varchar(50) not null,
+    amount           int         not null,
+    is_income        boolean     not null default false,
     line_item_id     bigint,
-    primary key (id)
+    description      varchar(255),
+    last_modified_at timestamptz not null,
+    primary key (id),
+    constraint merchant_not_empty check (
+        not (merchant = '' or merchant = ' ')
+        )
 );
 
 alter table line_items

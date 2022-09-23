@@ -8,52 +8,62 @@ import java.time.LocalDate;
 
 @Getter
 @ToString
+@SuppressWarnings("java:S107")
 public class Transaction extends BaseDomain {
   private final Long id;
-  private final Money amount;
   private final LocalDate date;
-  private final String description;
+  private final String merchant;
+  private final Money amount;
+  private final boolean isIncome;
   private final Long lineItemId;
+  private final String description;
 
-  public Transaction(Instant lastModifiedAt,
-                     Long id,
+  public Transaction(Long id,
+                     LocalDate date,
+                     String merchant,
                      Money amount,
-                     LocalDate date,
+                     Long lineItemId,
                      String description,
-                     Long lineItemId) {
-    super(lastModifiedAt);
-    this.id = id;
-    this.amount = amount;
-    this.date = date;
-    this.description = description;
-    this.lineItemId = lineItemId;
+                     Instant lastModifiedAt) {
+    this(id, date, merchant, amount, false, lineItemId, description, lastModifiedAt);
   }
 
-  public Transaction(Instant lastModifiedAt,
-                     Long id,
+  public Transaction(Long id,
+                     LocalDate date,
+                     String merchant,
                      Double amountInDollars,
-                     LocalDate date,
+                     Long lineItemId,
                      String description,
-                     Long lineItemId) {
-    super(lastModifiedAt);
-    this.id = id;
-    this.amount = new Money(amountInDollars);
-    this.date = date;
-    this.description = description;
-    this.lineItemId = lineItemId;
+                     Instant lastModifiedAt) {
+    this(id, date, merchant, new Money(amountInDollars), false, lineItemId, description, lastModifiedAt);
   }
 
-  public Transaction(Instant lastModifiedAt,
-                     Long id,
-                     Integer amountInCents,
+  public Transaction(Long id,
                      LocalDate date,
+                     String merchant,
+                     Integer amountInCents,
+                     boolean isIncome,
+                     Long lineItemId,
                      String description,
-                     Long lineItemId) {
+                     Instant lastModifiedAt) {
+    this(id, date, merchant, new Money(amountInCents), isIncome, lineItemId, description, lastModifiedAt);
+  }
+
+  public Transaction(Long id,
+                     LocalDate date,
+                     String merchant,
+                     Money amount,
+                     boolean isIncome,
+                     Long lineItemId,
+                     String description,
+                     Instant lastModifiedAt) {
     super(lastModifiedAt);
     this.id = id;
-    this.amount = new Money(amountInCents);
     this.date = date;
-    this.description = description;
+    this.merchant = merchant;
+    this.amount = amount;
+    this.isIncome = isIncome;
     this.lineItemId = lineItemId;
+    this.description = description;
   }
 }

@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import me.seantwiehaus.zbbp.domain.Money;
 import me.seantwiehaus.zbbp.domain.Transaction;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -20,23 +19,26 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class TransactionRequest {
   @NotNull
-  @Min(0)
-  private Double amount;
-  @NotNull
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   @JsonFormat(pattern = "yyyy-MM-dd")
   private LocalDate date;
   @NotBlank
-  private String description;
+  private String merchant;
+  @NotNull
+  @Min(0)
+  private Double amount;
+  private boolean isIncome;
   private Long lineItemId;
+  private String description;
 
   public Transaction convertToTransaction() {
     return new Transaction(
         null,
-        null,
-        new Money(amount),
         date,
+        merchant,
+        amount,
+        lineItemId,
         description,
-        lineItemId);
+        null);
   }
 }

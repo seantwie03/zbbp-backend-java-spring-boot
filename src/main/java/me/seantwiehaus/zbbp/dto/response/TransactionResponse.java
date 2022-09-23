@@ -10,27 +10,21 @@ import java.time.LocalDate;
 @ToString
 public class TransactionResponse extends BaseResponse {
   private final Long id;
-  private final Double amount;
   private final LocalDate date;
-  private final String description;
+  private final String merchant;
+  private final Double amount;
+  private final boolean isIncome;
   private final Long lineItemId;
+  private final String description;
 
   public TransactionResponse(Transaction transaction) {
     super(transaction.getLastModifiedAt());
     this.id = transaction.getId();
-    this.amount = transaction.getAmount().inDollars();
     this.date = transaction.getDate();
-    this.description = transaction.getDescription();
+    this.merchant = transaction.getMerchant();
+    this.amount = transaction.getAmount().inDollars();
+    this.isIncome = transaction.isIncome();
     this.lineItemId = transaction.getLineItemId();
-  }
-
-  public Transaction convertToTransaction() {
-    return new Transaction(
-        lastModifiedAt,
-        id,
-        amount,
-        date,
-        description,
-        lineItemId);
+    this.description = transaction.getDescription();
   }
 }
