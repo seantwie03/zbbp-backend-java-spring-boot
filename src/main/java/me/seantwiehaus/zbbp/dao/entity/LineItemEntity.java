@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.LineItem;
-import me.seantwiehaus.zbbp.domain.Money;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -28,17 +27,19 @@ public class LineItemEntity extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   @Column(name = "id", nullable = false)
   private Long id;
-  private String name;
-  @Column(name = "planned_amount", nullable = false)
-  private Integer plannedAmount;
   /**
    * BudgetDates only need the Year and Month; however, storing only the Year and Month in the database can be
    * tedious. Instead, the date is always set to the 1st.
    */
   @Column(name = "budget_date", nullable = false)
   private LocalDate budgetDate;
+  private String name;
+  @Column(name = "planned_amount", nullable = false)
+  private Integer plannedAmount;
   @Column(name = "category_id", nullable = false)
   private Long categoryId;
+  @Column(name = "description")
+  private String description;
   @OneToMany
   @JoinColumn(name = "line_item_id")
   @OrderBy("date asc, amount asc")
@@ -46,11 +47,11 @@ public class LineItemEntity extends BaseEntity {
 
   public LineItemEntity(LineItem lineItem) {
     this.id = lineItem.getId();
-    this.name = lineItem.getName();
-    this.categoryId = lineItem.getCategoryId();
-    this.plannedAmount = lineItem.getPlannedAmount().inCents();
     this.budgetDate = lineItem.getBudgetMonth().asLocalDate();
+    this.name = lineItem.getName();
+    this.plannedAmount = lineItem.getPlannedAmount().inCents();
     this.categoryId = lineItem.getCategoryId();
+    this.description = lineItem.getDescription();
   }
 
   public void setBudgetDate(LocalDate budgetDate) {
@@ -63,16 +64,17 @@ public class LineItemEntity extends BaseEntity {
 
   public LineItem convertToLineItem() {
     return new LineItem(
-        lastModifiedAt,
         id,
-        name,
-        categoryId,
-        new Money(plannedAmount),
         new BudgetMonth(budgetDate),
+        name,
+        plannedAmount,
+        categoryId,
+        description,
         transactionEntities
             .stream()
             .map(TransactionEntity::convertToTransaction)
-            .toList());
+            .toList(),
+        lastModifiedAt);
   }
 
   @Override

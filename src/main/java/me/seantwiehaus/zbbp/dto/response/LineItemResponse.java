@@ -9,13 +9,14 @@ import java.util.List;
 @Getter
 public class LineItemResponse extends BaseResponse {
   private final Long id;
-  private final String name;
-  private final Long categoryId;
-  private final Double plannedAmount;
   /**
    * Day of Month will be set to the 1st
    */
   private final LocalDate budgetDate;
+  private final String name;
+  private final Double plannedAmount;
+  private final Long categoryId;
+  private final String description;
   private final Double spentAmount;
   private final Double spentPercent;
   private final Double remainingAmount;
@@ -28,10 +29,11 @@ public class LineItemResponse extends BaseResponse {
   public LineItemResponse(LineItem lineItem) {
     super(lineItem.getLastModifiedAt());
     this.id = lineItem.getId();
-    this.name = lineItem.getName();
-    this.categoryId = lineItem.getCategoryId();
-    this.plannedAmount = lineItem.getPlannedAmount().inDollars();
     this.budgetDate = lineItem.getBudgetMonth().asLocalDate();
+    this.name = lineItem.getName();
+    this.plannedAmount = lineItem.getPlannedAmount().inDollars();
+    this.categoryId = lineItem.getCategoryId();
+    this.description = lineItem.getDescription();
     this.spentAmount = lineItem.getSpentAmount().inDollars();
     this.spentPercent = lineItem.getSpentPercent();
     this.remainingAmount = lineItem.getRemainingAmount().inDollars();

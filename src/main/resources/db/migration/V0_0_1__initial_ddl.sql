@@ -25,6 +25,7 @@ create table line_items
     name             varchar(50) not null,
     planned_amount   int         not null,
     category_id      bigint      not null,
+    description      varchar(255),
     last_modified_at timestamptz not null,
     primary key (id),
     constraint name_not_empty check (

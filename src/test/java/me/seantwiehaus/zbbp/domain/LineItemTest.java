@@ -43,13 +43,14 @@ class LineItemTest {
               null)
       );
       lineItem = new LineItem(
-          null,
           1L,
-          "Groceries",
-          1L,
-          new Money(50.0),
           new BudgetMonth(),
-          transactions);
+          "Groceries",
+          new Money(50.0),
+          1L,
+          "Description",
+          transactions,
+          null);
     }
 
     @Test
@@ -81,11 +82,12 @@ class LineItemTest {
     static void setup() {
       lineItem = new LineItem(
           null,
-          null,
-          "Restaurants",
-          1L,
-          new Money(50.0),
           new BudgetMonth(),
+          "Restaurants",
+          new Money(50.0),
+          1L,
+          "Description",
+          null,
           null
       );
     }

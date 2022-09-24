@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.LineItem;
-import me.seantwiehaus.zbbp.domain.Money;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
@@ -19,12 +18,6 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 public class LineItemRequest {
-  @NotBlank
-  private String name;
-  @NotNull
-  private Long categoryId;
-  @NotNull
-  private Double plannedAmount;
   /**
    * Day of Month will be set to the 1st
    */
@@ -32,15 +25,22 @@ public class LineItemRequest {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   @JsonFormat(pattern = "yyyy-MM-dd")
   private LocalDate budgetDate;
+  @NotBlank
+  private String name;
+  @NotNull
+  private Double plannedAmount;
+  @NotNull
+  private Long categoryId;
+  private String description;
 
   public LineItem convertToLineItem() {
     return new LineItem(
         null,
-        null,
-        name,
-        categoryId,
-        new Money(plannedAmount),
         new BudgetMonth(budgetDate),
+        name,
+        plannedAmount,
+        categoryId,
+        null,
         null);
 
   }
