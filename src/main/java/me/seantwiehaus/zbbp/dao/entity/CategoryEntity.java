@@ -52,14 +52,14 @@ public class CategoryEntity extends BaseEntity {
 
   public Category convertToCategory() {
     return new Category(
-        lastModifiedAt,
         id,
         name,
         new BudgetMonth(budgetDate),
         lineItemEntities
             .stream()
             .map(LineItemEntity::convertToLineItem)
-            .toList());
+            .toList(),
+        lastModifiedAt);
   }
 
   @Override

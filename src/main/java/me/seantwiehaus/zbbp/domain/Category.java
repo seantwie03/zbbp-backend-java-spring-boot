@@ -18,11 +18,11 @@ public class Category extends BaseDomain {
    */
   private final List<LineItem> lineItems;
 
-  public Category(Instant lastModifiedAt,
-                  Long id,
+  public Category(Long id,
                   String name,
                   BudgetMonth budgetMonth,
-                  List<LineItem> lineItems) {
+                  List<LineItem> lineItems,
+                  Instant lastModifiedAt) {
     super(lastModifiedAt);
     this.id = id;
     this.name = name;
