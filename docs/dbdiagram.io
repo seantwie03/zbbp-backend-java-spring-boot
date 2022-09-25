@@ -1,7 +1,7 @@
 Table categories {
-  id int [pk]
-  name varchar
+  id bigint [pk]
   budget_date date
+  name varchar
   last_modified_at timestamptz
     indexes {
       (name, budget_date) [unique]
@@ -9,25 +9,27 @@ Table categories {
 }
 
 Table line_items {
-  id int [pk]
-  name varchar
+  id bigint [pk]
   budget_date date
-  planned_amount numeric(19,4)
+  name varchar(50)
+  planned_amount int
+  category_id bigint
+  description varchar(255)
   last_modified_at timestamptz
-  category_id int
   indexes {
       (name, budget_date) [unique]
   }
 }
 
 Table transactions {
-  id int [pk]
-  amount numeric(19,4)
-  timestamp timestamp
-  description varchar
-  is_deposit boolean
-  last_modified_at timestamptz
+  id bigint [pk]
+  date date
+  merchant varchar(50)
+  amount int
+  is_income boolean
   line_item_id int
+  description varchar
+  last_modified_at timestamptz
 }
 
 Ref: line_items.category_id > categories.id
