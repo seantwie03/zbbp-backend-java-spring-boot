@@ -34,10 +34,10 @@ public class LineItemResponse extends BaseResponse {
     this.plannedAmount = lineItem.getPlannedAmount().inDollars();
     this.categoryId = lineItem.getCategoryId();
     this.description = lineItem.getDescription();
-    this.spentAmount = lineItem.getSpentAmount().inDollars();
-    this.spentPercent = lineItem.getSpentPercent();
-    this.remainingAmount = lineItem.getRemainingAmount().inDollars();
-    this.remainingPercent = lineItem.getRemainingPercent();
+    this.spentAmount = lineItem.getTotalSpent().inDollars();
+    this.spentPercent = lineItem.getPercentageSpent();
+    this.remainingAmount = lineItem.getTotalRemaining().inDollars();
+    this.remainingPercent = lineItem.getPercentageRemaining();
     this.transactionResponses = lineItem.getTransactions()
         .stream()
         .map(TransactionResponse::new)

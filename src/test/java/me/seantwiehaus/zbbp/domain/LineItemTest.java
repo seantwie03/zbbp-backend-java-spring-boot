@@ -55,22 +55,22 @@ class LineItemTest {
 
     @Test
     void shouldCalculateCorrectTotal() {
-      assertEquals(new Money(25.50), lineItem.getSpentAmount());
+      assertEquals(new Money(25.50), lineItem.getTotalSpent());
     }
 
     @Test
     void shouldCalculateCorrectPercentageSpent() {
-      assertEquals(51.0, lineItem.getSpentPercent());
+      assertEquals(51.0, lineItem.getPercentageSpent());
     }
 
     @Test
     void shouldCalculateCorrectAmountRemaining() {
-      assertEquals(new Money(24.50), lineItem.getRemainingAmount());
+      assertEquals(new Money(24.50), lineItem.getTotalRemaining());
     }
 
     @Test
     void shouldCalculateCorrectPercentageRemaining() {
-      assertEquals(49.0, lineItem.getRemainingPercent());
+      assertEquals(49.0, lineItem.getPercentageRemaining());
     }
   }
 
@@ -94,22 +94,22 @@ class LineItemTest {
 
     @Test
     void shouldCalculateCorrectTotal() {
-      assertEquals(new Money(0), lineItem.getSpentAmount());
+      assertEquals(new Money(0), lineItem.getTotalSpent());
     }
 
     @Test
     void shouldCalculateCorrectPercentageSpent() {
-      assertEquals(0.0, lineItem.getSpentPercent());
+      assertEquals(0.0, lineItem.getPercentageSpent());
     }
 
     @Test
     void shouldCalculateCorrectAmountRemaining() {
-      assertEquals(new Money(50.0), lineItem.getRemainingAmount());
+      assertEquals(new Money(50.0), lineItem.getTotalRemaining());
     }
 
     @Test
     void shouldCalculateCorrectPercentageRemaining() {
-      assertEquals(100.0, lineItem.getRemainingPercent());
+      assertEquals(100.0, lineItem.getPercentageRemaining());
     }
 
   }

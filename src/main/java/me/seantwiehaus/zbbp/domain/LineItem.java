@@ -22,10 +22,10 @@ public class LineItem extends BaseDomain {
    */
   private final List<Transaction> transactions;
 
-  private final Money spentAmount;
-  private final Double spentPercent;
-  private final Money remainingAmount;
-  private final Double remainingPercent;
+  private final Money totalSpent;
+  private final Double percentageSpent;
+  private final Money totalRemaining;
+  private final Double percentageRemaining;
 
   public LineItem(Long id,
                   BudgetMonth budgetMonth,
@@ -64,30 +64,31 @@ public class LineItem extends BaseDomain {
     this.categoryId = categoryId;
     this.description = description;
     this.transactions = transactions != null ? Collections.unmodifiableList(transactions) : List.of();
-    this.spentAmount = calculateAmountSpent();
-    this.spentPercent = calculatePercentageSpentOfPlannedAmount();
-    this.remainingAmount = calculateAmountRemainingOfPlannedAmount();
-    this.remainingPercent = calculatePercentageRemainingOfPlannedAmount();
+
+    this.totalSpent = calculateTotalSpent();
+    this.percentageSpent = calculatePercentageSpent();
+    this.totalRemaining = calculateTotalRemaining();
+    this.percentageRemaining = calculatePercentageRemaining();
   }
 
-  private Money calculateAmountSpent() {
+  private Money calculateTotalSpent() {
     return new Money(
         transactions
             .stream()
             .map(Transaction::getAmount)
-            .map(Money::inCents)
-            .reduce(0, Integer::sum));
+            .mapToInt(Money::inCents)
+            .sum());
   }
 
-  private Double calculatePercentageSpentOfPlannedAmount() {
-    return spentAmount.inCents() * 100.0 / plannedAmount.inCents();
+  private Double calculatePercentageSpent() {
+    return totalSpent.inCents() * 100.0 / plannedAmount.inCents();
   }
 
-  private Money calculateAmountRemainingOfPlannedAmount() {
-    return new Money(plannedAmount.inCents() - spentAmount.inCents());
+  private Money calculateTotalRemaining() {
+    return new Money(plannedAmount.inCents() - totalSpent.inCents());
   }
 
-  private Double calculatePercentageRemainingOfPlannedAmount() {
-    return remainingAmount.inCents() * 100.0 / plannedAmount.inCents();
+  private Double calculatePercentageRemaining() {
+    return totalRemaining.inCents() * 100.0 / plannedAmount.inCents();
   }
 }
