@@ -2,6 +2,7 @@ Table categories {
   id bigint [pk]
   budget_date date
   name varchar
+  is_income boolean
   last_modified_at timestamptz
     indexes {
       (name, budget_date) [unique]

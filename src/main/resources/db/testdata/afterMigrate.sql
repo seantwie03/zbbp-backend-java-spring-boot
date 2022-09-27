@@ -1,71 +1,72 @@
 -- Categories --
-INSERT INTO categories (id, name, budget_date, last_modified_at)
+INSERT INTO categories (id, budget_date, name, is_income, last_modified_at)
 VALUES (1,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         'Income',
-        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        true,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
                          extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO categories (id, name, budget_date, last_modified_at)
+INSERT INTO categories (id, budget_date, name, last_modified_at)
 VALUES (2,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         'Savings',
-        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
                          extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO categories (id, name, budget_date, last_modified_at)
+INSERT INTO categories (id, budget_date, name, last_modified_at)
 VALUES (3,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         'Housing',
-        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
                          extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO categories (id, name, budget_date, last_modified_at)
+INSERT INTO categories (id, budget_date, name, last_modified_at)
 VALUES (4,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         'Transportation',
-        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
                          extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO categories (id, name, budget_date, last_modified_at)
+INSERT INTO categories (id, budget_date, name, last_modified_at)
 VALUES (5,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         'Food',
-        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
                          extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO categories (id, name, budget_date, last_modified_at)
+INSERT INTO categories (id, budget_date, name, last_modified_at)
 VALUES (6,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         'Personal',
-        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
                          extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO categories (id, name, budget_date, last_modified_at)
+INSERT INTO categories (id, budget_date, name, last_modified_at)
 VALUES (7,
-        'Lifestyle',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Lifestyle',
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
                          extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO categories (id, name, budget_date, last_modified_at)
+INSERT INTO categories (id, budget_date, name, last_modified_at)
 VALUES (8,
-        'Health',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Health',
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
                          extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
                          extract(seconds from localtime), 'utc'))
@@ -75,10 +76,10 @@ ON CONFLICT DO NOTHING;
 
 -- Line Items --
 -- Income
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (100,
-        'Husband Income',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Husband Income',
         300000,
         1,
         'Paid on 1st and 15th of every month',
@@ -87,10 +88,10 @@ VALUES (100,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (101,
-        'Wife Income',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Wife Income',
         60000,
         1,
         'Paid every 2 weeks',
@@ -99,10 +100,10 @@ VALUES (101,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (102,
-        'Side Hustle',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Side Hustle',
         30000,
         1,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -112,10 +113,10 @@ ON CONFLICT DO NOTHING;
 
 
 -- Savings
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (201,
-        'Family Savings / Emergency Fund',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Family Savings / Emergency Fund',
         10000,
         2,
         'Keep a minimum of $6,000 for emergencies, use the rest as Family Savings account',
@@ -124,10 +125,10 @@ VALUES (201,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (202,
-        'Husband Savings',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Husband Savings',
         10000,
         2,
         'We all know he is going to waste this on gadgets',
@@ -136,10 +137,10 @@ VALUES (202,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (203,
-        'Wife Savings',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Wife Savings',
         10000,
         2,
         'AKA Craft and Cosmetics fund',
@@ -148,10 +149,10 @@ VALUES (203,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (204,
-        '529 College Savings Plan',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        '529 College Savings Plan',
         50000,
         2,
         'CollegeAmerica',
@@ -160,10 +161,10 @@ VALUES (204,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (205,
-        'Husband Roth IRA',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Husband Roth IRA',
         50000,
         2,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -171,10 +172,10 @@ VALUES (205,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (206,
-        'Wife Roth IRA',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Wife Roth IRA',
         50000,
         2,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -184,10 +185,10 @@ ON CONFLICT DO NOTHING;
 
 
 -- Housing
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (301,
-        'Mortgage',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Mortgage',
         130000,
         3,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -195,10 +196,10 @@ VALUES (301,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (302,
-        'Additional Mortgage Payment',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Additional Mortgage Payment',
         50000,
         3,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -206,10 +207,10 @@ VALUES (302,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (303,
-        'Water / Sewer',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Water / Sewer',
         15000,
         3,
         'Paid every other month',
@@ -218,10 +219,10 @@ VALUES (303,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (304,
-        'Natural Gas',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Natural Gas',
         4000,
         3,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -229,10 +230,10 @@ VALUES (304,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (305,
-        'Electricity',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Electricity',
         120000,
         3,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -240,10 +241,10 @@ VALUES (305,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (306,
-        'Trash',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Trash',
         100000,
         3,
         'Paid Quarterly',
@@ -252,10 +253,10 @@ VALUES (306,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (307,
-        'Internet',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Internet',
         5000,
         3,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -263,10 +264,10 @@ VALUES (307,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (308,
-        'Cellphones',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Cellphones',
         90000,
         3,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -274,10 +275,10 @@ VALUES (308,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (309,
-        'Household Items',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Household Items',
         100000,
         3,
         'Non-Consumable household items. Tupperware, Linen, Storage Containers, etc.',
@@ -286,10 +287,10 @@ VALUES (309,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (310,
-        'Maintenance / Upkeep',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Maintenance / Upkeep',
         0,
         3,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -299,10 +300,10 @@ ON CONFLICT DO NOTHING;
 
 
 -- Transportation
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (401,
-        'Auto Insurance',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Auto Insurance',
         12000,
         4,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -310,10 +311,10 @@ VALUES (401,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (402,
-        'Husband Fuel',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Husband Fuel',
         4000,
         4,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -321,10 +322,10 @@ VALUES (402,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (403,
-        'Wife Fuel',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Wife Fuel',
         8000,
         4,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -332,10 +333,10 @@ VALUES (403,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (404,
-        'Maintenance',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Maintenance',
         0,
         4,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -345,10 +346,10 @@ ON CONFLICT DO NOTHING;
 
 
 -- Food
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (501,
-        'Groceries / Consumables',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Groceries / Consumables',
         12000,
         5,
         'Things we consume.',
@@ -357,10 +358,10 @@ VALUES (501,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (502,
-        'Restaurants',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Restaurants',
         10000,
         5,
         'Mostly Qudoba',
@@ -371,10 +372,10 @@ ON CONFLICT DO NOTHING;
 
 
 -- Personal
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (601,
-        'Child Clothing',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Child Clothing',
         2000,
         6,
         '99 more Elsa dresses',
@@ -383,10 +384,10 @@ VALUES (601,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (602,
-        'Husband Personal Expenses',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Husband Personal Expenses',
         30000,
         6,
         'Videogames or Keyboards, how to choose?',
@@ -395,10 +396,10 @@ VALUES (602,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (603,
-        'Wife Personal Expenses',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Wife Personal Expenses',
         30000,
         6,
         'Nail polish technically counts as both a cosmetic and a craft supply',
@@ -407,10 +408,10 @@ VALUES (603,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (604,
-        'Husband Subscriptions',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Husband Subscriptions',
         5000,
         6,
         'Final World of Guild Wars 2',
@@ -419,10 +420,10 @@ VALUES (604,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
 VALUES (605,
-        'Wife Subscriptions',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Wife Subscriptions',
         5000,
         6,
         'Extreme Baking Plus and Drag Tiny Home Makeover Streaming',
@@ -433,10 +434,10 @@ ON CONFLICT DO NOTHING;
 
 
 -- Lifestyle
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (701,
-        'Child Care',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Child Care',
         200000,
         7,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -444,10 +445,10 @@ VALUES (701,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (702,
-        'Pet Care',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Pet Care',
         3000,
         7,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -455,10 +456,10 @@ VALUES (702,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (703,
-        'Entertainment',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Entertainment',
         40000,
         7,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -468,10 +469,10 @@ ON CONFLICT DO NOTHING;
 
 
 -- Health
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (801,
-        'Doctor Visits',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Doctor Visits',
         0,
         8,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -479,10 +480,10 @@ VALUES (801,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (802,
-        'Prescription Drugs',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Prescription Drugs',
         3000,
         8,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
@@ -490,10 +491,10 @@ VALUES (802,
                          extract(seconds from localtime), 'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, name, budget_date, planned_amount, category_id, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
 VALUES (803,
-        'Dentist Appointments',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Dentist Appointments',
         0,
         8,
         make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,

@@ -9,11 +9,12 @@ import java.util.List;
 @Getter
 public class CategoryResponse extends BaseResponse {
   private final Long id;
-  private final String name;
   /**
    * Day of Month will be set to the 1st
    */
   private final LocalDate budgetDate;
+  private final String name;
+  private final boolean isIncome;
   /**
    * Unmodifiable List
    */
@@ -22,8 +23,9 @@ public class CategoryResponse extends BaseResponse {
   public CategoryResponse(Category category) {
     super(category.getLastModifiedAt());
     this.id = category.getId();
-    this.name = category.getName();
     this.budgetDate = category.getBudgetMonth().asLocalDate();
+    this.name = category.getName();
+    this.isIncome = category.isIncome();
     this.lineItemResponses = category.getLineItems()
         .stream()
         .map(LineItemResponse::new)

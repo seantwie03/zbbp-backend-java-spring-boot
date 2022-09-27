@@ -30,14 +30,16 @@ public class CategoryEntity extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
-  @Column(name = "name", nullable = false)
-  private String name;
   /**
    * BudgetDates only need the Year and Month; however, storing only the Year and Month in the database can be
    * tedious. Instead, the date is always set to the 1st.
    */
   @Column(name = "budget_date", nullable = false)
   private LocalDate budgetDate;
+  @Column(name = "name", nullable = false)
+  private String name;
+  @Column(name = "is_income", nullable = false)
+  private boolean isIncome;
   @OneToMany
   @JoinColumn(name = "category_id")
   private List<LineItemEntity> lineItemEntities = new ArrayList<>();
@@ -53,8 +55,9 @@ public class CategoryEntity extends BaseEntity {
   public Category convertToCategory() {
     return new Category(
         id,
-        name,
         new BudgetMonth(budgetDate),
+        name,
+        isIncome,
         lineItemEntities
             .stream()
             .map(LineItemEntity::convertToLineItem)
