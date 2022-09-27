@@ -19,14 +19,15 @@ class LineItemTest {
       List<Transaction> transactions = List.of(
           new Transaction(
               1L,
+              ItemType.EXPENSE,
               LocalDate.now(),
               "Merchant 1",
               new Money(10.50),
               null,
-              "Transaction 1",
-              null),
+              "Transaction 1"),
           new Transaction(
               1L,
+              ItemType.EXPENSE,
               LocalDate.now(),
               "Merchant 2",
               new Money(11.00),
@@ -35,6 +36,7 @@ class LineItemTest {
               null),
           new Transaction(
               1L,
+              ItemType.EXPENSE,
               LocalDate.now(),
               "Merchant 3",
               new Money(4.00),
@@ -44,6 +46,7 @@ class LineItemTest {
       );
       lineItem = new LineItem(
           1L,
+          ItemType.EXPENSE,
           new BudgetMonth(),
           "Groceries",
           new Money(50.0),
@@ -82,6 +85,7 @@ class LineItemTest {
     static void setup() {
       lineItem = new LineItem(
           null,
+          ItemType.EXPENSE,
           new BudgetMonth(),
           "Restaurants",
           new Money(50.0),

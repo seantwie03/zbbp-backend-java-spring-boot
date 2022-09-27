@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
@@ -48,7 +49,7 @@ public class TransactionController {
   }
 
   @GetMapping("/transaction/{id}")
-  public ResponseEntity<TransactionResponse> getTransactionById(@PathVariable Long id) throws URISyntaxException {
+  public ResponseEntity<TransactionResponse> getTransactionById(@PathVariable @Min(0) Long id) throws URISyntaxException {
     TransactionResponse response = service.findById(id)
         .map(TransactionResponse::new)
         .orElseThrow(() -> new NotFoundException(TRANSACTION, id));
@@ -73,7 +74,7 @@ public class TransactionController {
   @PutMapping("/transaction/{id}")
   public ResponseEntity<TransactionResponse> updateTransaction(
       @RequestBody @Valid TransactionRequest request,
-      @PathVariable Long id,
+      @PathVariable @Min(0) Long id,
       @RequestHeader("If-Unmodified-Since") Instant ifUnmodifiedSince) throws URISyntaxException {
     TransactionResponse response =
         service.update(id, ifUnmodifiedSince, request.convertToTransaction())
@@ -87,7 +88,7 @@ public class TransactionController {
   }
 
   @DeleteMapping("/transaction/{id}")
-  public ResponseEntity<Long> deleteTransaction(@PathVariable Long id) {
+  public ResponseEntity<Long> deleteTransaction(@PathVariable @Min(0) Long id) {
     return service.delete(id)
         .map(i -> ResponseEntity.ok(id))
         .orElseThrow(() -> new NotFoundException(TRANSACTION, id));

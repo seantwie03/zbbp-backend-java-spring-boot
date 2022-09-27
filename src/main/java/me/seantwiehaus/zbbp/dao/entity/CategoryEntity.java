@@ -40,13 +40,11 @@ public class CategoryEntity extends BaseEntity {
   private String name;
   @Column(name = "is_income", nullable = false)
   private boolean isIncome;
-  @OneToMany(mappedBy = "categoryEntity")
+
+  @OneToMany
+  @JoinColumn(name = "category_id")
   @OrderBy("plannedAmount asc")
   private List<LineItemEntity> lineItemEntities = new ArrayList<>();
-
-  public CategoryEntity(Long id) {
-    this.id = id;
-  }
 
   public void setBudgetDate(LocalDate budgetDate) {
     this.budgetDate = budgetDate.withDayOfMonth(1);
@@ -59,6 +57,7 @@ public class CategoryEntity extends BaseEntity {
   public Category convertToCategory() {
     return new Category(
         id,
+        type,
         new BudgetMonth(budgetDate),
         name,
         isIncome,

@@ -1,15 +1,14 @@
 package me.seantwiehaus.zbbp.service;
 
 import lombok.extern.slf4j.Slf4j;
-import me.seantwiehaus.zbbp.dao.entity.CategoryEntity;
 import me.seantwiehaus.zbbp.dao.entity.LineItemEntity;
 import me.seantwiehaus.zbbp.dao.repository.LineItemRepository;
 import me.seantwiehaus.zbbp.domain.BudgetMonthRange;
+import me.seantwiehaus.zbbp.domain.Category;
 import me.seantwiehaus.zbbp.domain.LineItem;
 import me.seantwiehaus.zbbp.exception.BadRequestException;
 import me.seantwiehaus.zbbp.exception.InternalServerException;
 import me.seantwiehaus.zbbp.exception.ResourceConflictException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -21,9 +20,11 @@ import java.util.Optional;
 @Service
 public class LineItemService {
   private final LineItemRepository repository;
+  private final CategoryService categoryService;
 
-  public LineItemService(LineItemRepository repository) {
+  public LineItemService(LineItemRepository repository, CategoryService categoryService) {
     this.repository = repository;
+    this.categoryService = categoryService;
   }
 
   /**
@@ -54,11 +55,17 @@ public class LineItemService {
 
   public LineItem create(LineItem lineItem) {
     log.info("Creating new Line Item -> " + lineItem);
-    try {
-      return repository.save(new LineItemEntity(lineItem)).convertToLineItem();
-    } catch (DataIntegrityViolationException e) {
-      log.error("DataIntegrityViolationException " + e.getMessage());
-      throw new BadRequestException("A Line Item with that Name and BudgetDate already exists.");
+    throwIfCategoryDoesNotExistByIdOrHasDifferentType(lineItem);
+    return repository.save(new LineItemEntity(lineItem)).convertToLineItem();
+  }
+
+  private void throwIfCategoryDoesNotExistByIdOrHasDifferentType(LineItem lineItem) {
+    Optional<Category> categoryOptional = categoryService.findById(lineItem.getCategoryId());
+    Category category = categoryOptional.orElseThrow(
+        () -> new BadRequestException("Unable to find Category with ID: " + lineItem.getCategoryId()));
+    if (category.getType() != lineItem.getType()) {
+      throw new BadRequestException("Unable to add Line Item with type: " + lineItem.getType().toString() +
+          " to Category with type: " + category.getType().toString());
     }
   }
 
@@ -73,17 +80,14 @@ public class LineItemService {
             throw new ResourceConflictException(
                 "Line Item with ID: " + id + " has been modified since this client requested it.");
           }
-          entity.setName(lineItem.getName());
-          entity.setCategoryEntity(new CategoryEntity(lineItem.getCategoryId()));
-          entity.setPlannedAmount(lineItem.getPlannedAmount().inCents());
           entity.setBudgetDate(lineItem.getBudgetMonth());
+          entity.setName(lineItem.getName());
+          entity.setPlannedAmount(lineItem.getPlannedAmount().inCents());
+          throwIfCategoryDoesNotExistByIdOrHasDifferentType(lineItem);
+          entity.setCategoryId(lineItem.getCategoryId());
+          entity.setDescription(lineItem.getDescription());
           log.info("Updating Line Item with ID=" + id + " -> " + entity);
-          try {
-            return Optional.of(repository.save(entity).convertToLineItem());
-          } catch (DataIntegrityViolationException e) {
-            log.error("DataIntegrityViolationException: " + e.getMessage());
-            throw new BadRequestException("A Line Item with that Name and BudgetDate already exists.");
-          }
+          return Optional.of(repository.save(entity).convertToLineItem());
         })
         .orElse(Optional.empty());
   }

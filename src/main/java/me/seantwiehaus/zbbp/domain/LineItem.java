@@ -27,17 +27,16 @@ public class LineItem extends BaseDomain {
   private final Money totalRemaining;
   private final Double percentageRemaining;
 
-  public LineItem(Long id,
+  public LineItem(ItemType type,
                   BudgetMonth budgetMonth,
                   String name,
                   Double plannedAmount,
-                  Long categoryId,
-                  List<Transaction> transactions,
-                  Instant lastModifiedAt) {
-    this(id, budgetMonth, name, new Money(plannedAmount), categoryId, null, transactions, lastModifiedAt);
+                  Long categoryId) {
+    this(null, type, budgetMonth, name, new Money(plannedAmount), categoryId, null, null, null);
   }
 
   public LineItem(Long id,
+                  ItemType type,
                   BudgetMonth budgetMonth,
                   String name,
                   Integer plannedAmount,
@@ -45,10 +44,11 @@ public class LineItem extends BaseDomain {
                   String description,
                   List<Transaction> transactions,
                   Instant lastModifiedAt) {
-    this(id, budgetMonth, name, new Money(plannedAmount), categoryId, description, transactions, lastModifiedAt);
+    this(id, type, budgetMonth, name, new Money(plannedAmount), categoryId, description, transactions, lastModifiedAt);
   }
 
   public LineItem(Long id,
+                  ItemType type,
                   BudgetMonth budgetMonth,
                   String name,
                   Money plannedAmount,
@@ -56,7 +56,7 @@ public class LineItem extends BaseDomain {
                   String description,
                   List<Transaction> transactions,
                   Instant lastModifiedAt) {
-    super(lastModifiedAt);
+    super(type, lastModifiedAt);
     this.id = id;
     this.budgetMonth = budgetMonth;
     this.name = name;

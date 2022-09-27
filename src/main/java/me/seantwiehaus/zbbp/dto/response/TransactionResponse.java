@@ -13,17 +13,15 @@ public class TransactionResponse extends BaseResponse {
   private final LocalDate date;
   private final String merchant;
   private final Double amount;
-  private final boolean isIncome;
   private final Long lineItemId;
   private final String description;
 
   public TransactionResponse(Transaction transaction) {
-    super(transaction.getLastModifiedAt());
+    super(transaction.getType(), transaction.getLastModifiedAt());
     this.id = transaction.getId();
     this.date = transaction.getDate();
     this.merchant = transaction.getMerchant();
     this.amount = transaction.getAmount().inDollars();
-    this.isIncome = transaction.isIncome();
     this.lineItemId = transaction.getLineItemId();
     this.description = transaction.getDescription();
   }

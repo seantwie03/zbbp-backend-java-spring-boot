@@ -1,14 +1,13 @@
 package me.seantwiehaus.zbbp.service;
 
 import lombok.extern.slf4j.Slf4j;
-import me.seantwiehaus.zbbp.dao.entity.LineItemEntity;
 import me.seantwiehaus.zbbp.dao.entity.TransactionEntity;
 import me.seantwiehaus.zbbp.dao.repository.TransactionRepository;
+import me.seantwiehaus.zbbp.domain.LineItem;
 import me.seantwiehaus.zbbp.domain.Transaction;
 import me.seantwiehaus.zbbp.exception.BadRequestException;
 import me.seantwiehaus.zbbp.exception.InternalServerException;
 import me.seantwiehaus.zbbp.exception.ResourceConflictException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -21,9 +20,11 @@ import java.util.Optional;
 @Service
 public class TransactionService {
   private final TransactionRepository repository;
+  private final LineItemService lineItemService;
 
-  public TransactionService(TransactionRepository repository) {
+  public TransactionService(TransactionRepository repository, LineItemService lineItemService) {
     this.repository = repository;
+    this.lineItemService = lineItemService;
   }
 
   /**
@@ -54,17 +55,24 @@ public class TransactionService {
   public Transaction create(Transaction transaction) {
     if (transaction == null) throw new InternalServerException("Unable to create null Transaction.");
     log.info("Creating new Transaction -> " + transaction);
-    try {
-      return repository.save(new TransactionEntity(transaction)).convertToTransaction();
-    } catch (DataIntegrityViolationException e) {
-      log.error("DataIntegrityViolationException " + e.getMessage());
-      throw new BadRequestException("The Transaction you are trying to create has an invalid lineItemId.");
+    throwIfLineItemDoesNotExistByIdOrHasDifferentType(transaction);
+    return repository.save(new TransactionEntity(transaction)).convertToTransaction();
+  }
+
+  private void throwIfLineItemDoesNotExistByIdOrHasDifferentType(Transaction transaction) {
+    if (transaction.getLineItemId() == null) return;
+    Optional<LineItem> lineItemOptional = lineItemService.findById(transaction.getLineItemId());
+    LineItem lineItem = lineItemOptional.orElseThrow(
+        () -> new BadRequestException("Unable to find Line Item with ID: " + transaction.getLineItemId()));
+    if (lineItem.getType() != transaction.getType()) {
+      throw new BadRequestException("Unable to add Transaction with type: " + transaction.getType().toString() +
+          " to Line Item with type: " + lineItem.getType().toString());
     }
   }
 
   public Optional<Transaction> update(Long id, Instant ifUnmodifiedSince, Transaction transaction) {
     if (id == null || ifUnmodifiedSince == null || transaction == null) {
-      throw new InternalServerException("Unable to update Transaction. One or more parameters is null");
+      throw new InternalServerException("Unable to update Transaction. One or more parameters are null");
     }
     Optional<TransactionEntity> existingEntity = repository.findById(id);
     return existingEntity
@@ -76,14 +84,10 @@ public class TransactionService {
           entity.setAmount(transaction.getAmount().inCents());
           entity.setDate(transaction.getDate());
           entity.setDescription(transaction.getDescription());
-          entity.setLineItemEntity(new LineItemEntity(transaction.getLineItemId()));
+          throwIfLineItemDoesNotExistByIdOrHasDifferentType(transaction);
+          entity.setLineItemId(transaction.getLineItemId());
           log.info("Updating Transaction with ID=" + id + " -> " + entity);
-          try {
-            return Optional.of(repository.save(entity).convertToTransaction());
-          } catch (DataIntegrityViolationException e) {
-            log.error("DataIntegrityViolationException " + e.getMessage());
-            throw new BadRequestException("Attempted to update a Transaction to an invalid lineItemId.");
-          }
+          return Optional.of(repository.save(entity).convertToTransaction());
         })
         .orElse(Optional.empty());
   }

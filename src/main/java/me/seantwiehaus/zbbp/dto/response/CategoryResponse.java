@@ -21,7 +21,7 @@ public class CategoryResponse extends BaseResponse {
   private final List<LineItemResponse> lineItemResponses;
 
   public CategoryResponse(Category category) {
-    super(category.getLastModifiedAt());
+    super(category.getType(), category.getLastModifiedAt());
     this.id = category.getId();
     this.budgetDate = category.getBudgetMonth().asLocalDate();
     this.name = category.getName();

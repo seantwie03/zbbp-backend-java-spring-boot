@@ -20,12 +20,13 @@ public class Category extends BaseDomain {
   private final List<LineItem> lineItems;
 
   public Category(Long id,
+                  ItemType type,
                   BudgetMonth budgetMonth,
                   String name,
                   boolean isIncome,
                   List<LineItem> lineItems,
                   Instant lastModifiedAt) {
-    super(lastModifiedAt);
+    super(type, lastModifiedAt);
     this.id = id;
     this.budgetMonth = budgetMonth;
     this.name = name;

@@ -36,27 +36,22 @@ public class LineItemEntity extends BaseEntity {
   private String name;
   @Column(name = "planned_amount", nullable = false)
   private Integer plannedAmount;
+  @Column(name = "category_id", nullable = false)
+  private Long categoryId;
   @Column(name = "description")
   private String description;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "category_id")
-  private CategoryEntity categoryEntity;
-
-  @OneToMany(mappedBy = "lineItemEntity")
+  @OneToMany
+  @JoinColumn(name = "line_item_id")
   @OrderBy("date asc, amount asc")
   private List<TransactionEntity> transactionEntities = new ArrayList<>();
-
-  public LineItemEntity(Long id) {
-    this.id = id;
-  }
 
   public LineItemEntity(LineItem lineItem) {
     this.id = lineItem.getId();
     this.budgetDate = lineItem.getBudgetMonth().asLocalDate();
     this.name = lineItem.getName();
     this.plannedAmount = lineItem.getPlannedAmount().inCents();
-    this.categoryEntity = new CategoryEntity(lineItem.getCategoryId());
+    this.categoryId = lineItem.getCategoryId();
     this.description = lineItem.getDescription();
   }
 
@@ -71,10 +66,11 @@ public class LineItemEntity extends BaseEntity {
   public LineItem convertToLineItem() {
     return new LineItem(
         id,
+        type,
         new BudgetMonth(budgetDate),
         name,
         plannedAmount,
-        categoryEntity.getId(),
+        categoryId,
         description,
         transactionEntities
             .stream()

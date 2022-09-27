@@ -5,9 +5,20 @@ drop sequence if exists hibernate_sequence;
 
 create sequence hibernate_sequence start with 10000 increment by 1;
 
+create table item_types
+(
+    type varchar(10) default 'EXPENSE',
+    primary key (type),
+    constraint type_not_empty check (
+        not (type = '' or type = ' ')
+        )
+);
+create unique index unique_case_insensitive_type_idx on item_types (UPPER(type));
+
 create table categories
 (
     id               bigint      not null,
+    type             varchar(10) not null default 'EXPENSE',
     budget_date      date        not null,
     name             varchar(50) not null,
     is_income        boolean     not null default false,
@@ -17,11 +28,12 @@ create table categories
         not (name = '' or name = ' ')
         )
 );
-create unique index unique_name_budget_date_idx on categories (UPPER(name), budget_date);
+create unique index unique_case_insensitive_name_budget_date_idx on categories (UPPER(name), budget_date);
 
 create table line_items
 (
     id               bigint      not null,
+    type             varchar(10) not null default 'EXPENSE',
     budget_date      date        not null,
     name             varchar(50) not null,
     planned_amount   int         not null,
@@ -33,15 +45,15 @@ create table line_items
         not (name = '' or name = ' ')
         )
 );
-create unique index unique_upper_name_budget_date_idx on line_items (UPPER(name), budget_date);
+create unique index unique_insensitive_name_budget_date_idx on line_items (UPPER(name), budget_date);
 
 create table transactions
 (
     id               bigint      not null,
+    type             varchar(10) not null default 'EXPENSE',
     date             date        not null,
     merchant         varchar(50) not null,
     amount           int         not null,
-    is_income        boolean     not null default false,
     line_item_id     bigint,
     description      varchar(255),
     last_modified_at timestamptz not null,
@@ -50,6 +62,21 @@ create table transactions
         not (merchant = '' or merchant = ' ')
         )
 );
+
+alter table categories
+    add constraint FK_type
+        foreign key (type)
+            references item_types;
+
+alter table line_items
+    add constraint FK_type
+        foreign key (type)
+            references item_types;
+
+alter table transactions
+    add constraint FK_type
+        foreign key (type)
+            references item_types;
 
 alter table line_items
     add constraint FK_category_id

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
@@ -55,7 +56,7 @@ public class LineItemController {
   }
 
   @GetMapping("/line-item/{id}")
-  public ResponseEntity<LineItemResponse> getLineItemById(@PathVariable Long id) throws URISyntaxException {
+  public ResponseEntity<LineItemResponse> getLineItemById(@PathVariable @Min(0) Long id) throws URISyntaxException {
     LineItemResponse response = service.findById(id)
         .map(LineItemResponse::new)
         .orElseThrow(() -> new NotFoundException(LINE_ITEM, id));
@@ -79,7 +80,7 @@ public class LineItemController {
   @PutMapping("/line-item/{id}")
   public ResponseEntity<LineItemResponse> updateLineItem(
       @RequestBody @Valid LineItemRequest request,
-      @PathVariable Long id,
+      @PathVariable @Min(0) Long id,
       @RequestHeader("If-Unmodified-Since") Instant ifUnmodifiedSince) throws URISyntaxException {
     LineItemResponse response = service.update(id, ifUnmodifiedSince, request.convertToLineItem())
         .map(LineItemResponse::new)
@@ -91,7 +92,7 @@ public class LineItemController {
   }
 
   @DeleteMapping("/line-item/{id}")
-  public ResponseEntity<Long> deleteLineItem(@PathVariable Long id) {
+  public ResponseEntity<Long> deleteLineItem(@PathVariable @Min(0) Long id) {
     return service.delete(id)
         .map(i -> ResponseEntity.ok(id))
         .orElseThrow(() -> new NotFoundException(LINE_ITEM, id));

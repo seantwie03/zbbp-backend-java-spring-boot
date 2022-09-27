@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
+import me.seantwiehaus.zbbp.domain.ItemType;
 import me.seantwiehaus.zbbp.domain.LineItem;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 public class LineItemRequest {
+  private ItemType type;
   /**
    * Day of Month will be set to the 1st
    */
@@ -35,13 +37,10 @@ public class LineItemRequest {
 
   public LineItem convertToLineItem() {
     return new LineItem(
-        null,
+        type,
         new BudgetMonth(budgetDate),
         name,
         plannedAmount,
-        categoryId,
-        null,
-        null);
-
+        categoryId);
   }
 }

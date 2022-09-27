@@ -28,33 +28,28 @@ public class TransactionEntity extends BaseEntity {
   private String merchant;
   @Column(name = "amount", nullable = false)
   private Integer amount;
-  @Column(name = "is_income", nullable = false)
-  private boolean isIncome;
+  @Column(name = "line_item_id")
+  private Long lineItemId;
   @Column(name = "description")
   private String description;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "line_item_id")
-  private LineItemEntity lineItemEntity;
 
   public TransactionEntity(Transaction transaction) {
     this.id = transaction.getId();
     this.date = transaction.getDate();
     this.merchant = transaction.getMerchant();
     this.amount = transaction.getAmount().inCents();
-    this.isIncome = transaction.isIncome();
-    this.setLineItemEntity(new LineItemEntity(transaction.getLineItemId()));
+    this.setLineItemId(transaction.getLineItemId());
     this.description = transaction.getDescription();
   }
 
   public Transaction convertToTransaction() {
     return new Transaction(
         id,
+        type,
         date,
         merchant,
         amount,
-        isIncome,
-        lineItemEntity.getId(),
+        lineItemId,
         description,
         lastModifiedAt);
   }
