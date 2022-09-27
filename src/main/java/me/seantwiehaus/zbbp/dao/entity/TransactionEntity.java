@@ -30,10 +30,12 @@ public class TransactionEntity extends BaseEntity {
   private Integer amount;
   @Column(name = "is_income", nullable = false)
   private boolean isIncome;
-  @Column(name = "line_item_id")
-  private Long lineItemId;
   @Column(name = "description")
   private String description;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "line_item_id")
+  private LineItemEntity lineItemEntity;
 
   public TransactionEntity(Transaction transaction) {
     this.id = transaction.getId();
@@ -41,7 +43,7 @@ public class TransactionEntity extends BaseEntity {
     this.merchant = transaction.getMerchant();
     this.amount = transaction.getAmount().inCents();
     this.isIncome = transaction.isIncome();
-    this.setLineItemId(transaction.getLineItemId());
+    this.setLineItemEntity(new LineItemEntity(transaction.getLineItemId()));
     this.description = transaction.getDescription();
   }
 
@@ -52,7 +54,7 @@ public class TransactionEntity extends BaseEntity {
         merchant,
         amount,
         isIncome,
-        lineItemId,
+        lineItemEntity.getId(),
         description,
         lastModifiedAt);
   }

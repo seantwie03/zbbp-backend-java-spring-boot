@@ -77,7 +77,7 @@ ON CONFLICT DO NOTHING;
 -- Line Items --
 -- Income
 INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
-VALUES (100,
+VALUES (101,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         'Husband Income',
         300000,
@@ -89,7 +89,7 @@ VALUES (100,
 ON CONFLICT DO NOTHING;
 
 INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, description, last_modified_at)
-VALUES (101,
+VALUES (102,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         'Wife Income',
         60000,
@@ -101,7 +101,7 @@ VALUES (101,
 ON CONFLICT DO NOTHING;
 
 INSERT INTO line_items (id, budget_date, name, planned_amount, category_id, last_modified_at)
-VALUES (102,
+VALUES (103,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         'Side Hustle',
         30000,
@@ -504,17 +504,176 @@ ON CONFLICT DO NOTHING;
 
 
 -- Transactions --
---INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
---VALUES (1,
---        'Primary Employer 1', -- Paycheck 1
---        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
---        210000,
---        true,
---        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
---                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
---                         extract(seconds from localtime), 'utc'),
---        1)
---ON CONFLICT DO NOTHING;
+-- Income
+INSERT INTO transactions (id, date, merchant, amount, is_income, line_item_id, last_modified_at)
+VALUES (1001,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Husband Employer 1',
+        310000,
+        true,
+        101,
+        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
+                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
+                         extract(seconds from localtime), 'utc'))
+ON CONFLICT DO NOTHING;
+
+INSERT INTO transactions (id, date, merchant, amount, is_income, line_item_id, last_modified_at)
+VALUES (1002,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Wife Employer 1',
+        40000,
+        true,
+        102,
+        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
+                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
+                         extract(seconds from localtime), 'utc'))
+ON CONFLICT DO NOTHING;
+
+INSERT INTO transactions (id, date, merchant, amount, is_income, line_item_id, last_modified_at)
+VALUES (1003,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 15),
+        'Husband Employer 2',
+        310000,
+        true,
+        101,
+        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
+                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
+                         extract(seconds from localtime), 'utc'))
+ON CONFLICT DO NOTHING;
+
+INSERT INTO transactions (id, date, merchant, amount, is_income, line_item_id, last_modified_at)
+VALUES (1004,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Wife Employer 2',
+        40000,
+        true,
+        102,
+        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
+                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
+                         extract(seconds from localtime), 'utc'))
+ON CONFLICT DO NOTHING;
+
+INSERT INTO transactions (id, date, merchant, amount, is_income, line_item_id, last_modified_at)
+VALUES (1005,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Side Hustle 1',
+        30000,
+        true,
+        103,
+        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
+                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
+                         extract(seconds from localtime), 'utc'))
+ON CONFLICT DO NOTHING;
+
+
+-- Savings
+INSERT INTO transactions (id, date, merchant, amount, is_income, line_item_id, last_modified_at)
+VALUES (2001,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Family Savings 1',
+        5000,
+        true,
+        201,
+        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
+                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
+                         extract(seconds from localtime), 'utc'))
+ON CONFLICT DO NOTHING;
+
+INSERT INTO transactions (id, date, merchant, amount, is_income, line_item_id, last_modified_at)
+VALUES (2002,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Husband Savings 1',
+        5000,
+        true,
+        202,
+        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
+                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
+                         extract(seconds from localtime), 'utc'))
+ON CONFLICT DO NOTHING;
+
+INSERT INTO transactions (id, date, merchant, amount, is_income, line_item_id, last_modified_at)
+VALUES (2003,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        'Wife Savings 1',
+        5000,
+        true,
+        203,
+        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1,
+                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
+                         extract(seconds from localtime), 'utc'))
+ON CONFLICT DO NOTHING;
+
+INSERT INTO transactions (id, date, merchant, amount, is_income, line_item_id, last_modified_at)
+VALUES (2004,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 15),
+        'Family Savings 2',
+        5000,
+        true,
+        201,
+        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 15,
+                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
+                         extract(seconds from localtime), 'utc'))
+ON CONFLICT DO NOTHING;
+
+INSERT INTO transactions (id, date, merchant, amount, is_income, line_item_id, last_modified_at)
+VALUES (2005,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 15),
+        'Husband Savings 2',
+        5000,
+        true,
+        202,
+        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 15,
+                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
+                         extract(seconds from localtime), 'utc'))
+ON CONFLICT DO NOTHING;
+
+INSERT INTO transactions (id, date, merchant, amount, is_income, line_item_id, last_modified_at)
+VALUES (2006,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 15),
+        'Wife Savings 2',
+        5000,
+        true,
+        203,
+        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 15,
+                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
+                         extract(seconds from localtime), 'utc'))
+ON CONFLICT DO NOTHING;
+
+INSERT INTO transactions (id, date, merchant, amount, is_income, line_item_id, last_modified_at)
+VALUES (2007,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 28),
+        'AmericanCollegeFund',
+        50000,
+        true,
+        204,
+        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 28,
+                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
+                         extract(seconds from localtime), 'utc'))
+ON CONFLICT DO NOTHING;
+
+INSERT INTO transactions (id, date, merchant, amount, is_income, line_item_id, last_modified_at)
+VALUES (2008,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 28),
+        'Husband IRA',
+        50000,
+        true,
+        205,
+        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 28,
+                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
+                         extract(seconds from localtime), 'utc'))
+ON CONFLICT DO NOTHING;
+
+INSERT INTO transactions (id, date, merchant, amount, is_income, line_item_id, last_modified_at)
+VALUES (2009,
+        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 28),
+        'Edward Jones IRA',
+        50000,
+        true,
+        206,
+        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 28,
+                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
+                         extract(seconds from localtime), 'utc'))
+ON CONFLICT DO NOTHING;
 --
 --INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
 --VALUES (2,
@@ -660,15 +819,3 @@ ON CONFLICT DO NOTHING;
 --        null)
 --ON CONFLICT DO NOTHING;
 --
---INSERT INTO transactions (id, description, date, amount, is_deposit, last_modified_at, line_item_id)
---VALUES (14,
---        'Side Hustle Co.', -- Side Hustle Income 1
---        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 30),
---        30000,
---        true,
---        make_timestamptz(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 30,
---                         extract(hour FROM localtime)::int, extract(minutes from localtime)::int,
---                         extract(seconds from localtime), 'utc'),
---        2)
---ON CONFLICT DO NOTHING;
-----

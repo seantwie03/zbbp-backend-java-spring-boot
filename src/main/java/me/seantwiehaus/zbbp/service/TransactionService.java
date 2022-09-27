@@ -1,6 +1,7 @@
 package me.seantwiehaus.zbbp.service;
 
 import lombok.extern.slf4j.Slf4j;
+import me.seantwiehaus.zbbp.dao.entity.LineItemEntity;
 import me.seantwiehaus.zbbp.dao.entity.TransactionEntity;
 import me.seantwiehaus.zbbp.dao.repository.TransactionRepository;
 import me.seantwiehaus.zbbp.domain.Transaction;
@@ -75,7 +76,7 @@ public class TransactionService {
           entity.setAmount(transaction.getAmount().inCents());
           entity.setDate(transaction.getDate());
           entity.setDescription(transaction.getDescription());
-          entity.setLineItemId(transaction.getLineItemId());
+          entity.setLineItemEntity(new LineItemEntity(transaction.getLineItemId()));
           log.info("Updating Transaction with ID=" + id + " -> " + entity);
           try {
             return Optional.of(repository.save(entity).convertToTransaction());

@@ -40,10 +40,14 @@ public class LineItemEntity extends BaseEntity {
   private Long categoryId;
   @Column(name = "description")
   private String description;
-  @OneToMany
-  @JoinColumn(name = "line_item_id")
+
+  @OneToMany(mappedBy = "lineItemEntity")
   @OrderBy("date asc, amount asc")
   private List<TransactionEntity> transactionEntities = new ArrayList<>();
+
+  public LineItemEntity(Long id) {
+    this.id = id;
+  }
 
   public LineItemEntity(LineItem lineItem) {
     this.id = lineItem.getId();
