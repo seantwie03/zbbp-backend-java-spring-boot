@@ -41,6 +41,7 @@ public class CategoryEntity extends BaseEntity {
   @Column(name = "is_income", nullable = false)
   private boolean isIncome;
   @OneToMany(mappedBy = "categoryEntity")
+  @OrderBy("plannedAmount asc")
   private List<LineItemEntity> lineItemEntities = new ArrayList<>();
 
   public CategoryEntity(Long id) {
