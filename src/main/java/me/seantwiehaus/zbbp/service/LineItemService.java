@@ -1,6 +1,7 @@
 package me.seantwiehaus.zbbp.service;
 
 import lombok.extern.slf4j.Slf4j;
+import me.seantwiehaus.zbbp.dao.entity.CategoryEntity;
 import me.seantwiehaus.zbbp.dao.entity.LineItemEntity;
 import me.seantwiehaus.zbbp.dao.repository.LineItemRepository;
 import me.seantwiehaus.zbbp.domain.BudgetMonthRange;
@@ -73,7 +74,7 @@ public class LineItemService {
                 "Line Item with ID: " + id + " has been modified since this client requested it.");
           }
           entity.setName(lineItem.getName());
-          entity.setCategoryId(lineItem.getCategoryId());
+          entity.setCategoryEntity(new CategoryEntity(lineItem.getCategoryId()));
           entity.setPlannedAmount(lineItem.getPlannedAmount().inCents());
           entity.setBudgetDate(lineItem.getBudgetMonth());
           log.info("Updating Line Item with ID=" + id + " -> " + entity);

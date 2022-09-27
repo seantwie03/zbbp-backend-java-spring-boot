@@ -36,10 +36,12 @@ public class LineItemEntity extends BaseEntity {
   private String name;
   @Column(name = "planned_amount", nullable = false)
   private Integer plannedAmount;
-  @Column(name = "category_id", nullable = false)
-  private Long categoryId;
   @Column(name = "description")
   private String description;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "category_id")
+  private CategoryEntity categoryEntity;
 
   @OneToMany(mappedBy = "lineItemEntity")
   @OrderBy("date asc, amount asc")
@@ -54,7 +56,7 @@ public class LineItemEntity extends BaseEntity {
     this.budgetDate = lineItem.getBudgetMonth().asLocalDate();
     this.name = lineItem.getName();
     this.plannedAmount = lineItem.getPlannedAmount().inCents();
-    this.categoryId = lineItem.getCategoryId();
+    this.categoryEntity = new CategoryEntity(lineItem.getCategoryId());
     this.description = lineItem.getDescription();
   }
 
@@ -72,7 +74,7 @@ public class LineItemEntity extends BaseEntity {
         new BudgetMonth(budgetDate),
         name,
         plannedAmount,
-        categoryId,
+        categoryEntity.getId(),
         description,
         transactionEntities
             .stream()
