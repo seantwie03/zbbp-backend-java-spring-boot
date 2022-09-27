@@ -14,7 +14,6 @@ public class CategoryResponse extends BaseResponse {
    */
   private final LocalDate budgetDate;
   private final String name;
-  private final boolean isIncome;
   /**
    * Unmodifiable List
    */
@@ -25,7 +24,6 @@ public class CategoryResponse extends BaseResponse {
     this.id = category.getId();
     this.budgetDate = category.getBudgetMonth().asLocalDate();
     this.name = category.getName();
-    this.isIncome = category.isIncome();
     this.lineItemResponses = category.getLineItems()
         .stream()
         .map(LineItemResponse::new)

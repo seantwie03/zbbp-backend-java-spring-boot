@@ -13,7 +13,6 @@ public class Category extends BaseDomain {
   private final Long id;
   private final BudgetMonth budgetMonth;
   private final String name;
-  private final boolean isIncome;
   /**
    * Unmodifiable List
    */
@@ -23,14 +22,12 @@ public class Category extends BaseDomain {
                   ItemType type,
                   BudgetMonth budgetMonth,
                   String name,
-                  boolean isIncome,
                   List<LineItem> lineItems,
                   Instant lastModifiedAt) {
     super(type, lastModifiedAt);
     this.id = id;
     this.budgetMonth = budgetMonth;
     this.name = name;
-    this.isIncome = isIncome;
     this.lineItems = Collections.unmodifiableList(lineItems);
   }
 }
