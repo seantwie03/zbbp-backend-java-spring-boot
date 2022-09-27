@@ -17,10 +17,10 @@ public class LineItemResponse extends BaseResponse {
   private final Double plannedAmount;
   private final Long categoryId;
   private final String description;
-  private final Double spentAmount;
-  private final Double spentPercent;
-  private final Double remainingAmount;
-  private final Double remainingPercent;
+  private final Double totalTransactions;
+  private final Double percentageTransacted;
+  private final Double totalRemaining;
+  private final Double percentageRemaining;
   /**
    * Unmodifiable List
    */
@@ -34,10 +34,10 @@ public class LineItemResponse extends BaseResponse {
     this.plannedAmount = lineItem.getPlannedAmount().inDollars();
     this.categoryId = lineItem.getCategoryId();
     this.description = lineItem.getDescription();
-    this.spentAmount = lineItem.getTotalSpent().inDollars();
-    this.spentPercent = lineItem.getPercentageSpent();
-    this.remainingAmount = lineItem.getTotalRemaining().inDollars();
-    this.remainingPercent = lineItem.getPercentageRemaining();
+    this.totalTransactions = lineItem.calculateTotalTransactions().inDollars();
+    this.percentageTransacted = lineItem.calculatePercentageTransacted();
+    this.totalRemaining = lineItem.calculateTotalRemaining().inDollars();
+    this.percentageRemaining = lineItem.calculatePercentageRemaining();
     this.transactionResponses = lineItem.getTransactions()
         .stream()
         .map(TransactionResponse::new)

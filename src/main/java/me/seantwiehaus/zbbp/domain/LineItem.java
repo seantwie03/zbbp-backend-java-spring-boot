@@ -22,11 +22,6 @@ public class LineItem extends BaseDomain {
    */
   private final List<Transaction> transactions;
 
-  private final Money totalSpent;
-  private final Double percentageSpent;
-  private final Money totalRemaining;
-  private final Double percentageRemaining;
-
   public LineItem(ItemType type,
                   BudgetMonth budgetMonth,
                   String name,
@@ -64,14 +59,9 @@ public class LineItem extends BaseDomain {
     this.categoryId = categoryId;
     this.description = description;
     this.transactions = transactions != null ? Collections.unmodifiableList(transactions) : List.of();
-
-    this.totalSpent = calculateTotalSpent();
-    this.percentageSpent = calculatePercentageSpent();
-    this.totalRemaining = calculateTotalRemaining();
-    this.percentageRemaining = calculatePercentageRemaining();
   }
 
-  private Money calculateTotalSpent() {
+  public Money calculateTotalTransactions() {
     return new Money(
         transactions
             .stream()
@@ -80,15 +70,15 @@ public class LineItem extends BaseDomain {
             .sum());
   }
 
-  private Double calculatePercentageSpent() {
-    return totalSpent.inCents() * 100.0 / plannedAmount.inCents();
+  public Double calculatePercentageTransacted() {
+    return calculateTotalTransactions().inCents() * 100.0 / plannedAmount.inCents();
   }
 
-  private Money calculateTotalRemaining() {
-    return new Money(plannedAmount.inCents() - totalSpent.inCents());
+  public Money calculateTotalRemaining() {
+    return new Money(plannedAmount.inCents() - calculateTotalTransactions().inCents());
   }
 
-  private Double calculatePercentageRemaining() {
-    return totalRemaining.inCents() * 100.0 / plannedAmount.inCents();
+  public Double calculatePercentageRemaining() {
+    return calculateTotalRemaining().inCents() * 100.0 / plannedAmount.inCents();
   }
 }
