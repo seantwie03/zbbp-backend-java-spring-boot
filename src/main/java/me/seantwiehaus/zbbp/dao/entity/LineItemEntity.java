@@ -43,7 +43,7 @@ public class LineItemEntity extends BaseEntity {
 
   @OneToMany
   @JoinColumn(name = "line_item_id")
-  @OrderBy("date asc, amount asc")
+  @OrderBy("date asc, amount desc, type desc")
   private List<TransactionEntity> transactionEntities = new ArrayList<>();
 
   public LineItemEntity(LineItem lineItem) {
