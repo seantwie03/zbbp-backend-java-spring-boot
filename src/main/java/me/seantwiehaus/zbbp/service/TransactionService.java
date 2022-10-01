@@ -55,11 +55,11 @@ public class TransactionService {
   public Transaction create(Transaction transaction) {
     if (transaction == null) throw new InternalServerException("Unable to create null Transaction.");
     log.info("Creating new Transaction -> " + transaction);
-    throwIfLineItemDoesNotExistByIdOrHasDifferentType(transaction);
+    throwIfLineItemHasDifferentType(transaction);
     return repository.save(new TransactionEntity(transaction)).convertToTransaction();
   }
 
-  private void throwIfLineItemDoesNotExistByIdOrHasDifferentType(Transaction transaction) {
+  private void throwIfLineItemHasDifferentType(Transaction transaction) {
     if (transaction.getLineItemId() == null) return;
     Optional<LineItem> lineItemOptional = lineItemService.findById(transaction.getLineItemId());
     LineItem lineItem = lineItemOptional.orElseThrow(
@@ -84,7 +84,7 @@ public class TransactionService {
           entity.setAmount(transaction.getAmount().inCents());
           entity.setDate(transaction.getDate());
           entity.setDescription(transaction.getDescription());
-          throwIfLineItemDoesNotExistByIdOrHasDifferentType(transaction);
+          throwIfLineItemHasDifferentType(transaction);
           entity.setLineItemId(transaction.getLineItemId());
           log.info("Updating Transaction with ID=" + id + " -> " + entity);
           return Optional.of(repository.save(entity).convertToTransaction());
