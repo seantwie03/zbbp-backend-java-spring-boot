@@ -50,7 +50,7 @@ class LineItemTest {
           new BudgetMonth(),
           "Groceries",
           new Money(50.0),
-          1L,
+          Category.FOOD,
           "Description",
           transactions,
           null);
@@ -58,22 +58,17 @@ class LineItemTest {
 
     @Test
     void shouldCalculateCorrectTotal() {
-      assertEquals(new Money(25.50), lineItem.calculateTotalTransactions());
+      assertEquals(new Money(25.50), lineItem.getTotalTransactions());
     }
 
     @Test
     void shouldCalculateCorrectPercentageSpent() {
-      assertEquals(51.0, lineItem.calculatePercentageTransacted());
+      assertEquals(51.0, lineItem.getPercentageOfPlanned());
     }
 
     @Test
     void shouldCalculateCorrectAmountRemaining() {
-      assertEquals(new Money(24.50), lineItem.calculateTotalRemaining());
-    }
-
-    @Test
-    void shouldCalculateCorrectPercentageRemaining() {
-      assertEquals(49.0, lineItem.calculatePercentageRemaining());
+      assertEquals(new Money(24.50), lineItem.getTotalRemaining());
     }
   }
 
@@ -89,7 +84,7 @@ class LineItemTest {
           new BudgetMonth(),
           "Restaurants",
           new Money(50.0),
-          1L,
+          Category.FOOD,
           "Description",
           null,
           null
@@ -98,23 +93,17 @@ class LineItemTest {
 
     @Test
     void shouldCalculateCorrectTotal() {
-      assertEquals(new Money(0), lineItem.calculateTotalTransactions());
+      assertEquals(new Money(0), lineItem.getTotalTransactions());
     }
 
     @Test
     void shouldCalculateCorrectPercentageSpent() {
-      assertEquals(0.0, lineItem.calculatePercentageTransacted());
+      assertEquals(0.0, lineItem.getPercentageOfPlanned());
     }
 
     @Test
     void shouldCalculateCorrectAmountRemaining() {
-      assertEquals(new Money(50.0), lineItem.calculateTotalRemaining());
+      assertEquals(new Money(50.0), lineItem.getTotalRemaining());
     }
-
-    @Test
-    void shouldCalculateCorrectPercentageRemaining() {
-      assertEquals(100.0, lineItem.calculatePercentageRemaining());
-    }
-
   }
 }

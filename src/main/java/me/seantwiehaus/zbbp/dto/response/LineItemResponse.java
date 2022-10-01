@@ -11,17 +11,18 @@ import java.util.List;
 public class LineItemResponse extends BaseResponse {
   private final Long id;
   /**
-   * Day of Month will be set to the 1st
+   * Day of Month is always set to the 1st
    */
   private final LocalDate budgetDate;
   private final String name;
   private final Double plannedAmount;
   private final Category category;
+
   private final String description;
   private final Double totalTransactions;
-  private final Double percentageTransacted;
+  private final Double percentageOfPlanned;
   private final Double totalRemaining;
-  private final Double percentageRemaining;
+
   /**
    * Unmodifiable List
    */
@@ -35,13 +36,13 @@ public class LineItemResponse extends BaseResponse {
     this.plannedAmount = lineItem.getPlannedAmount().inDollars();
     this.category = lineItem.getCategory();
     this.description = lineItem.getDescription();
-    this.totalTransactions = lineItem.calculateTotalTransactions().inDollars();
-    this.percentageTransacted = lineItem.calculatePercentageTransacted();
-    this.totalRemaining = lineItem.calculateTotalRemaining().inDollars();
-    this.percentageRemaining = lineItem.calculatePercentageRemaining();
     this.transactionResponses = lineItem.getTransactions()
         .stream()
         .map(TransactionResponse::new)
         .toList();
+
+    this.totalTransactions = lineItem.getTotalTransactions().inDollars();
+    this.percentageOfPlanned = lineItem.getPercentageOfPlanned();
+    this.totalRemaining = lineItem.getTotalRemaining().inDollars();
   }
 }

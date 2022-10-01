@@ -17,6 +17,11 @@ public class LineItem extends BaseDomain {
   private final Money plannedAmount;
   private final Category category;
   private final String description;
+
+  private final Money totalTransactions;
+  private final double percentageOfPlanned;
+  private final Money totalRemaining;
+
   /**
    * Unmodifiable List
    */
@@ -59,9 +64,13 @@ public class LineItem extends BaseDomain {
     this.category = category;
     this.description = description;
     this.transactions = transactions != null ? Collections.unmodifiableList(transactions) : List.of();
+
+    this.totalTransactions = calculateTotalTransactions();
+    this.percentageOfPlanned = calculatePercentageOfPlanned();
+    this.totalRemaining = calculateTotalRemaining();
   }
 
-  public Money calculateTotalTransactions() {
+  private Money calculateTotalTransactions() {
     return new Money(
         transactions
             .stream()
@@ -70,24 +79,16 @@ public class LineItem extends BaseDomain {
             .sum());
   }
 
-  public Double calculatePercentageTransacted() {
+  private double calculatePercentageOfPlanned() {
+    // Without this check, plannedAmount could be 0 in the divisor below.
     if (plannedAmount.inCents() == 0) {
-      return 100 + calculateTotalTransactions().inDollars();
+      // If plannedAmount is 0, but totalTransactions is 5.50 the percentage should be %105.50
+      return 100 + this.totalTransactions.inDollars();
     }
-    return calculateTotalTransactions().inCents() * 100.0 / plannedAmount.inCents();
+    return this.totalTransactions.inCents() * 100.0 / plannedAmount.inCents();
   }
 
-  public Money calculateTotalRemaining() {
-    return new Money(plannedAmount.inCents() - calculateTotalTransactions().inCents());
-  }
-
-  public Double calculatePercentageRemaining() {
-    int remainingCents = calculateTotalRemaining().inCents();
-    if (remainingCents == 0) {
-      return 0.0;
-    } else if (remainingCents < 0) {
-      return - (100 + calculateTotalTransactions().inDollars());
-    }
-    return remainingCents * 100.0 / plannedAmount.inCents();
+  private Money calculateTotalRemaining() {
+    return new Money(plannedAmount.inCents() - this.totalTransactions.inCents());
   }
 }
