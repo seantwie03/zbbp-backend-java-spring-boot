@@ -21,7 +21,6 @@ create table categories
     type             varchar(10) not null default 'EXPENSE',
     budget_date      date        not null,
     name             varchar(50) not null,
-    is_income        boolean     not null default false,
     last_modified_at timestamptz not null,
     primary key (id),
     constraint name_not_empty check (

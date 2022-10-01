@@ -29,7 +29,6 @@ public class TransactionRequest {
   @NotNull
   @Min(0)
   private Double amount;
-  private boolean isIncome;
   private Long lineItemId;
   private String description;
 
