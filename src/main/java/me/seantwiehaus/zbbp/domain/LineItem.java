@@ -71,6 +71,9 @@ public class LineItem extends BaseDomain {
   }
 
   public Double calculatePercentageTransacted() {
+    if (plannedAmount.inCents() == 0) {
+      return 100 + calculateTotalTransactions().inDollars();
+    }
     return calculateTotalTransactions().inCents() * 100.0 / plannedAmount.inCents();
   }
 
@@ -79,6 +82,12 @@ public class LineItem extends BaseDomain {
   }
 
   public Double calculatePercentageRemaining() {
-    return calculateTotalRemaining().inCents() * 100.0 / plannedAmount.inCents();
+    int remainingCents = calculateTotalRemaining().inCents();
+    if (remainingCents == 0) {
+      return 0.0;
+    } else if (remainingCents < 0) {
+      return - (100 + calculateTotalTransactions().inDollars());
+    }
+    return remainingCents * 100.0 / plannedAmount.inCents();
   }
 }
