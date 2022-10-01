@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
+import me.seantwiehaus.zbbp.domain.Category;
 import me.seantwiehaus.zbbp.domain.ItemType;
 import me.seantwiehaus.zbbp.domain.LineItem;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,7 +33,7 @@ public class LineItemRequest {
   @NotNull
   private Double plannedAmount;
   @NotNull
-  private Long categoryId;
+  private Category category;
   private String description;
 
   public LineItem convertToLineItem() {
@@ -41,6 +42,6 @@ public class LineItemRequest {
         new BudgetMonth(budgetDate),
         name,
         plannedAmount,
-        categoryId);
+        category);
   }
 }

@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
+import me.seantwiehaus.zbbp.domain.Category;
 import me.seantwiehaus.zbbp.domain.LineItem;
 
 import javax.persistence.*;
@@ -36,8 +37,9 @@ public class LineItemEntity extends BaseEntity {
   private String name;
   @Column(name = "planned_amount", nullable = false)
   private Integer plannedAmount;
-  @Column(name = "category_id", nullable = false)
-  private Long categoryId;
+  @Column(name = "category", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private Category category;
   @Column(name = "description")
   private String description;
 
@@ -51,7 +53,7 @@ public class LineItemEntity extends BaseEntity {
     this.budgetDate = lineItem.getBudgetMonth().asLocalDate();
     this.name = lineItem.getName();
     this.plannedAmount = lineItem.getPlannedAmount().inCents();
-    this.categoryId = lineItem.getCategoryId();
+    this.category = lineItem.getCategory();
     this.description = lineItem.getDescription();
   }
 
@@ -70,7 +72,7 @@ public class LineItemEntity extends BaseEntity {
         new BudgetMonth(budgetDate),
         name,
         plannedAmount,
-        categoryId,
+        category,
         description,
         transactionEntities
             .stream()

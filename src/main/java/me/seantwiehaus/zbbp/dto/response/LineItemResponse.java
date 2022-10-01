@@ -1,6 +1,7 @@
 package me.seantwiehaus.zbbp.dto.response;
 
 import lombok.Getter;
+import me.seantwiehaus.zbbp.domain.Category;
 import me.seantwiehaus.zbbp.domain.LineItem;
 
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ public class LineItemResponse extends BaseResponse {
   private final LocalDate budgetDate;
   private final String name;
   private final Double plannedAmount;
-  private final Long categoryId;
+  private final Category category;
   private final String description;
   private final Double totalTransactions;
   private final Double percentageTransacted;
@@ -32,7 +33,7 @@ public class LineItemResponse extends BaseResponse {
     this.budgetDate = lineItem.getBudgetMonth().asLocalDate();
     this.name = lineItem.getName();
     this.plannedAmount = lineItem.getPlannedAmount().inDollars();
-    this.categoryId = lineItem.getCategoryId();
+    this.category = lineItem.getCategory();
     this.description = lineItem.getDescription();
     this.totalTransactions = lineItem.calculateTotalTransactions().inDollars();
     this.percentageTransacted = lineItem.calculatePercentageTransacted();

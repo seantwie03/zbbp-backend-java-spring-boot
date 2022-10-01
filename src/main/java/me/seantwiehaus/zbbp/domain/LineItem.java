@@ -15,7 +15,7 @@ public class LineItem extends BaseDomain {
   private final BudgetMonth budgetMonth;
   private final String name;
   private final Money plannedAmount;
-  private final Long categoryId;
+  private final Category category;
   private final String description;
   /**
    * Unmodifiable List
@@ -26,8 +26,8 @@ public class LineItem extends BaseDomain {
                   BudgetMonth budgetMonth,
                   String name,
                   Double plannedAmount,
-                  Long categoryId) {
-    this(null, type, budgetMonth, name, new Money(plannedAmount), categoryId, null, null, null);
+                  Category category) {
+    this(null, type, budgetMonth, name, new Money(plannedAmount), category, null, null, null);
   }
 
   public LineItem(Long id,
@@ -35,11 +35,11 @@ public class LineItem extends BaseDomain {
                   BudgetMonth budgetMonth,
                   String name,
                   Integer plannedAmount,
-                  Long categoryId,
+                  Category category,
                   String description,
                   List<Transaction> transactions,
                   Instant lastModifiedAt) {
-    this(id, type, budgetMonth, name, new Money(plannedAmount), categoryId, description, transactions, lastModifiedAt);
+    this(id, type, budgetMonth, name, new Money(plannedAmount), category, description, transactions, lastModifiedAt);
   }
 
   public LineItem(Long id,
@@ -47,7 +47,7 @@ public class LineItem extends BaseDomain {
                   BudgetMonth budgetMonth,
                   String name,
                   Money plannedAmount,
-                  Long categoryId,
+                  Category category,
                   String description,
                   List<Transaction> transactions,
                   Instant lastModifiedAt) {
@@ -56,7 +56,7 @@ public class LineItem extends BaseDomain {
     this.budgetMonth = budgetMonth;
     this.name = name;
     this.plannedAmount = plannedAmount;
-    this.categoryId = categoryId;
+    this.category = category;
     this.description = description;
     this.transactions = transactions != null ? Collections.unmodifiableList(transactions) : List.of();
   }

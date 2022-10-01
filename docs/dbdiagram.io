@@ -3,14 +3,7 @@ Table item_types {
 }
 
 Table categories {
-  id bigint [pk]
-  type varchar(10)
-  budget_date date
-  name varchar
-  last_modified_at timestamptz
-    indexes {
-      (name, budget_date) [unique]
-  }
+  name(20) [pk]
 }
 
 Table line_items {
@@ -19,7 +12,7 @@ Table line_items {
   budget_date date
   name varchar(50)
   planned_amount int
-  category_id bigint
+  category_name varchar(20)
   description varchar(255)
   last_modified_at timestamptz
   indexes {
@@ -41,5 +34,5 @@ Table transactions {
 Ref: categories.type > item_types.type
 Ref: line_items.type > item_types.type
 Ref: transactions.type > item_types.type
-Ref: line_items.category_id > categories.id
+Ref: line_items.category_name > categories.name
 Ref: transactions.line_item_id > line_items.id
