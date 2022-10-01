@@ -19,6 +19,11 @@ public class CategoryResponse extends BaseResponse {
    */
   private final List<LineItemResponse> lineItemResponses;
 
+  private final Double totalTransactions;
+  private final Double percentageTransacted;
+  private final Double totalRemaining;
+  private final Double percentageRemaining;
+
   public CategoryResponse(Category category) {
     super(category.getType(), category.getLastModifiedAt());
     this.id = category.getId();
@@ -28,5 +33,10 @@ public class CategoryResponse extends BaseResponse {
         .stream()
         .map(LineItemResponse::new)
         .toList();
+
+    this.totalTransactions = category.calculateTotalTransactions().inDollars();
+    this.percentageTransacted = category.calculatePercentageTransacted();
+    this.totalRemaining = category.calculateTotalRemaining().inDollars();
+    this.percentageRemaining = category.calculatePercentageRemaining();
   }
 }

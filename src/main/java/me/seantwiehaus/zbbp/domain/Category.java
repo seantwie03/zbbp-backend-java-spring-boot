@@ -30,4 +30,33 @@ public class Category extends BaseDomain {
     this.name = name;
     this.lineItems = Collections.unmodifiableList(lineItems);
   }
+
+  public Money calculateTotalTransactions() {
+    return new Money(
+        lineItems.stream()
+            .map(LineItem::calculateTotalTransactions)
+            .mapToInt(Money::inCents)
+            .sum());
+  }
+
+  public Double calculatePercentageTransacted() {
+    return lineItems.stream()
+        .mapToDouble(LineItem::calculatePercentageTransacted)
+        .average()
+        .orElse(0.0);
+  }
+
+  public Money calculateTotalRemaining() {
+    return new Money(lineItems.stream()
+        .map(LineItem::calculateTotalRemaining)
+        .mapToInt(Money::inCents)
+        .sum());
+  }
+
+  public Double calculatePercentageRemaining() {
+    return lineItems.stream()
+        .mapToDouble(LineItem::calculatePercentageRemaining)
+        .average()
+        .orElse(0.0);
+  }
 }

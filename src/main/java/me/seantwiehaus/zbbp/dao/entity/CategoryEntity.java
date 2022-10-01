@@ -9,9 +9,9 @@ import me.seantwiehaus.zbbp.domain.Category;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,62 +19,62 @@ import java.util.Objects;
 @ToString
 @Entity
 @NamedEntityGraph(name = "category.lineItems.transactions", attributeNodes = {
-        @NamedAttributeNode(value = "lineItemEntities", subgraph = "transactions"),
+    @NamedAttributeNode(value = "lineItemEntities", subgraph = "transactions"),
 }, subgraphs = {
-        @NamedSubgraph(name = "transactions", attributeNodes = {
-                @NamedAttributeNode("transactionEntities")
-        })
+    @NamedSubgraph(name = "transactions", attributeNodes = {
+        @NamedAttributeNode("transactionEntities")
+    })
 })
 @Table(name = "categories", uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "budget_date" }) })
 public class CategoryEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
-    /**
-     * BudgetDates only need the Year and Month; however, storing only the Year and Month in the database can be
-     * tedious. Instead, the date is always set to the 1st.
-     */
-    @Column(name = "budget_date", nullable = false)
-    private LocalDate budgetDate;
-    @Column(name = "name", nullable = false)
-    private String name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  private Long id;
+  /**
+   * BudgetDates only need the Year and Month; however, storing only the Year and Month in the database can be
+   * tedious. Instead, the date is always set to the 1st.
+   */
+  @Column(name = "budget_date", nullable = false)
+  private LocalDate budgetDate;
+  @Column(name = "name", nullable = false)
+  private String name;
 
-    @OneToMany
-    @JoinColumn(name = "category_id")
-    @OrderBy("plannedAmount asc")
-    private List<LineItemEntity> lineItemEntities = new ArrayList<>();
+  @OneToMany
+  @JoinColumn(name = "category_id")
+  @OrderBy("type desc, plannedAmount desc")
+  private Set<LineItemEntity> lineItemEntities = new HashSet<>();
 
-    public void setBudgetDate(LocalDate budgetDate) {
-        this.budgetDate = budgetDate.withDayOfMonth(1);
-    }
+  public void setBudgetDate(LocalDate budgetDate) {
+    this.budgetDate = budgetDate.withDayOfMonth(1);
+  }
 
-    public void setBudgetDate(BudgetMonth budgetMonth) {
-        this.budgetDate = budgetMonth.asLocalDate();
-    }
+  public void setBudgetDate(BudgetMonth budgetMonth) {
+    this.budgetDate = budgetMonth.asLocalDate();
+  }
 
-    public Category convertToCategory() {
-        return new Category(
-                id,
-                type,
-                new BudgetMonth(budgetDate),
-                name,
-                lineItemEntities
-                        .stream()
-                        .map(LineItemEntity::convertToLineItem)
-                        .toList(),
-                lastModifiedAt);
-    }
+  public Category convertToCategory() {
+    return new Category(
+        id,
+        type,
+        new BudgetMonth(budgetDate),
+        name,
+        lineItemEntities
+            .stream()
+            .map(LineItemEntity::convertToLineItem)
+            .toList(),
+        lastModifiedAt);
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CategoryEntity that = (CategoryEntity) o;
-        return Objects.equals(id, that.id);
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    CategoryEntity that = (CategoryEntity) o;
+    return Objects.equals(id, that.id);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
+  }
 }
