@@ -2,15 +2,22 @@ package me.seantwiehaus.zbbp.domain;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import me.seantwiehaus.zbbp.exception.InternalServerException;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
 public class Budget {
   @Getter(AccessLevel.NONE)
-  private final List<LineItem> incomeItems;
+  private final List<LineItem> uncategorized;
   @Getter(AccessLevel.NONE)
-  private final List<LineItem> expenseItems;
+  private final List<LineItem> allIncomeItems;
+  @Getter(AccessLevel.NONE)
+  private final List<LineItem> allExpenseItems;
+
+  private final BudgetMonth budgetMonth;
   /**
    * Immutable List
    */
@@ -54,52 +61,63 @@ public class Budget {
   private final Money totalSpent;
   private final Money totalLeftToSpend;
 
-  public Budget(List<LineItem> lineItems) {
-    this.incomeItems = lineItems
-        .stream()
-        .filter(lineItem -> lineItem.getType().equals(ItemType.INCOME))
-        .toList();
-    this.expenseItems = lineItems
-        .stream()
-        .filter(lineItem -> lineItem.getType().equals(ItemType.EXPENSE))
-        .toList();
+  public Budget(BudgetMonth budgetMonth, List<LineItem> lineItems) {
+    this.uncategorized = lineItems;
+    if (budgetMonth == null) {
+      throw new InternalServerException("Unable to instantiate a Budget with a null BudgetMonth");
+    }
+    this.budgetMonth = budgetMonth;
 
-    this.incomes = lineItems
-        .stream()
-        .filter(lineItem -> lineItem.getCategory().equals(Category.INCOME))
-        .toList();
-    this.savings = lineItems
-        .stream()
-        .filter(lineItem -> lineItem.getCategory().equals(Category.SAVINGS))
-        .toList();
-    this.investments = lineItems
-        .stream()
-        .filter(lineItem -> lineItem.getCategory().equals(Category.INVESTMENTS))
-        .toList();
-    this.housing = lineItems
-        .stream()
-        .filter(lineItem -> lineItem.getCategory().equals(Category.HOUSING))
-        .toList();
-    this.transportation = lineItems
-        .stream()
-        .filter(lineItem -> lineItem.getCategory().equals(Category.TRANSPORTATION))
-        .toList();
-    this.food = lineItems
-        .stream()
-        .filter(lineItem -> lineItem.getCategory().equals(Category.FOOD))
-        .toList();
-    this.personal = lineItems
-        .stream()
-        .filter(lineItem -> lineItem.getCategory().equals(Category.PERSONAL))
-        .toList();
-    this.health = lineItems
-        .stream()
-        .filter(lineItem -> lineItem.getCategory().equals(Category.HEALTH))
-        .toList();
-    this.lifestyle = lineItems
-        .stream()
-        .filter(lineItem -> lineItem.getCategory().equals(Category.LIFESTYLE))
-        .toList();
+    if (notAllLineItemsHaveCorrectBudgetMonth()) {
+      throw new InternalServerException("Unable to instantiate a Budget with lineItems from different months");
+    }
+
+    List<LineItem> allIncomes = new ArrayList<>();
+    List<LineItem> allExpenses = new ArrayList<>();
+    List<LineItem> incomeItems = new ArrayList<>();
+    List<LineItem> savingItems = new ArrayList<>();
+    List<LineItem> investmentItems = new ArrayList<>();
+    List<LineItem> housingItems = new ArrayList<>();
+    List<LineItem> transportationItems = new ArrayList<>();
+    List<LineItem> foodItems = new ArrayList<>();
+    List<LineItem> personalItems = new ArrayList<>();
+    List<LineItem> healthItems = new ArrayList<>();
+    List<LineItem> lifestyleItems = new ArrayList<>();
+
+    lineItems.forEach(lineItem -> {
+      switch (lineItem.getType()) {
+        case INCOME -> allIncomes.add(lineItem);
+        case EXPENSE -> allExpenses.add(lineItem);
+        default ->
+            throw new InternalServerException("LineItem with ID: " + lineItem.getId() + " has an invalid ItemType.");
+      }
+
+      switch (lineItem.getCategory()) {
+        case INCOME -> incomeItems.add(lineItem);
+        case SAVINGS -> savingItems.add(lineItem);
+        case INVESTMENTS -> investmentItems.add(lineItem);
+        case HOUSING -> housingItems.add(lineItem);
+        case TRANSPORTATION -> transportationItems.add(lineItem);
+        case FOOD -> foodItems.add(lineItem);
+        case PERSONAL -> personalItems.add(lineItem);
+        case HEALTH -> healthItems.add(lineItem);
+        case LIFESTYLE -> lifestyleItems.add(lineItem);
+        default ->
+            throw new InternalServerException("LineItem with ID: " + lineItem.getId() + " has an invalid Category.");
+      }
+    });
+
+    this.allIncomeItems = Collections.unmodifiableList(allIncomes);
+    this.allExpenseItems = Collections.unmodifiableList(allExpenses);
+    this.incomes = Collections.unmodifiableList(incomeItems);
+    this.savings = Collections.unmodifiableList(savingItems);
+    this.investments = Collections.unmodifiableList(investmentItems);
+    this.housing = Collections.unmodifiableList(housingItems);
+    this.transportation = Collections.unmodifiableList(transportationItems);
+    this.food = Collections.unmodifiableList(foodItems);
+    this.personal = Collections.unmodifiableList(personalItems);
+    this.health = Collections.unmodifiableList(healthItems);
+    this.lifestyle = Collections.unmodifiableList(lifestyleItems);
 
     this.totalPlannedIncome = calculateTotalPlannedIncome();
     this.totalPlannedExpense = calculateTotalPlannedExpense();
@@ -108,9 +126,15 @@ public class Budget {
     this.totalLeftToSpend = calculateTotalLeftToSpend();
   }
 
+  private boolean notAllLineItemsHaveCorrectBudgetMonth() {
+    return uncategorized
+        .stream()
+        .anyMatch(lineItem -> ! lineItem.getBudgetMonth().equals(budgetMonth));
+  }
+
   private Money calculateTotalPlannedIncome() {
     return new Money(
-        incomeItems
+        allIncomeItems
             .stream()
             .map(LineItem::getPlannedAmount)
             .mapToInt(Money::inCents)
@@ -119,7 +143,7 @@ public class Budget {
 
   private Money calculateTotalPlannedExpense() {
     return new Money(
-        incomeItems
+        allIncomeItems
             .stream()
             .filter(lineItem -> lineItem.type.equals(ItemType.INCOME))
             .map(LineItem::getPlannedAmount)
@@ -129,7 +153,7 @@ public class Budget {
 
   private Money calculateTotalSpent() {
     return new Money(
-        expenseItems
+        allExpenseItems
             .stream()
             .filter(lineItem -> lineItem.type.equals(ItemType.EXPENSE))
             .map(LineItem::getTotalTransactions)
