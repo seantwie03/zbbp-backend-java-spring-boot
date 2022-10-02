@@ -19,6 +19,7 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 public class TransactionRequest {
+  @NotNull
   private ItemType type;
   @NotNull
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)

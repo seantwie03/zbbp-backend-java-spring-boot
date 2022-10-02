@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import me.seantwiehaus.zbbp.exception.InternalServerException;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,17 +62,15 @@ public class Budget {
   private final Money totalSpent;
   private final Money totalLeftToSpend;
 
-  public Budget(BudgetMonth budgetMonth, List<LineItem> lineItems) {
-    this.uncategorized = lineItems;
-    if (budgetMonth == null) {
-      throw new InternalServerException("Unable to instantiate a Budget with a null BudgetMonth");
-    }
+  public Budget(@NotNull BudgetMonth budgetMonth, @NotNull List<LineItem> lineItems) {
     this.budgetMonth = budgetMonth;
+    this.uncategorized = lineItems;
 
     if (notAllLineItemsHaveCorrectBudgetMonth()) {
       throw new InternalServerException("Unable to instantiate a Budget with lineItems from different months");
     }
 
+    // Mutable local variables
     List<LineItem> allIncomes = new ArrayList<>();
     List<LineItem> allExpenses = new ArrayList<>();
     List<LineItem> incomeItems = new ArrayList<>();
@@ -107,6 +106,7 @@ public class Budget {
       }
     });
 
+    // Set fields as immutable lists
     this.allIncomeItems = Collections.unmodifiableList(allIncomes);
     this.allExpenseItems = Collections.unmodifiableList(allExpenses);
     this.incomes = Collections.unmodifiableList(incomeItems);

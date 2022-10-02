@@ -3,6 +3,8 @@ package me.seantwiehaus.zbbp.domain;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -12,9 +14,13 @@ import java.util.List;
 @SuppressWarnings("java:S107")
 public class LineItem extends BaseDomain {
   private final Long id;
+  @NotNull
   private final BudgetMonth budgetMonth;
+  @NotBlank
   private final String name;
+  @NotNull
   private final Money plannedAmount;
+  @NotNull
   private final Category category;
   private final String description;
 
@@ -27,20 +33,20 @@ public class LineItem extends BaseDomain {
    */
   private final List<Transaction> transactions;
 
-  public LineItem(ItemType type,
-                  BudgetMonth budgetMonth,
-                  String name,
-                  Double plannedAmount,
-                  Category category) {
+  public LineItem(@NotNull ItemType type,
+                  @NotNull BudgetMonth budgetMonth,
+                  @NotNull String name,
+                  double plannedAmount,
+                  @NotNull Category category) {
     this(null, type, budgetMonth, name, new Money(plannedAmount), category, null, null, null);
   }
 
   public LineItem(Long id,
-                  ItemType type,
-                  BudgetMonth budgetMonth,
-                  String name,
-                  Integer plannedAmount,
-                  Category category,
+                  @NotNull ItemType type,
+                  @NotNull BudgetMonth budgetMonth,
+                  @NotNull String name,
+                  int plannedAmount,
+                  @NotNull Category category,
                   String description,
                   List<Transaction> transactions,
                   Instant lastModifiedAt) {
@@ -48,11 +54,11 @@ public class LineItem extends BaseDomain {
   }
 
   public LineItem(Long id,
-                  ItemType type,
-                  BudgetMonth budgetMonth,
-                  String name,
-                  Money plannedAmount,
-                  Category category,
+                  @NotNull ItemType type,
+                  @NotNull BudgetMonth budgetMonth,
+                  @NotNull String name,
+                  @NotNull Money plannedAmount,
+                  @NotNull Category category,
                   String description,
                   List<Transaction> transactions,
                   Instant lastModifiedAt) {

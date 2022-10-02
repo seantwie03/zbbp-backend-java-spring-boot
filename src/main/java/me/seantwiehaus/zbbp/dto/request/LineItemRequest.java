@@ -20,6 +20,7 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 public class LineItemRequest {
+  @NotNull
   private ItemType type;
   /**
    * Day of Month will be set to the 1st

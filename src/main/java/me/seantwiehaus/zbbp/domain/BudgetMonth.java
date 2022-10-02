@@ -3,6 +3,7 @@ package me.seantwiehaus.zbbp.domain;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Objects;
@@ -20,8 +21,8 @@ public class BudgetMonth {
   public BudgetMonth() {
   }
 
-  public BudgetMonth(LocalDate date) {
-    if (date != null) this.date = YearMonth.of(date.getYear(), date.getMonth());
+  public BudgetMonth(@NotNull LocalDate date) {
+    this.date = YearMonth.of(date.getYear(), date.getMonth());
   }
 
   public LocalDate asLocalDate() {
