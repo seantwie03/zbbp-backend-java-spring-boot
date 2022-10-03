@@ -143,9 +143,8 @@ public class Budget {
 
   private Money calculateTotalPlannedExpense() {
     return new Money(
-        allIncomeItems
+        allExpenseItems
             .stream()
-            .filter(lineItem -> lineItem.type.equals(ItemType.INCOME))
             .map(LineItem::getPlannedAmount)
             .mapToInt(Money::inCents)
             .sum());
@@ -155,7 +154,6 @@ public class Budget {
     return new Money(
         allExpenseItems
             .stream()
-            .filter(lineItem -> lineItem.type.equals(ItemType.EXPENSE))
             .map(LineItem::getTotalTransactions)
             .mapToInt(Money::inCents)
             .sum());
@@ -168,5 +166,4 @@ public class Budget {
   private Money calculateTotalLeftToSpend() {
     return new Money(totalPlannedExpense.inCents() - totalSpent.inCents());
   }
-
 }
