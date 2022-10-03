@@ -2,7 +2,6 @@ package me.seantwiehaus.zbbp.dto.response;
 
 import lombok.Getter;
 import me.seantwiehaus.zbbp.domain.Budget;
-import me.seantwiehaus.zbbp.domain.LineItem;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,39 +15,39 @@ public class BudgetResponse {
   /**
    * Immutable List
    */
-  private final List<LineItem> incomes;
+  private final List<LineItemResponse> incomes;
   /**
    * Immutable List
    */
-  private final List<LineItem> savings;
+  private final List<LineItemResponse> savings;
   /**
    * Immutable List
    */
-  private final List<LineItem> investments;
+  private final List<LineItemResponse> investments;
   /**
    * Immutable List
    */
-  private final List<LineItem> housing;
+  private final List<LineItemResponse> housing;
   /**
    * Immutable List
    */
-  private final List<LineItem> transportation;
+  private final List<LineItemResponse> transportation;
   /**
    * Immutable List
    */
-  private final List<LineItem> food;
+  private final List<LineItemResponse> food;
   /**
    * Immutable List
    */
-  private final List<LineItem> personal;
+  private final List<LineItemResponse> personal;
   /**
    * Immutable List
    */
-  private final List<LineItem> health;
+  private final List<LineItemResponse> health;
   /**
    * Immutable List
    */
-  private final List<LineItem> lifestyle;
+  private final List<LineItemResponse> lifestyle;
 
   private final Double totalPlannedIncome;
   private final Double totalPlannedExpense;
@@ -58,15 +57,42 @@ public class BudgetResponse {
 
   public BudgetResponse(Budget budget) {
     this.budgetDate = budget.getBudgetMonth().asLocalDate();
-    this.incomes = budget.getIncomes();
-    this.savings = budget.getSavings();
-    this.investments = budget.getInvestments();
-    this.housing = budget.getHousing();
-    this.transportation = budget.getTransportation();
-    this.food = budget.getFood();
-    this.personal = budget.getPersonal();
-    this.health = budget.getHealth();
-    this.lifestyle = budget.getLifestyle();
+    this.incomes = budget.getIncomes()
+        .stream()
+        .map(LineItemResponse::new)
+        .toList();
+    this.savings = budget.getSavings()
+        .stream()
+        .map(LineItemResponse::new)
+        .toList();
+    this.investments = budget.getInvestments()
+        .stream()
+        .map(LineItemResponse::new)
+        .toList();
+    this.housing = budget.getHousing()
+        .stream()
+        .map(LineItemResponse::new)
+        .toList();
+    this.transportation = budget.getTransportation()
+        .stream()
+        .map(LineItemResponse::new)
+        .toList();
+    this.food = budget.getFood()
+        .stream()
+        .map(LineItemResponse::new)
+        .toList();
+    this.personal = budget.getPersonal()
+        .stream()
+        .map(LineItemResponse::new)
+        .toList();
+    this.health = budget.getHealth()
+        .stream()
+        .map(LineItemResponse::new)
+        .toList();
+    this.lifestyle = budget.getLifestyle()
+        .stream()
+        .map(LineItemResponse::new)
+        .toList();
     this.totalPlannedIncome = budget.getTotalPlannedIncome().inDollars();
     this.totalPlannedExpense = budget.getTotalPlannedExpense().inDollars();
     this.totalLeftToBudget = budget.getTotalLeftToBudget().inDollars();
