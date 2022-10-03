@@ -5,10 +5,13 @@ import me.seantwiehaus.zbbp.dao.entity.LineItemEntity;
 import me.seantwiehaus.zbbp.dao.repository.LineItemRepository;
 import me.seantwiehaus.zbbp.domain.Budget;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
-import me.seantwiehaus.zbbp.domain.LineItem;
+import me.seantwiehaus.zbbp.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -28,10 +31,57 @@ public class BudgetService {
       log.warn("BudgetService::getForBudgetMonth was called with null BudgetMonth.");
       budgetMonth = new BudgetMonth();
     }
-    List<LineItem> lineItems = lineItemRepository.findAllByBudgetDate(budgetMonth.asLocalDate())
-        .stream()
-        .map(LineItemEntity::convertToLineItem)
-        .toList();
-    return new Budget(budgetMonth, lineItems);
+    List<LineItemEntity> entities = lineItemRepository.findAllByBudgetDate(budgetMonth.asLocalDate());
+    return new Budget(budgetMonth, LineItemEntity.convertToLineItems(entities));
   }
+
+  /**
+   * This method will attempt to copy the most recent set of LineItems to the budgetMonth specified
+   *
+   * @param budgetMonth The budgetMonth to copy LineItems to
+   * @return The copied budget.
+   */
+  public Budget create(BudgetMonth budgetMonth) {
+    throwIfLineItemsAlreadyExistForThisBudgetMonth(budgetMonth);
+    Optional<LocalDate> mostRecentBudgetDate = findMostRecentBudgetDateWithAtLeastOneLineItem();
+    if (mostRecentBudgetDate.isEmpty()) {
+      // If no previous budgetMonths have at least one LineItem, this is a completely new user
+      return new Budget(budgetMonth, new ArrayList<>());
+    }
+    List<LineItemEntity> exiting = lineItemRepository.findAllByBudgetDate(mostRecentBudgetDate.get());
+    List<LineItemEntity> copied = copyLineItemEntitiesToNewBudgetMonth(budgetMonth, exiting);
+    copied.forEach(item -> log.info("Creating new Line Item -> " + item));
+    List<LineItemEntity> saved = lineItemRepository.saveAll(copied);
+    return new Budget(budgetMonth, LineItemEntity.convertToLineItems(saved));
+  }
+
+  private void throwIfLineItemsAlreadyExistForThisBudgetMonth(BudgetMonth budgetMonth) {
+    List<LineItemEntity> allByBudgetDate = lineItemRepository.findAllByBudgetDate(budgetMonth.asLocalDate());
+    if (! allByBudgetDate.isEmpty()) {
+      throw new BadRequestException("LineItems for: " + budgetMonth + " already exists.");
+    }
+  }
+
+  private Optional<LocalDate> findMostRecentBudgetDateWithAtLeastOneLineItem() {
+    Optional<LineItemEntity> topLineItemOptional = lineItemRepository.findTopByOrderByBudgetDateDesc();
+    if (topLineItemOptional.isEmpty()) {
+      return Optional.empty();
+    }
+    return Optional.of(topLineItemOptional.get().getBudgetDate());
+  }
+
+  private List<LineItemEntity> copyLineItemEntitiesToNewBudgetMonth(BudgetMonth budgetMonth,
+                                                                    List<LineItemEntity> exitingEntities) {
+    return exitingEntities.stream().map(existingEntity -> {
+      LineItemEntity newEntity = new LineItemEntity();
+      newEntity.setType(existingEntity.getType());
+      newEntity.setBudgetDate(budgetMonth);
+      newEntity.setName(existingEntity.getName());
+      newEntity.setPlannedAmount(existingEntity.getPlannedAmount());
+      newEntity.setCategory(existingEntity.getCategory());
+      newEntity.setDescription(existingEntity.getDescription());
+      return newEntity;
+    }).toList();
+  }
+
 }

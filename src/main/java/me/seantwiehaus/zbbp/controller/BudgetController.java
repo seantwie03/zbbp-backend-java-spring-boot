@@ -5,9 +5,7 @@ import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.dto.response.BudgetResponse;
 import me.seantwiehaus.zbbp.service.BudgetService;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -32,5 +30,17 @@ public class BudgetController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> budgetDate) {
     BudgetMonth budgetMonth = budgetDate.map(BudgetMonth::new).orElse(new BudgetMonth());
     return new BudgetResponse(budgetService.getForBudgetMonth(budgetMonth));
+  }
+
+  /**
+   * This endpoint will copy LineItems from the most recent budget to the budgetDate specified.
+   *
+   * @param budgetDate The budgetDate to copy the LineItems to
+   * @return The newly copied budget
+   */
+  @PostMapping("/budget/{budgetDate}")
+  public BudgetResponse createBudgetFor(
+      @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate budgetDate) {
+    return new BudgetResponse(budgetService.create(new BudgetMonth(budgetDate)));
   }
 }

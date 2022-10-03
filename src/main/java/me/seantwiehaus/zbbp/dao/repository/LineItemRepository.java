@@ -19,4 +19,6 @@ public interface LineItemRepository extends JpaRepository<LineItemEntity, Long> 
 
   @EntityGraph("lineItem.transactions")
   List<LineItemEntity> findAllByBudgetDate(LocalDate budgetDate);
+
+  Optional<LineItemEntity> findTopByOrderByBudgetDateDesc();
 }

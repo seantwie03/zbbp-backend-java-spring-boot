@@ -81,6 +81,13 @@ public class LineItemEntity extends BaseEntity {
         lastModifiedAt);
   }
 
+  public static List<LineItem> convertToLineItems(List<LineItemEntity> lineItems) {
+    return lineItems
+        .stream()
+        .map(LineItemEntity::convertToLineItem)
+        .toList();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
