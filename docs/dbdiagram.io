@@ -3,7 +3,7 @@ Table item_types {
 }
 
 Table categories {
-  name(20) [pk]
+  name varchar(20) [pk]
 }
 
 Table line_items {
@@ -12,7 +12,7 @@ Table line_items {
   budget_date date
   name varchar(50)
   planned_amount int
-  category_name varchar(20)
+  category varchar(20)
   description varchar(255)
   last_modified_at timestamptz
   indexes {
@@ -31,8 +31,7 @@ Table transactions {
   last_modified_at timestamptz
 }
 
-Ref: categories.type > item_types.type
 Ref: line_items.type > item_types.type
 Ref: transactions.type > item_types.type
-Ref: line_items.category_name > categories.name
+Ref: line_items.category > categories.name
 Ref: transactions.line_item_id > line_items.id
