@@ -78,7 +78,7 @@ alter table transactions
       references item_types;
 
 alter table line_items
-  add constraint FK_category_name
+  add constraint FK_category
     foreign key (category)
       references categories;
 
