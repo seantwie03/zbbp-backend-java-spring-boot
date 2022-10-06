@@ -7,8 +7,10 @@ import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.Category;
 import me.seantwiehaus.zbbp.domain.LineItem;
+import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +36,13 @@ public class LineItemEntity extends BaseEntity {
    */
   @Column(name = "budget_date", nullable = false)
   private LocalDate budgetDate;
+  @NotBlank
+  @Column(name = "name", nullable = false)
   private String name;
   @Column(name = "planned_amount", nullable = false)
   private Integer plannedAmount;
   @Column(name = "category", nullable = false)
+  @ColumnTransformer(read = "upper(category)", write = "upper(?)")
   @Enumerated(EnumType.STRING)
   private Category category;
   @Column(name = "description")

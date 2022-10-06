@@ -1,11 +1,3 @@
-Table item_types {
-  type varchar(10) [pk]
-}
-
-Table categories {
-  name varchar(20) [pk]
-}
-
 Table line_items {
   id bigint [pk]
   type varchar(10)
@@ -31,7 +23,4 @@ Table transactions {
   last_modified_at timestamptz
 }
 
-Ref: line_items.type > item_types.type
-Ref: transactions.type > item_types.type
-Ref: line_items.category > categories.name
 Ref: transactions.line_item_id > line_items.id

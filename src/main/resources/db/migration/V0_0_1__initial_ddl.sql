@@ -5,26 +5,6 @@ drop sequence if exists hibernate_sequence;
 
 create sequence hibernate_sequence start with 10000 increment by 1;
 
-create table item_types
-(
-  type varchar(10) default 'EXPENSE',
-  primary key (type),
-  constraint type_not_empty check (
-    not (type = '' or type = ' ')
-    )
-);
-create unique index unique_case_insensitive_type_idx on item_types (UPPER(type));
-
-create table categories
-(
-  name varchar(20),
-  primary key (name),
-  constraint name_not_empty check (
-    not (name = '' or name = ' ')
-    )
-);
-create unique index unique_case_insensitive_name_idx on categories (UPPER(name));
-
 create table line_items
 (
   id               bigint      not null,
@@ -46,7 +26,10 @@ create table line_items
     not (category = '' or category = ' ')
     )
 );
-create unique index unique_insensitive_name_category_date_idx on line_items (UPPER(name), category, budget_date);
+-- This constraint was originally name and budget_date, but I added category to it. This change allows multiple
+-- LineItems to have the same name as long as they are in different Categories. One example where this is useful is
+-- Insurance. You could have an Insurance LineItem in several categories (Transportation, Housing, Health, etc.)
+create unique index unique_insensitive_name_category_date_idx on line_items (upper(name), upper(category), budget_date);
 
 create table transactions
 (
@@ -59,6 +42,9 @@ create table transactions
   description      varchar(255),
   last_modified_at timestamptz not null,
   primary key (id),
+  constraint type_not_empty check (
+    not (type = '' or type = ' ')
+    ),
   constraint merchant_not_empty check (
     not (merchant = '' or merchant = ' ')
     ),
@@ -66,21 +52,6 @@ create table transactions
     not (merchant = '' or merchant = ' ')
     )
 );
-
-alter table line_items
-  add constraint FK_type
-    foreign key (type)
-      references item_types;
-
-alter table transactions
-  add constraint FK_type
-    foreign key (type)
-      references item_types;
-
-alter table line_items
-  add constraint FK_category
-    foreign key (category)
-      references categories;
 
 alter table transactions
   add constraint FK_line_item_id
