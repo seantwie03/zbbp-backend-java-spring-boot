@@ -152,12 +152,29 @@ class LineItemEntityIT {
   @Test
   @Sql("classpath:insertMixedCaseTypeAndCategoryIntoLineItems.sql")
   void shouldRetrieveEnumsFromDatabaseWhenDatabaseContainsMixedCaseValues() {
-    // Given a database entry with mixed-case Type and Category (ID = 7878778 from @SQL)
-    // When that entry is retrieved from the database
+    // Given a database record with mixed-case Type and Category (ID = 7878778 from @SQL)
+    // When that record is retrieved from the database
     Optional<LineItemEntity> lineItem = lineItemRepository.findLineItemEntityById(7878778L);
     assertTrue(lineItem.isPresent());
     // Then the Enum values should be set correctly
     assertEquals(ItemType.EXPENSE, lineItem.get().getType());
     assertEquals(Category.FOOD, lineItem.get().getCategory());
+  }
+
+  @Test
+  @Sql("classpath:insertLineItemWithTransactionsToTestSorting.sql")
+  void shouldSortTransactionsByDateAndAmount() {
+    // Given a LineItem record (7878779) with 3 transactions (6969669, 6969668, 6969667)
+    // When that record is retrieved from the database
+    Optional<LineItemEntity> lineItem = lineItemRepository.findLineItemEntityById(7878779L);
+    assertTrue(lineItem.isPresent());
+    assertEquals(3, lineItem.get().getTransactionEntities().size());
+    // Then the Transactions should be sorted by Date then by Amount
+    // 6969669 has the earliest date and should be first
+    assertEquals(6969669L, lineItem.get().getTransactionEntities().get(0).getId());
+    // The next two have the same date, but 6969668 has the higher amount and should be next
+    assertEquals(6969668L, lineItem.get().getTransactionEntities().get(1).getId());
+    // 6969667 has the lowest amount and should be last
+    assertEquals(6969667L, lineItem.get().getTransactionEntities().get(2).getId());
   }
 }
