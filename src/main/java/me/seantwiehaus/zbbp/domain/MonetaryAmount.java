@@ -5,14 +5,14 @@ import lombok.ToString;
 import java.util.Objects;
 
 @ToString
-public class Money {
+public class MonetaryAmount {
   private final int amountInCents;
 
-  public Money(double amountInDollars) {
+  public MonetaryAmount(double amountInDollars) {
     this.amountInCents = Math.toIntExact(Math.round(amountInDollars * 100));
   }
 
-  public Money(int amountInCents) {
+  public MonetaryAmount(int amountInCents) {
     this.amountInCents = amountInCents;
   }
 
@@ -28,8 +28,8 @@ public class Money {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    Money money = (Money) o;
-    return amountInCents == money.amountInCents;
+    MonetaryAmount monetaryAmount = (MonetaryAmount) o;
+    return amountInCents == monetaryAmount.amountInCents;
   }
 
   @Override

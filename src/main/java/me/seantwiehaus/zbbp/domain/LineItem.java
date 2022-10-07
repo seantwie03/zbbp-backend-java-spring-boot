@@ -19,14 +19,14 @@ public class LineItem extends BaseDomain {
   @NotBlank
   private final String name;
   @NotNull
-  private final Money plannedAmount;
+  private final MonetaryAmount plannedAmount;
   @NotNull
   private final Category category;
   private final String description;
 
-  private final Money totalTransactions;
+  private final MonetaryAmount totalTransactions;
   private final double percentageOfPlanned;
-  private final Money totalRemaining;
+  private final MonetaryAmount totalRemaining;
 
   /**
    * Unmodifiable List
@@ -38,7 +38,7 @@ public class LineItem extends BaseDomain {
                   @NotNull String name,
                   double plannedAmount,
                   @NotNull Category category) {
-    this(null, type, budgetMonth, name, new Money(plannedAmount), category, null, null, null);
+    this(null, type, budgetMonth, name, new MonetaryAmount(plannedAmount), category, null, null, null);
   }
 
   public LineItem(Long id,
@@ -50,14 +50,14 @@ public class LineItem extends BaseDomain {
                   String description,
                   List<Transaction> transactions,
                   Instant lastModifiedAt) {
-    this(id, type, budgetMonth, name, new Money(plannedAmount), category, description, transactions, lastModifiedAt);
+    this(id, type, budgetMonth, name, new MonetaryAmount(plannedAmount), category, description, transactions, lastModifiedAt);
   }
 
   public LineItem(Long id,
                   @NotNull ItemType type,
                   @NotNull BudgetMonth budgetMonth,
                   @NotNull String name,
-                  @NotNull Money plannedAmount,
+                  @NotNull MonetaryAmount plannedAmount,
                   @NotNull Category category,
                   String description,
                   List<Transaction> transactions,
@@ -76,12 +76,12 @@ public class LineItem extends BaseDomain {
     this.totalRemaining = calculateTotalRemaining();
   }
 
-  private Money calculateTotalTransactions() {
-    return new Money(
+  private MonetaryAmount calculateTotalTransactions() {
+    return new MonetaryAmount(
         transactions
             .stream()
             .map(Transaction::getAmount)
-            .mapToInt(Money::inCents)
+            .mapToInt(MonetaryAmount::inCents)
             .sum());
   }
 
@@ -94,7 +94,7 @@ public class LineItem extends BaseDomain {
     return this.totalTransactions.inCents() * 100.0 / plannedAmount.inCents();
   }
 
-  private Money calculateTotalRemaining() {
-    return new Money(plannedAmount.inCents() - this.totalTransactions.inCents());
+  private MonetaryAmount calculateTotalRemaining() {
+    return new MonetaryAmount(plannedAmount.inCents() - this.totalTransactions.inCents());
   }
 }

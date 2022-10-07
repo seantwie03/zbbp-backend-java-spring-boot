@@ -22,7 +22,7 @@ class LineItemTest {
               ItemType.EXPENSE,
               LocalDate.now(),
               "Merchant 1",
-              new Money(10.50),
+              new MonetaryAmount(10.50),
               null,
               "Transaction 1"),
           new Transaction(
@@ -30,7 +30,7 @@ class LineItemTest {
               ItemType.EXPENSE,
               LocalDate.now(),
               "Merchant 2",
-              new Money(11.00),
+              new MonetaryAmount(11.00),
               null,
               "Transaction 2",
               null),
@@ -39,7 +39,7 @@ class LineItemTest {
               ItemType.EXPENSE,
               LocalDate.now(),
               "Merchant 3",
-              new Money(4.00),
+              new MonetaryAmount(4.00),
               null,
               "Transaction 3",
               null)
@@ -49,7 +49,7 @@ class LineItemTest {
           ItemType.EXPENSE,
           new BudgetMonth(),
           "Groceries",
-          new Money(50.0),
+          new MonetaryAmount(50.0),
           Category.FOOD,
           "Description",
           transactions,
@@ -58,7 +58,7 @@ class LineItemTest {
 
     @Test
     void shouldCalculateCorrectTotal() {
-      assertEquals(new Money(25.50), lineItem.getTotalTransactions());
+      assertEquals(new MonetaryAmount(25.50), lineItem.getTotalTransactions());
     }
 
     @Test
@@ -68,7 +68,7 @@ class LineItemTest {
 
     @Test
     void shouldCalculateCorrectAmountRemaining() {
-      assertEquals(new Money(24.50), lineItem.getTotalRemaining());
+      assertEquals(new MonetaryAmount(24.50), lineItem.getTotalRemaining());
     }
   }
 
@@ -83,7 +83,7 @@ class LineItemTest {
           ItemType.EXPENSE,
           new BudgetMonth(),
           "Restaurants",
-          new Money(50.0),
+          new MonetaryAmount(50.0),
           Category.FOOD,
           "Description",
           null,
@@ -93,7 +93,7 @@ class LineItemTest {
 
     @Test
     void shouldCalculateCorrectTotal() {
-      assertEquals(new Money(0), lineItem.getTotalTransactions());
+      assertEquals(new MonetaryAmount(0), lineItem.getTotalTransactions());
     }
 
     @Test
@@ -103,7 +103,7 @@ class LineItemTest {
 
     @Test
     void shouldCalculateCorrectAmountRemaining() {
-      assertEquals(new Money(50.0), lineItem.getTotalRemaining());
+      assertEquals(new MonetaryAmount(50.0), lineItem.getTotalRemaining());
     }
   }
 }

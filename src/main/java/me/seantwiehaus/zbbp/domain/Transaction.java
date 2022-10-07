@@ -14,7 +14,7 @@ public class Transaction extends BaseDomain {
   private final Long id;
   private final LocalDate date;
   private final String merchant;
-  private final Money amount;
+  private final MonetaryAmount amount;
   private final Long lineItemId;
   private final String description;
 
@@ -24,14 +24,14 @@ public class Transaction extends BaseDomain {
                      @NotNull Double amountInDollars,
                      Long lineItemId,
                      String description) {
-    this(null, type, date, merchant, new Money(amountInDollars), lineItemId, description, null);
+    this(null, type, date, merchant, new MonetaryAmount(amountInDollars), lineItemId, description, null);
   }
 
   public Transaction(Long id,
                      @NotNull ItemType type,
                      @NotNull LocalDate date,
                      @NotNull String merchant,
-                     @NotNull Money amount,
+                     @NotNull MonetaryAmount amount,
                      Long lineItemId,
                      String description) {
     this(id, type, date, merchant, amount, lineItemId, description, null);
@@ -45,14 +45,14 @@ public class Transaction extends BaseDomain {
                      @NotNull Long lineItemId,
                      String description,
                      Instant lastModifiedAt) {
-    this(id, type, date, merchant, new Money(amountInCents), lineItemId, description, lastModifiedAt);
+    this(id, type, date, merchant, new MonetaryAmount(amountInCents), lineItemId, description, lastModifiedAt);
   }
 
   public Transaction(Long id,
                      @NotNull ItemType type,
                      @NotNull LocalDate date,
                      @NotNull String merchant,
-                     @NotNull Money amount,
+                     @NotNull MonetaryAmount amount,
                      Long lineItemId,
                      String description,
                      Instant lastModifiedAt) {
