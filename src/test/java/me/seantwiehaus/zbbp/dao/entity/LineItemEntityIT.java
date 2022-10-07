@@ -150,7 +150,7 @@ class LineItemEntityIT {
   }
 
   @Test
-  @Sql("classpath:insertMixedCaseTypeAndCategoryIntoLineItems.sql")
+  @Sql("insertMixedCaseTypeAndCategoryIntoLineItems.sql")
   void shouldRetrieveEnumsFromDatabaseWhenDatabaseContainsMixedCaseValues() {
     // Given a database record with mixed-case Type and Category (ID = 7878778 from @SQL)
     // When that record is retrieved from the database
@@ -162,7 +162,7 @@ class LineItemEntityIT {
   }
 
   @Test
-  @Sql("classpath:insertLineItemWithTransactionsToTestSorting.sql")
+  @Sql("insertLineItemWithTransactionsToTestSorting.sql")
   void shouldSortTransactionsByDateAndAmount() {
     // Given a LineItem record (7878779) with 3 transactions (6969669, 6969668, 6969667)
     // When that record is retrieved from the database
