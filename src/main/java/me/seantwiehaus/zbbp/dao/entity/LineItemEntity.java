@@ -24,7 +24,7 @@ import java.util.Objects;
 @NamedEntityGraph(name = "lineItem.transactions", attributeNodes = {
     @NamedAttributeNode("transactionEntities"),
 })
-@Table(name = "line_items", uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "budget_date" }) })
+@Table(name = "line_items", uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "budget_date", "category" }) })
 public class LineItemEntity extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -32,7 +32,7 @@ public class LineItemEntity extends BaseEntity {
   private Long id;
   /**
    * BudgetDates only need the Year and Month; however, storing only the Year and Month in the database can be
-   * tedious. Instead, the date is always set to the 1st.
+   * tedious. Instead, the date is always set to the 1st in the setters.
    */
   @Column(name = "budget_date", nullable = false)
   private LocalDate budgetDate;
@@ -40,7 +40,7 @@ public class LineItemEntity extends BaseEntity {
   @Column(name = "name", nullable = false)
   private String name;
   @Column(name = "planned_amount", nullable = false)
-  private Integer plannedAmount;
+  private int plannedAmount;
   @Column(name = "category", nullable = false)
   @ColumnTransformer(read = "upper(category)", write = "upper(?)")
   @Enumerated(EnumType.STRING)
