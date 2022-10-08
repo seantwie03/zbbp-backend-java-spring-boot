@@ -9,7 +9,6 @@ import java.time.LocalDate;
 
 @Getter
 @ToString
-@SuppressWarnings("java:S107")
 public class Transaction extends BaseDomain {
   private final Long id;
   private final LocalDate date;
@@ -37,6 +36,7 @@ public class Transaction extends BaseDomain {
     this(id, type, date, merchant, amount, lineItemId, description, null);
   }
 
+  @SuppressWarnings("java:S107") // SonarLint thinks this is too many constructor parameters
   public Transaction(Long id,
                      @NotNull ItemType type,
                      @NotNull LocalDate date,
@@ -48,6 +48,7 @@ public class Transaction extends BaseDomain {
     this(id, type, date, merchant, new MonetaryAmount(amountInCents), lineItemId, description, lastModifiedAt);
   }
 
+  @SuppressWarnings("java:S107") // SonarLint thinks this is too many constructor parameters
   public Transaction(Long id,
                      @NotNull ItemType type,
                      @NotNull LocalDate date,

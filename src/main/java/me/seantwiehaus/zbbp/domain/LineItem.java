@@ -11,7 +11,6 @@ import java.util.List;
 
 @Getter
 @ToString
-@SuppressWarnings("java:S107")
 public class LineItem extends BaseDomain {
   private final Long id;
   @NotNull
@@ -41,6 +40,7 @@ public class LineItem extends BaseDomain {
     this(null, type, budgetMonth, name, new MonetaryAmount(plannedAmount), category, null, null, null);
   }
 
+  @SuppressWarnings("java:S107") // SonarLint thinks this is too many constructor parameters
   public LineItem(Long id,
                   @NotNull ItemType type,
                   @NotNull BudgetMonth budgetMonth,
@@ -53,6 +53,7 @@ public class LineItem extends BaseDomain {
     this(id, type, budgetMonth, name, new MonetaryAmount(plannedAmount), category, description, transactions, lastModifiedAt);
   }
 
+  @SuppressWarnings("java:S107") // SonarLint thinks this is too many constructor parameters
   public LineItem(Long id,
                   @NotNull ItemType type,
                   @NotNull BudgetMonth budgetMonth,
