@@ -1,6 +1,7 @@
 package me.seantwiehaus.zbbp.dao.entity;
 
 import me.seantwiehaus.zbbp.dao.repository.LineItemRepository;
+import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.domain.Category;
 import me.seantwiehaus.zbbp.domain.ItemType;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,12 +28,7 @@ class LineItemEntityIT {
 
   @BeforeEach
   void setup() {
-    lineItemEntity = new LineItemEntity();
-    lineItemEntity.setType(ItemType.EXPENSE);
-    lineItemEntity.setBudgetDate(LocalDate.now().withDayOfMonth(1));
-    lineItemEntity.setName("Groceries");
-    lineItemEntity.setPlannedAmount(120000);
-    lineItemEntity.setCategory(Category.FOOD);
+    lineItemEntity = createLineItemEntity("Groceries", new BudgetMonth().asLocalDate(), Category.FOOD);
   }
 
   @Test
@@ -70,25 +66,11 @@ class LineItemEntityIT {
   @Test
   void shouldEnforceUniqueConstraint() {
     // Given two entities with the same name, budgetDate, and category
-    LineItemEntity lineItem1 = new LineItemEntity();
-    lineItem1.setName("The Name");
-    lineItem1.setBudgetDate(LocalDate.now().withDayOfMonth(1));
-    lineItem1.setCategory(Category.FOOD);
-    LineItemEntity lineItem2 = new LineItemEntity();
-    lineItem2.setName("The Name");
-    lineItem2.setBudgetDate(LocalDate.now().withDayOfMonth(1));
-    lineItem2.setCategory(Category.FOOD);
-    // And the rest of the required fields
-    lineItem1.setType(ItemType.EXPENSE);
-    lineItem1.setPlannedAmount(120000);
-    lineItem1.setBudgetDate(LocalDate.now());
-    lineItem2.setType(ItemType.EXPENSE);
-    lineItem2.setPlannedAmount(120000);
-    lineItem2.setBudgetDate(LocalDate.now());
-    // When the first entity is saved
-    lineItemRepository.save(lineItem1);
-    // And then the second entity is saved
-    // Then a DataIntegrityViolationException should be thrown
+    LineItemEntity lineItem1 = createLineItemEntity("name", new BudgetMonth().asLocalDate(), Category.FOOD);
+    LineItemEntity lineItem2 = createLineItemEntity("name", new BudgetMonth().asLocalDate(), Category.FOOD);
+    // When the first entity is saved, no exceptions should be thrown
+    assertDoesNotThrow(() -> lineItemRepository.save(lineItem1));
+    // And when the second entity is saved, a DataIntegrityViolationException should be thrown
     DataIntegrityViolationException violationException =
         assertThrows(DataIntegrityViolationException.class, () -> lineItemRepository.save(lineItem2));
     // And the exception should contain the following error message
@@ -99,25 +81,11 @@ class LineItemEntityIT {
   @Test
   void shouldEnforceUniqueConstraintEvenWhenMixedCase() {
     // Given two entities with the same mIxEdCaSe name, budgetDate, and category
-    LineItemEntity lineItem1 = new LineItemEntity();
-    lineItem1.setName("MiXeDcAsE");
-    lineItem1.setBudgetDate(LocalDate.now().withDayOfMonth(1));
-    lineItem1.setCategory(Category.FOOD);
-    LineItemEntity lineItem2 = new LineItemEntity();
-    lineItem2.setName("mIxEdCaSe");
-    lineItem2.setBudgetDate(LocalDate.now().withDayOfMonth(1));
-    lineItem2.setCategory(Category.FOOD);
-    // And the rest of the required fields
-    lineItem1.setType(ItemType.EXPENSE);
-    lineItem1.setPlannedAmount(120000);
-    lineItem1.setBudgetDate(LocalDate.now());
-    lineItem2.setType(ItemType.EXPENSE);
-    lineItem2.setPlannedAmount(120000);
-    lineItem2.setBudgetDate(LocalDate.now());
-    // When the first entity is saved
-    lineItemRepository.save(lineItem1);
-    // And then the second entity is saved
-    // Then a DataIntegrityViolationException should be thrown
+    LineItemEntity lineItem1 = createLineItemEntity("MiXeDcAsE", new BudgetMonth().asLocalDate(), Category.FOOD);
+    LineItemEntity lineItem2 = createLineItemEntity("mIxEdCaSe", new BudgetMonth().asLocalDate(), Category.FOOD);
+    // When the first entity is saved, no exceptions should be thrown
+    assertDoesNotThrow(() -> lineItemRepository.save(lineItem1));
+    // And when the second entity is saved, a DataIntegrityViolationException should be thrown
     DataIntegrityViolationException violationException =
         assertThrows(DataIntegrityViolationException.class, () -> lineItemRepository.save(lineItem2));
     // And the exception should contain the following error message
@@ -128,24 +96,11 @@ class LineItemEntityIT {
   @Test
   void shouldAllowTwoItemsToHaveSameNameIfDifferentCategory() {
     // Given two entities with the same name, budgetDate but different categories
-    LineItemEntity lineItem1 = new LineItemEntity();
-    lineItem1.setName("Insurance");
-    lineItem1.setBudgetDate(LocalDate.now().withDayOfMonth(1));
-    lineItem1.setCategory(Category.TRANSPORTATION);
-    LineItemEntity lineItem2 = new LineItemEntity();
-    lineItem2.setName("Insurance");
-    lineItem2.setBudgetDate(LocalDate.now().withDayOfMonth(1));
-    lineItem2.setCategory(Category.HOUSING);
-    // And the rest of the required fields
-    lineItem1.setType(ItemType.EXPENSE);
-    lineItem1.setPlannedAmount(120000);
-    lineItem1.setBudgetDate(LocalDate.now());
-    lineItem2.setType(ItemType.EXPENSE);
-    lineItem2.setPlannedAmount(120000);
-    lineItem2.setBudgetDate(LocalDate.now());
-    // When the first entity is saved
-    lineItemRepository.save(lineItem1);
-    // And then the second entity is saved successfully
+    LineItemEntity lineItem1 = createLineItemEntity("Insurance", new BudgetMonth().asLocalDate(), Category.HEALTH);
+    LineItemEntity lineItem2 = createLineItemEntity("Insurance", new BudgetMonth().asLocalDate(), Category.HOUSING);
+    // When the first entity is saved, no exceptions should be thrown
+    assertDoesNotThrow(() -> lineItemRepository.save(lineItem1));
+    // And when the second entity is saved, no exceptions should be thrown
     assertDoesNotThrow(() -> lineItemRepository.save(lineItem2));
   }
 
@@ -176,5 +131,15 @@ class LineItemEntityIT {
     assertEquals(6969668L, lineItem.get().getTransactionEntities().get(1).getId());
     // 6969667 has the lowest amount and should be last
     assertEquals(6969667L, lineItem.get().getTransactionEntities().get(2).getId());
+  }
+
+  private LineItemEntity createLineItemEntity(String name, LocalDate budgetDate, Category category) {
+    lineItemEntity = new LineItemEntity();
+    lineItemEntity.setType(ItemType.EXPENSE);
+    lineItemEntity.setBudgetDate(budgetDate);
+    lineItemEntity.setName(name);
+    lineItemEntity.setPlannedAmount(120000);
+    lineItemEntity.setCategory(category);
+    return lineItemEntity;
   }
 }
