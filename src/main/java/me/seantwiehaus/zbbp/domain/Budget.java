@@ -5,6 +5,7 @@ import lombok.Getter;
 import me.seantwiehaus.zbbp.exception.InternalServerException;
 
 import javax.validation.constraints.NotNull;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +19,7 @@ public class Budget {
   @Getter(AccessLevel.NONE)
   private final List<LineItem> allExpenseItems;
 
-  private final BudgetMonth budgetMonth;
+  private final YearMonth budgetDate;
   /**
    * Immutable List
    */
@@ -62,8 +63,8 @@ public class Budget {
   private final MonetaryAmount totalSpent;
   private final MonetaryAmount totalLeftToSpend;
 
-  public Budget(@NotNull BudgetMonth budgetMonth, @NotNull List<LineItem> lineItems) {
-    this.budgetMonth = budgetMonth;
+  public Budget(@NotNull YearMonth budgetDate, @NotNull List<LineItem> lineItems) {
+    this.budgetDate = budgetDate;
     this.uncategorized = lineItems;
 
     if (notAllLineItemsHaveCorrectBudgetMonth()) {
@@ -129,7 +130,7 @@ public class Budget {
   private boolean notAllLineItemsHaveCorrectBudgetMonth() {
     return uncategorized
         .stream()
-        .anyMatch(lineItem -> ! lineItem.getBudgetMonth().equals(budgetMonth));
+        .anyMatch(lineItem -> ! lineItem.getBudgetDate().equals(budgetDate));
   }
 
   private MonetaryAmount calculateTotalPlannedIncome() {

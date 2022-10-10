@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +48,7 @@ class LineItemTest {
       lineItem = new LineItem(
           1L,
           ItemType.EXPENSE,
-          new BudgetMonth(),
+          YearMonth.now(),
           "Groceries",
           new MonetaryAmount(50.0),
           Category.FOOD,
@@ -81,7 +82,7 @@ class LineItemTest {
       lineItem = new LineItem(
           null,
           ItemType.EXPENSE,
-          new BudgetMonth(),
+          YearMonth.now(),
           "Restaurants",
           new MonetaryAmount(50.0),
           Category.FOOD,

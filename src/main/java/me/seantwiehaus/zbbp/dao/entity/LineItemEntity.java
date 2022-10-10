@@ -4,14 +4,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import me.seantwiehaus.zbbp.domain.BudgetMonth;
+import me.seantwiehaus.zbbp.dao.converter.YearMonthDateAttributeConverter;
 import me.seantwiehaus.zbbp.domain.Category;
 import me.seantwiehaus.zbbp.domain.LineItem;
 import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,18 +24,17 @@ import java.util.Objects;
 @NamedEntityGraph(name = "lineItem.transactions", attributeNodes = {
     @NamedAttributeNode("transactionEntities"),
 })
-@Table(name = "line_items", uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "budget_date", "category" }) })
+@Table(
+    name = "line_items",
+    uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "budget_date", "category" }) })
 public class LineItemEntity extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   @Column(name = "id", nullable = false)
   private Long id;
-  /**
-   * BudgetDates only need the Year and Month; however, storing only the Year and Month in the database can be
-   * tedious. Instead, the date is always set to the 1st in the setters.
-   */
   @Column(name = "budget_date", nullable = false)
-  private LocalDate budgetDate;
+  @Convert(converter = YearMonthDateAttributeConverter.class)
+  private YearMonth budgetDate;
   @NotBlank
   @Column(name = "name", nullable = false)
   private String name;
@@ -55,26 +54,18 @@ public class LineItemEntity extends BaseEntity {
 
   public LineItemEntity(LineItem lineItem) {
     this.id = lineItem.getId();
-    this.budgetDate = lineItem.getBudgetMonth().asLocalDate();
+    this.budgetDate = lineItem.getBudgetDate();
     this.name = lineItem.getName();
     this.plannedAmount = lineItem.getPlannedAmount().inCents();
     this.category = lineItem.getCategory();
     this.description = lineItem.getDescription();
   }
 
-  public void setBudgetDate(LocalDate budgetDate) {
-    this.budgetDate = budgetDate.withDayOfMonth(1);
-  }
-
-  public void setBudgetDate(BudgetMonth budgetMonth) {
-    this.budgetDate = budgetMonth.asLocalDate();
-  }
-
   public LineItem convertToLineItem() {
     return new LineItem(
         id,
         type,
-        new BudgetMonth(budgetDate),
+        budgetDate,
         name,
         plannedAmount,
         category,

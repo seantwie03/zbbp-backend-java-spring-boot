@@ -8,7 +8,11 @@
 INSERT INTO line_items (id, type, budget_date, name, planned_amount, category, description, last_modified_at)
 VALUES (110,
         'INCOME',
-        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        make_timestamp(
+                extract(year FROM current_date)::int, -- Year
+                extract(month FROM current_date)::int, -- Month
+                1, -- Day
+                0, 0, 0.0), -- Hour, Minute, Second
         'Spouse 1 Income',
         300000,
         'INCOME',
@@ -25,7 +29,11 @@ ON CONFLICT DO NOTHING;
 INSERT INTO line_items (id, type, budget_date, name, planned_amount, category, description, last_modified_at)
 VALUES (111,
         'INCOME',
-        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        make_timestamp(
+                extract(year FROM current_date)::int, -- Year
+                extract(month FROM current_date)::int, -- Month
+                1, -- Day
+                0, 0, 0.0), -- Hour, Minute, Second
         'Spouse 2 Income',
         250000,
         'INCOME',
@@ -42,7 +50,11 @@ ON CONFLICT DO NOTHING;
 INSERT INTO line_items (id, type, budget_date, name, planned_amount, category, last_modified_at)
 VALUES (112,
         'INCOME',
-        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        make_timestamp(
+                extract(year FROM current_date)::int, -- Year
+                extract(month FROM current_date)::int, -- Month
+                1, -- Day
+                0, 0, 0.0), -- Hour, Minute, Second
         'Side Hustle - Photography',
         0,
         'INCOME',
@@ -61,7 +73,11 @@ ON CONFLICT DO NOTHING;
 --
 INSERT INTO line_items (id, budget_date, name, planned_amount, category, description, last_modified_at)
 VALUES (211,
-        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        make_timestamp(
+                extract(year FROM current_date)::int, -- Year
+                extract(month FROM current_date)::int, -- Month
+                1, -- Day
+                0, 0, 0.0), -- Hour, Minute, Second
         'Emergency Fund / Family Savings',
         10000,
         'SAVINGS',
@@ -77,7 +93,11 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO line_items (id, budget_date, name, planned_amount, category, description, last_modified_at)
 VALUES (212,
-        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        make_timestamp(
+                extract(year FROM current_date)::int, -- Year
+                extract(month FROM current_date)::int, -- Month
+                1, -- Day
+                0, 0, 0.0), -- Hour, Minute, Second
         'Spouse 1 Savings',
         10000,
         'SAVINGS',
@@ -93,7 +113,11 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO line_items (id, budget_date, name, planned_amount, category, description, last_modified_at)
 VALUES (213,
-        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        make_timestamp(
+                extract(year FROM current_date)::int, -- Year
+                extract(month FROM current_date)::int, -- Month
+                1, -- Day
+                0, 0, 0.0), -- Hour, Minute, Second
         'Spouse 2 Savings',
         10000,
         'SAVINGS',
@@ -109,7 +133,11 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO line_items (id, budget_date, name, planned_amount, category, description, last_modified_at)
 VALUES (214,
-        make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
+        make_timestamp(
+                extract(year FROM current_date)::int, -- Year
+                extract(month FROM current_date)::int, -- Month
+                1, -- Day
+                0, 0, 0.0), -- Hour, Minute, Second
         '529 College Savings Plan',
         50000,
         'INVESTMENTS',

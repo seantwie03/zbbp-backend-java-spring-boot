@@ -1,17 +1,14 @@
 package me.seantwiehaus.zbbp.validation;
 
-import me.seantwiehaus.zbbp.domain.BudgetMonth;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.time.LocalDate;
+import java.time.YearMonth;
 
 public class MustBeCurrentOrFutureBudgetDateValidator implements
-    ConstraintValidator<MustBeCurrentOrFutureBudgetDate, LocalDate> {
+    ConstraintValidator<MustBeCurrentOrFutureBudgetDate, YearMonth> {
   @Override
-  public boolean isValid(LocalDate localDate, ConstraintValidatorContext constraintValidatorContext) {
-    LocalDate current = new BudgetMonth().asLocalDate();
-    LocalDate toValidate = new BudgetMonth(localDate).asLocalDate();
-    return toValidate.equals(current) || toValidate.isAfter(current);
+  public boolean isValid(YearMonth yearMonth, ConstraintValidatorContext constraintValidatorContext) {
+    YearMonth current = YearMonth.now();
+    return yearMonth.equals(current) || yearMonth.isAfter(current);
   }
 }

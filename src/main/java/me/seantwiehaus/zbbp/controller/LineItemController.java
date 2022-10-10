@@ -1,13 +1,10 @@
 package me.seantwiehaus.zbbp.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import me.seantwiehaus.zbbp.domain.BudgetMonth;
-import me.seantwiehaus.zbbp.domain.BudgetMonthRange;
 import me.seantwiehaus.zbbp.dto.request.LineItemRequest;
 import me.seantwiehaus.zbbp.dto.response.LineItemResponse;
 import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.service.LineItemService;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +13,7 @@ import javax.validation.constraints.Min;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,24 +29,20 @@ public class LineItemController {
   }
 
   /**
-   * @param startBudgetDate Include all Line Items with budgetDates greater-than-or-equal to this BudgetDate.
-   *                        BudgetDates are always on the 1st day of the month.
-   *                        If no value is supplied, the default value will be the first day of the current month
-   *                        100 years in the past.
-   * @param endBudgetDate   Include all Line Items with budgetDates less-than-or-equal-to this BudgetDate.
-   *                        BudgetDates are always on the 1st day of the month.
-   *                        If no value is supplied, the default value will be the first day of the current month
-   *                        100 years in the future.
-   * @return All Line Items with BudgetDates between the startBudgetDate and endBudgetDate (inclusive).
+   * @param startingBudgetDate The first budgetDate to include in the list of results.
+   *                           The default value is the current month 100 years in the past.
+   * @param endingBudgetDate   The last budgetDate to include in the list of results.
+   *                           If no value is supplied, the default value is the current month 100 years in the future.
+   *                           The default value is the current month 100 years in the future.
+   * @return All Line Items between the starting and ending budgetDates (inclusive).
    */
   @GetMapping("/line-items")
   public List<LineItemResponse> getAllLineItemsBetween(
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> startBudgetDate,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> endBudgetDate) {
-    BudgetMonthRange budgetMonthRange = new BudgetMonthRange(
-        startBudgetDate.map(BudgetMonth::new).orElse(null),
-        endBudgetDate.map(BudgetMonth::new).orElse(null));
-    return service.getAllBetween(budgetMonthRange)
+      @RequestParam Optional<YearMonth> startingBudgetDate,
+      @RequestParam Optional<YearMonth> endingBudgetDate) {
+    return service.getAllBetween(
+            startingBudgetDate.orElse(YearMonth.now().minusYears(100)),
+            endingBudgetDate.orElse(YearMonth.now().plusYears(100)))
         .stream()
         .map(LineItemResponse::new)
         .toList();

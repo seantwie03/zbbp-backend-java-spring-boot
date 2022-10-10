@@ -1,16 +1,14 @@
 package me.seantwiehaus.zbbp.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.dto.response.BudgetResponse;
 import me.seantwiehaus.zbbp.service.BudgetService;
 import me.seantwiehaus.zbbp.validation.MustBeCurrentOrFutureBudgetDate;
 import me.seantwiehaus.zbbp.validation.MustNotBeMoreThanSixMonthsInFuture;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Optional;
 
 @Slf4j
@@ -31,9 +29,8 @@ public class BudgetController {
    */
   @GetMapping("/budget")
   public BudgetResponse getBudgetFor(
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> budgetDate) {
-    BudgetMonth budgetMonth = budgetDate.map(BudgetMonth::new).orElse(new BudgetMonth());
-    return new BudgetResponse(budgetService.getForBudgetMonth(budgetMonth));
+      @RequestParam Optional<YearMonth> budgetDate) {
+    return new BudgetResponse(budgetService.getForBudgetMonth(budgetDate.orElse(YearMonth.now())));
   }
 
   /**
@@ -44,8 +41,7 @@ public class BudgetController {
    */
   @PostMapping("/budget/{budgetDate}")
   public BudgetResponse createBudgetFor(
-      @PathVariable @MustBeCurrentOrFutureBudgetDate @MustNotBeMoreThanSixMonthsInFuture
-      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate budgetDate) {
-    return new BudgetResponse(budgetService.create(new BudgetMonth(budgetDate)));
+      @PathVariable @MustBeCurrentOrFutureBudgetDate @MustNotBeMoreThanSixMonthsInFuture YearMonth budgetDate) {
+    return new BudgetResponse(budgetService.create(budgetDate));
   }
 }

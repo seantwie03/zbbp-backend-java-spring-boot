@@ -3,14 +3,12 @@ package me.seantwiehaus.zbbp.service;
 import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dao.entity.LineItemEntity;
 import me.seantwiehaus.zbbp.dao.repository.LineItemRepository;
-import me.seantwiehaus.zbbp.domain.BudgetMonthRange;
 import me.seantwiehaus.zbbp.domain.LineItem;
-import me.seantwiehaus.zbbp.exception.InternalServerException;
 import me.seantwiehaus.zbbp.exception.ResourceConflictException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Collections;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,27 +22,18 @@ public class LineItemService {
   }
 
   /**
-   * @param budgetMonthRange Range of BudgetMonths to search
-   * @return All Line Items within budgetMonthRange (inclusive).
+   * @param startingBudgetDate The first budgetDate to include in the list of results.
+   * @param endingBudgetDate   The last budgetDate to include in the list of results.
+   * @return All Line Items between starting and ending budgetDates (inclusive).
    */
-  public List<LineItem> getAllBetween(BudgetMonthRange budgetMonthRange) {
-    if (budgetMonthRange == null) {
-      log.warn("LineItemService::getAllBetween was called with null BudgetMonthRange.");
-      return Collections.emptyList();
-    }
-    return repository.findAllByBudgetDateBetween(
-            budgetMonthRange.getStart().asLocalDate(),
-            budgetMonthRange.getEnd().asLocalDate())
+  public List<LineItem> getAllBetween(YearMonth startingBudgetDate, YearMonth endingBudgetDate) {
+    return repository.findAllByBudgetDateBetween(startingBudgetDate, endingBudgetDate)
         .stream()
         .map(LineItemEntity::convertToLineItem)
         .toList();
   }
 
   public Optional<LineItem> findById(Long id) {
-    if (id == null) {
-      log.warn("LineItemService::findById was called with null ID");
-      return Optional.empty();
-    }
     return repository.findLineItemEntityById(id)
         .map(LineItemEntity::convertToLineItem);
   }
@@ -55,9 +44,6 @@ public class LineItemService {
   }
 
   public Optional<LineItem> update(Long id, Instant ifUnmodifiedSince, LineItem lineItem) {
-    if (id == null || ifUnmodifiedSince == null || lineItem == null) {
-      throw new InternalServerException("Unable to update Line Item. One or more parameters is null");
-    }
     Optional<LineItemEntity> existingEntity = repository.findLineItemEntityById(id);
     return existingEntity
         .map(entity -> {
@@ -65,7 +51,7 @@ public class LineItemService {
             throw new ResourceConflictException(
                 "Line Item with ID: " + id + " has been modified since this client requested it.");
           }
-          entity.setBudgetDate(lineItem.getBudgetMonth());
+          entity.setBudgetDate(lineItem.getBudgetDate());
           entity.setName(lineItem.getName());
           entity.setPlannedAmount(lineItem.getPlannedAmount().inCents());
           entity.setCategory(lineItem.getCategory());
@@ -77,7 +63,6 @@ public class LineItemService {
   }
 
   public Optional<Long> delete(Long id) {
-    if (id == null) throw new InternalServerException("Unable to delete Line Item. ID is null");
     return repository.findById(id)
         .map(entity -> {
           log.info("Deleting Line Item with ID=" + id + " -> " + entity);

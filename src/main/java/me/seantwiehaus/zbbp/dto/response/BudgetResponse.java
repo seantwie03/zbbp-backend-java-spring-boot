@@ -3,15 +3,12 @@ package me.seantwiehaus.zbbp.dto.response;
 import lombok.Getter;
 import me.seantwiehaus.zbbp.domain.Budget;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 @Getter
 public class BudgetResponse {
-  /**
-   * Day of Month is always set to the 1st
-   */
-  private final LocalDate budgetDate;
+  private final YearMonth budgetDate;
   /**
    * Immutable List
    */
@@ -56,7 +53,7 @@ public class BudgetResponse {
   private final Double totalLeftToSpend;
 
   public BudgetResponse(Budget budget) {
-    this.budgetDate = budget.getBudgetMonth().asLocalDate();
+    this.budgetDate = budget.getBudgetDate();
     this.incomes = budget.getIncomes()
         .stream()
         .map(LineItemResponse::new)

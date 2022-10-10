@@ -6,6 +6,7 @@ import lombok.ToString;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
+import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 public class LineItem extends BaseDomain {
   private final Long id;
   @NotNull
-  private final BudgetMonth budgetMonth;
+  private final YearMonth budgetDate;
   @NotBlank
   private final String name;
   @NotNull
@@ -33,30 +34,30 @@ public class LineItem extends BaseDomain {
   private final List<Transaction> transactions;
 
   public LineItem(@NotNull ItemType type,
-                  @NotNull BudgetMonth budgetMonth,
+                  @NotNull YearMonth budgetDate,
                   @NotNull String name,
                   double plannedAmount,
                   @NotNull Category category) {
-    this(null, type, budgetMonth, name, new MonetaryAmount(plannedAmount), category, null, null, null);
+    this(null, type, budgetDate, name, new MonetaryAmount(plannedAmount), category, null, null, null);
   }
 
   @SuppressWarnings("java:S107") // SonarLint thinks this is too many constructor parameters
   public LineItem(Long id,
                   @NotNull ItemType type,
-                  @NotNull BudgetMonth budgetMonth,
+                  @NotNull YearMonth budgetDate,
                   @NotNull String name,
                   int plannedAmount,
                   @NotNull Category category,
                   String description,
                   List<Transaction> transactions,
                   Instant lastModifiedAt) {
-    this(id, type, budgetMonth, name, new MonetaryAmount(plannedAmount), category, description, transactions, lastModifiedAt);
+    this(id, type, budgetDate, name, new MonetaryAmount(plannedAmount), category, description, transactions, lastModifiedAt);
   }
 
   @SuppressWarnings("java:S107") // SonarLint thinks this is too many constructor parameters
   public LineItem(Long id,
                   @NotNull ItemType type,
-                  @NotNull BudgetMonth budgetMonth,
+                  @NotNull YearMonth budgetDate,
                   @NotNull String name,
                   @NotNull MonetaryAmount plannedAmount,
                   @NotNull Category category,
@@ -65,7 +66,7 @@ public class LineItem extends BaseDomain {
                   Instant lastModifiedAt) {
     super(type, lastModifiedAt);
     this.id = id;
-    this.budgetMonth = budgetMonth;
+    this.budgetDate = budgetDate;
     this.name = name;
     this.plannedAmount = plannedAmount;
     this.category = category;

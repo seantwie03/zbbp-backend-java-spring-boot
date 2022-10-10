@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,10 +15,10 @@ public interface LineItemRepository extends JpaRepository<LineItemEntity, Long> 
   Optional<LineItemEntity> findLineItemEntityById(Long id);
 
   @EntityGraph("lineItem.transactions")
-  List<LineItemEntity> findAllByBudgetDateBetween(LocalDate startDate, LocalDate endDate);
+  List<LineItemEntity> findAllByBudgetDateBetween(YearMonth startDate, YearMonth endDate);
 
   @EntityGraph("lineItem.transactions")
-  List<LineItemEntity> findAllByBudgetDate(LocalDate budgetDate);
+  List<LineItemEntity> findAllByBudgetDate(YearMonth budgetDate);
 
   Optional<LineItemEntity> findTopByOrderByBudgetDateDesc();
 }

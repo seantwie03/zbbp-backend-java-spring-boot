@@ -4,11 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dao.entity.LineItemEntity;
 import me.seantwiehaus.zbbp.dao.repository.LineItemRepository;
 import me.seantwiehaus.zbbp.domain.Budget;
-import me.seantwiehaus.zbbp.domain.BudgetMonth;
 import me.seantwiehaus.zbbp.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,16 +22,12 @@ public class BudgetService {
   }
 
   /**
-   * @param budgetMonth The monthly Budget to return
+   * @param budgetDate The monthly Budget to return
    * @return The Budget for the specified month
    */
-  public Budget getForBudgetMonth(BudgetMonth budgetMonth) {
-    if (budgetMonth == null) {
-      log.warn("BudgetService::getForBudgetMonth was called with null BudgetMonth.");
-      budgetMonth = new BudgetMonth();
-    }
-    List<LineItemEntity> entities = lineItemRepository.findAllByBudgetDate(budgetMonth.asLocalDate());
-    return new Budget(budgetMonth, LineItemEntity.convertToLineItems(entities));
+  public Budget getForBudgetMonth(YearMonth budgetDate) {
+    List<LineItemEntity> entities = lineItemRepository.findAllByBudgetDate(budgetDate);
+    return new Budget(budgetDate, LineItemEntity.convertToLineItems(entities));
   }
 
   /**
@@ -41,9 +36,9 @@ public class BudgetService {
    * @param budgetMonth The budgetMonth to copy LineItems to
    * @return The copied budget.
    */
-  public Budget create(BudgetMonth budgetMonth) {
+  public Budget create(YearMonth budgetMonth) {
     throwIfLineItemsAlreadyExistForThisBudgetMonth(budgetMonth);
-    Optional<LocalDate> mostRecentBudgetDate = findMostRecentBudgetDateWithAtLeastOneLineItem();
+    Optional<YearMonth> mostRecentBudgetDate = findMostRecentBudgetDateWithAtLeastOneLineItem();
     if (mostRecentBudgetDate.isEmpty()) {
       // If no previous budgetMonths have at least one LineItem, this is a completely new user
       return new Budget(budgetMonth, new ArrayList<>());
@@ -55,14 +50,14 @@ public class BudgetService {
     return new Budget(budgetMonth, LineItemEntity.convertToLineItems(saved));
   }
 
-  private void throwIfLineItemsAlreadyExistForThisBudgetMonth(BudgetMonth budgetMonth) {
-    List<LineItemEntity> allByBudgetDate = lineItemRepository.findAllByBudgetDate(budgetMonth.asLocalDate());
+  private void throwIfLineItemsAlreadyExistForThisBudgetMonth(YearMonth budgetMonth) {
+    List<LineItemEntity> allByBudgetDate = lineItemRepository.findAllByBudgetDate(budgetMonth);
     if (! allByBudgetDate.isEmpty()) {
       throw new BadRequestException("LineItems for: " + budgetMonth + " already exists.");
     }
   }
 
-  private Optional<LocalDate> findMostRecentBudgetDateWithAtLeastOneLineItem() {
+  private Optional<YearMonth> findMostRecentBudgetDateWithAtLeastOneLineItem() {
     Optional<LineItemEntity> topLineItemOptional = lineItemRepository.findTopByOrderByBudgetDateDesc();
     if (topLineItemOptional.isEmpty()) {
       return Optional.empty();
@@ -70,12 +65,12 @@ public class BudgetService {
     return Optional.of(topLineItemOptional.get().getBudgetDate());
   }
 
-  private List<LineItemEntity> copyLineItemEntitiesToNewBudgetMonth(BudgetMonth budgetMonth,
+  private List<LineItemEntity> copyLineItemEntitiesToNewBudgetMonth(YearMonth budgetDate,
                                                                     List<LineItemEntity> exitingEntities) {
     return exitingEntities.stream().map(existingEntity -> {
       LineItemEntity newEntity = new LineItemEntity();
       newEntity.setType(existingEntity.getType());
-      newEntity.setBudgetDate(budgetMonth);
+      newEntity.setBudgetDate(budgetDate);
       newEntity.setName(existingEntity.getName());
       newEntity.setPlannedAmount(existingEntity.getPlannedAmount());
       newEntity.setCategory(existingEntity.getCategory());

@@ -4,16 +4,13 @@ import lombok.Getter;
 import me.seantwiehaus.zbbp.domain.Category;
 import me.seantwiehaus.zbbp.domain.LineItem;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 @Getter
 public class LineItemResponse extends BaseResponse {
   private final Long id;
-  /**
-   * Day of Month is always set to the 1st
-   */
-  private final LocalDate budgetDate;
+  private final YearMonth budgetDate;
   private final String name;
   private final Double plannedAmount;
   private final Category category;
@@ -31,7 +28,7 @@ public class LineItemResponse extends BaseResponse {
   public LineItemResponse(LineItem lineItem) {
     super(lineItem.getType(), lineItem.getLastModifiedAt());
     this.id = lineItem.getId();
-    this.budgetDate = lineItem.getBudgetMonth().asLocalDate();
+    this.budgetDate = lineItem.getBudgetDate();
     this.name = lineItem.getName();
     this.plannedAmount = lineItem.getPlannedAmount().inDollars();
     this.category = lineItem.getCategory();

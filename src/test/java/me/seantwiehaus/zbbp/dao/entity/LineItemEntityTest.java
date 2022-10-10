@@ -3,7 +3,7 @@ package me.seantwiehaus.zbbp.dao.entity;
 import me.seantwiehaus.zbbp.domain.ItemType;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,9 +22,9 @@ class LineItemEntityTest {
     // Given a LineItemEntity
     LineItemEntity lineItem = new LineItemEntity();
     // When setBudgetDate is called with any day of the month
-    lineItem.setBudgetDate(LocalDate.of(2030, 1, 20));
+    lineItem.setBudgetDate(YearMonth.of(2030, 1));
     // Then the budgetDate should be set to the first day of the same month
-    assertEquals(LocalDate.of(2030, 1, 1), lineItem.getBudgetDate());
+    assertEquals(YearMonth.of(2030, 1), lineItem.getBudgetDate());
   }
 
 }

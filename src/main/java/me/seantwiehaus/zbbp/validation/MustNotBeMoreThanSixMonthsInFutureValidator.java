@@ -1,17 +1,13 @@
 package me.seantwiehaus.zbbp.validation;
 
-import me.seantwiehaus.zbbp.domain.BudgetMonth;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.time.LocalDate;
+import java.time.YearMonth;
 
 public class MustNotBeMoreThanSixMonthsInFutureValidator implements
-    ConstraintValidator<MustNotBeMoreThanSixMonthsInFuture, LocalDate> {
+    ConstraintValidator<MustNotBeMoreThanSixMonthsInFuture, YearMonth> {
   @Override
-  public boolean isValid(LocalDate localDate, ConstraintValidatorContext constraintValidatorContext) {
-    LocalDate current = new BudgetMonth().asLocalDate();
-    LocalDate toValidate = new BudgetMonth(localDate).asLocalDate();
-    return current.plusMonths(7L).isAfter(toValidate);
+  public boolean isValid(YearMonth yearMonth, ConstraintValidatorContext constraintValidatorContext) {
+    return YearMonth.now().plusMonths(7L).isAfter(yearMonth);
   }
 }
