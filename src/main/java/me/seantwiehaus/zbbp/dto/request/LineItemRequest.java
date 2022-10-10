@@ -1,5 +1,6 @@
 package me.seantwiehaus.zbbp.dto.request;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,6 +8,7 @@ import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.Category;
 import me.seantwiehaus.zbbp.domain.ItemType;
 import me.seantwiehaus.zbbp.domain.LineItem;
+import me.seantwiehaus.zbbp.dto.serialize.DollarsToCentsDeserializer;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -26,7 +28,8 @@ public class LineItemRequest {
   private String name;
   @NotNull
   @Min(0)
-  private Double plannedAmount;
+  @JsonDeserialize(using = DollarsToCentsDeserializer.class)
+  private Integer plannedAmount;
   @NotNull
   private Category category;
   private String description;

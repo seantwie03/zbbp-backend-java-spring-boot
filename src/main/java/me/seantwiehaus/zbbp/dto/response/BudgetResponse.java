@@ -1,7 +1,9 @@
 package me.seantwiehaus.zbbp.dto.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import me.seantwiehaus.zbbp.domain.Budget;
+import me.seantwiehaus.zbbp.dto.serialize.CentsToDollarsSerializer;
 
 import java.time.YearMonth;
 import java.util.List;
@@ -46,11 +48,16 @@ public class BudgetResponse {
    */
   private final List<LineItemResponse> lifestyle;
 
-  private final Double totalPlannedIncome;
-  private final Double totalPlannedExpense;
-  private final Double totalLeftToBudget;
-  private final Double totalSpent;
-  private final Double totalLeftToSpend;
+  @JsonSerialize(using = CentsToDollarsSerializer.class)
+  private final int totalPlannedIncome;
+  @JsonSerialize(using = CentsToDollarsSerializer.class)
+  private final int totalPlannedExpense;
+  @JsonSerialize(using = CentsToDollarsSerializer.class)
+  private final int totalLeftToBudget;
+  @JsonSerialize(using = CentsToDollarsSerializer.class)
+  private final int totalSpent;
+  @JsonSerialize(using = CentsToDollarsSerializer.class)
+  private final int totalLeftToSpend;
 
   public BudgetResponse(Budget budget) {
     this.budgetDate = budget.getBudgetDate();
@@ -90,10 +97,10 @@ public class BudgetResponse {
         .stream()
         .map(LineItemResponse::new)
         .toList();
-    this.totalPlannedIncome = budget.getTotalPlannedIncome().inDollars();
-    this.totalPlannedExpense = budget.getTotalPlannedExpense().inDollars();
-    this.totalLeftToBudget = budget.getTotalLeftToBudget().inDollars();
-    this.totalSpent = budget.getTotalSpent().inDollars();
-    this.totalLeftToSpend = budget.getTotalLeftToSpend().inDollars();
+    this.totalPlannedIncome = budget.getTotalPlannedIncome();
+    this.totalPlannedExpense = budget.getTotalPlannedExpense();
+    this.totalLeftToBudget = budget.getTotalLeftToBudget();
+    this.totalSpent = budget.getTotalSpent();
+    this.totalLeftToSpend = budget.getTotalLeftToSpend();
   }
 }

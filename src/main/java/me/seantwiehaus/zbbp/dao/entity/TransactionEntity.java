@@ -26,7 +26,7 @@ public class TransactionEntity extends BaseEntity {
   @NotBlank
   @Column(name = "merchant", nullable = false)
   private String merchant;
-  @Column(name = "amount", nullable = false)
+  @Column(name = "amount_cents", nullable = false)
   private Integer amount;
   @Column(name = "line_item_id")
   private Long lineItemId;
@@ -37,7 +37,7 @@ public class TransactionEntity extends BaseEntity {
     this.id = transaction.getId();
     this.date = transaction.getDate();
     this.merchant = transaction.getMerchant();
-    this.amount = transaction.getAmount().inCents();
+    this.amount = transaction.getAmount();
     this.setLineItemId(transaction.getLineItemId());
     this.description = transaction.getDescription();
   }

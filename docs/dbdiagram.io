@@ -3,7 +3,7 @@ Table line_items {
   type varchar(10)
   budget_date date
   name varchar(50)
-  planned_amount int
+  planned_amount_cents int
   category varchar(20)
   description varchar(255)
   last_modified_at timestamptz
@@ -17,7 +17,7 @@ Table transactions {
   type varchar(10)
   date date
   merchant varchar(50)
-  amount int
+  amount_cents int
   line_item_id int
   description varchar
   last_modified_at timestamptz

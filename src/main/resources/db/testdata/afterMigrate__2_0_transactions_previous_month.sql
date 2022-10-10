@@ -5,7 +5,7 @@
 --
 -- Income
 --
-INSERT INTO transactions (id, type, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, type, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (1100,
         'INCOME',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int - 1, 1),
@@ -22,7 +22,7 @@ VALUES (1100,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, type, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, type, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (1101,
         'INCOME',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int - 1, 4),
@@ -39,7 +39,7 @@ VALUES (1101,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, type, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, type, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (1102,
         'INCOME',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int - 1, 15),
@@ -56,7 +56,7 @@ VALUES (1102,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, type, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, type, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (1103,
         'INCOME',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int - 1, 18),
@@ -73,7 +73,7 @@ VALUES (1103,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, type, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, type, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (1104,
         'INCOME',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int - 1, 25),
@@ -94,7 +94,7 @@ ON CONFLICT DO NOTHING;
 --
 -- Savings
 --
-INSERT INTO transactions (id, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (1201,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int - 1, 1),
         'Emergency Fund / Family Savings',
@@ -110,7 +110,7 @@ VALUES (1201,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (1202,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int - 1, 1),
         'Spouse 1 Savings',
@@ -126,7 +126,7 @@ VALUES (1202,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, date, merchant, amount, line_item_id, last_modified_at)
+INSERT INTO transactions (id, date, merchant, amount_cents, line_item_id, last_modified_at)
 VALUES (1203,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int - 1, 4),
         'Spouse 2 Savings',
@@ -141,7 +141,7 @@ VALUES (1203,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (1204,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int - 1, 15),
         'Emergency Fund / Family Savings',
@@ -157,7 +157,7 @@ VALUES (1204,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (1205,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int - 1, 15),
         'Spouse 1 Savings',
@@ -173,7 +173,7 @@ VALUES (1205,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, date, merchant, amount, line_item_id, last_modified_at)
+INSERT INTO transactions (id, date, merchant, amount_cents, line_item_id, last_modified_at)
 VALUES (1206,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int - 1, 18),
         'Spouse 2 Savings',
@@ -188,7 +188,7 @@ VALUES (1206,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (1207,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int - 1, 25),
         'American College',

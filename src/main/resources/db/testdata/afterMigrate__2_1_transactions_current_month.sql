@@ -5,7 +5,7 @@
 --
 -- Income
 --
-INSERT INTO transactions (id, type, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, type, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (2100,
         'INCOME',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
@@ -22,7 +22,7 @@ VALUES (2100,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, type, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, type, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (2101,
         'INCOME',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 4),
@@ -39,7 +39,7 @@ VALUES (2101,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, type, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, type, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (2102,
         'INCOME',
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 15),
@@ -60,7 +60,7 @@ ON CONFLICT DO NOTHING;
 --
 -- Savings
 --
-INSERT INTO transactions (id, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (2201,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         'Emergency Fund / Family Savings',
@@ -76,7 +76,7 @@ VALUES (2201,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (2202,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 1),
         'Spouse 1 Savings',
@@ -92,7 +92,7 @@ VALUES (2202,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, date, merchant, amount, line_item_id, last_modified_at)
+INSERT INTO transactions (id, date, merchant, amount_cents, line_item_id, last_modified_at)
 VALUES (2203,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 4),
         'Spouse 2 Savings',
@@ -107,7 +107,7 @@ VALUES (2203,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (2204,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 15),
         'Emergency Fund / Family Savings',
@@ -123,7 +123,7 @@ VALUES (2204,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO transactions (id, date, merchant, amount, line_item_id, description, last_modified_at)
+INSERT INTO transactions (id, date, merchant, amount_cents, line_item_id, description, last_modified_at)
 VALUES (2205,
         make_date(extract(year FROM current_date)::int, extract(month FROM current_date)::int, 15),
         'Spouse 1 Savings',

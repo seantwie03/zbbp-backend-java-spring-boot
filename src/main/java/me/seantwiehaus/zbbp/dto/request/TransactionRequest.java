@@ -29,7 +29,7 @@ public class TransactionRequest {
   private String merchant;
   @NotNull
   @Min(0)
-  private Double amount;
+  private int amount;
   private Long lineItemId;
   private String description;
 

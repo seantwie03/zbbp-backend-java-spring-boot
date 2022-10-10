@@ -53,7 +53,7 @@ public class LineItemService {
           }
           entity.setBudgetDate(lineItem.getBudgetDate());
           entity.setName(lineItem.getName());
-          entity.setPlannedAmount(lineItem.getPlannedAmount().inCents());
+          entity.setPlannedAmount(lineItem.getPlannedAmount());
           entity.setCategory(lineItem.getCategory());
           entity.setDescription(lineItem.getDescription());
           log.info("Updating Line Item with ID=" + id + " -> " + entity);

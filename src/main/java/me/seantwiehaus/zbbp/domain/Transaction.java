@@ -13,24 +13,24 @@ public class Transaction extends BaseDomain {
   private final Long id;
   private final LocalDate date;
   private final String merchant;
-  private final MonetaryAmount amount;
+  private final int amount;
   private final Long lineItemId;
   private final String description;
 
   public Transaction(@NotNull ItemType type,
                      @NotNull LocalDate date,
                      @NotNull String merchant,
-                     @NotNull Double amountInDollars,
+                     @NotNull int amount,
                      Long lineItemId,
                      String description) {
-    this(null, type, date, merchant, new MonetaryAmount(amountInDollars), lineItemId, description, null);
+    this(null, type, date, merchant, amount, lineItemId, description, null);
   }
 
   public Transaction(Long id,
                      @NotNull ItemType type,
                      @NotNull LocalDate date,
                      @NotNull String merchant,
-                     @NotNull MonetaryAmount amount,
+                     @NotNull int amount,
                      Long lineItemId,
                      String description) {
     this(id, type, date, merchant, amount, lineItemId, description, null);
@@ -41,19 +41,7 @@ public class Transaction extends BaseDomain {
                      @NotNull ItemType type,
                      @NotNull LocalDate date,
                      @NotNull String merchant,
-                     int amountInCents,
-                     @NotNull Long lineItemId,
-                     String description,
-                     Instant lastModifiedAt) {
-    this(id, type, date, merchant, new MonetaryAmount(amountInCents), lineItemId, description, lastModifiedAt);
-  }
-
-  @SuppressWarnings("java:S107") // SonarLint thinks this is too many constructor parameters
-  public Transaction(Long id,
-                     @NotNull ItemType type,
-                     @NotNull LocalDate date,
-                     @NotNull String merchant,
-                     @NotNull MonetaryAmount amount,
+                     int amount,
                      Long lineItemId,
                      String description,
                      Instant lastModifiedAt) {

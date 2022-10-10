@@ -38,7 +38,7 @@ public class LineItemEntity extends BaseEntity {
   @NotBlank
   @Column(name = "name", nullable = false)
   private String name;
-  @Column(name = "planned_amount", nullable = false)
+  @Column(name = "planned_amount_cents", nullable = false)
   private int plannedAmount;
   @Column(name = "category", nullable = false)
   @ColumnTransformer(read = "upper(category)", write = "upper(?)")
@@ -56,7 +56,7 @@ public class LineItemEntity extends BaseEntity {
     this.id = lineItem.getId();
     this.budgetDate = lineItem.getBudgetDate();
     this.name = lineItem.getName();
-    this.plannedAmount = lineItem.getPlannedAmount().inCents();
+    this.plannedAmount = lineItem.getPlannedAmount();
     this.category = lineItem.getCategory();
     this.description = lineItem.getDescription();
   }

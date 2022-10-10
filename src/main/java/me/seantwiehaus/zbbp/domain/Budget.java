@@ -57,11 +57,11 @@ public class Budget {
    */
   private final List<LineItem> lifestyle;
 
-  private final MonetaryAmount totalPlannedIncome;
-  private final MonetaryAmount totalPlannedExpense;
-  private final MonetaryAmount totalLeftToBudget;
-  private final MonetaryAmount totalSpent;
-  private final MonetaryAmount totalLeftToSpend;
+  private final int totalPlannedIncome;
+  private final int totalPlannedExpense;
+  private final int totalLeftToBudget;
+  private final int totalSpent;
+  private final int totalLeftToSpend;
 
   public Budget(@NotNull YearMonth budgetDate, @NotNull List<LineItem> lineItems) {
     this.budgetDate = budgetDate;
@@ -133,38 +133,32 @@ public class Budget {
         .anyMatch(lineItem -> ! lineItem.getBudgetDate().equals(budgetDate));
   }
 
-  private MonetaryAmount calculateTotalPlannedIncome() {
-    return new MonetaryAmount(
-        allIncomeItems
-            .stream()
-            .map(LineItem::getPlannedAmount)
-            .mapToInt(MonetaryAmount::inCents)
-            .sum());
+  private int calculateTotalPlannedIncome() {
+    return allIncomeItems
+        .stream()
+        .mapToInt(LineItem::getPlannedAmount)
+        .sum();
   }
 
-  private MonetaryAmount calculateTotalPlannedExpense() {
-    return new MonetaryAmount(
-        allExpenseItems
-            .stream()
-            .map(LineItem::getPlannedAmount)
-            .mapToInt(MonetaryAmount::inCents)
-            .sum());
+  private int calculateTotalPlannedExpense() {
+    return allExpenseItems
+        .stream()
+        .mapToInt(LineItem::getPlannedAmount)
+        .sum();
   }
 
-  private MonetaryAmount calculateTotalSpent() {
-    return new MonetaryAmount(
-        allExpenseItems
-            .stream()
-            .map(LineItem::getTotalTransactions)
-            .mapToInt(MonetaryAmount::inCents)
-            .sum());
+  private int calculateTotalSpent() {
+    return allExpenseItems
+        .stream()
+        .mapToInt(LineItem::getTotalTransactions)
+        .sum();
   }
 
-  private MonetaryAmount calculateTotalLeftToBudget() {
-    return new MonetaryAmount(totalPlannedIncome.inCents() - totalPlannedExpense.inCents());
+  private int calculateTotalLeftToBudget() {
+    return totalPlannedIncome - totalPlannedExpense;
   }
 
-  private MonetaryAmount calculateTotalLeftToSpend() {
-    return new MonetaryAmount(totalPlannedExpense.inCents() - totalSpent.inCents());
+  private int calculateTotalLeftToSpend() {
+    return totalPlannedExpense - totalSpent;
   }
 }

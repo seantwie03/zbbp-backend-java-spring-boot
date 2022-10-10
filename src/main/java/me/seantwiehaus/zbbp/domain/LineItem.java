@@ -19,14 +19,14 @@ public class LineItem extends BaseDomain {
   @NotBlank
   private final String name;
   @NotNull
-  private final MonetaryAmount plannedAmount;
+  private final int plannedAmount;
   @NotNull
   private final Category category;
   private final String description;
 
-  private final MonetaryAmount totalTransactions;
+  private final int totalTransactions;
   private final double percentageOfPlanned;
-  private final MonetaryAmount totalRemaining;
+  private final int totalRemaining;
 
   /**
    * Unmodifiable List
@@ -36,9 +36,9 @@ public class LineItem extends BaseDomain {
   public LineItem(@NotNull ItemType type,
                   @NotNull YearMonth budgetDate,
                   @NotNull String name,
-                  double plannedAmount,
+                  int plannedAmount,
                   @NotNull Category category) {
-    this(null, type, budgetDate, name, new MonetaryAmount(plannedAmount), category, null, null, null);
+    this(null, type, budgetDate, name, plannedAmount, category, null, null, null);
   }
 
   @SuppressWarnings("java:S107") // SonarLint thinks this is too many constructor parameters
@@ -47,19 +47,6 @@ public class LineItem extends BaseDomain {
                   @NotNull YearMonth budgetDate,
                   @NotNull String name,
                   int plannedAmount,
-                  @NotNull Category category,
-                  String description,
-                  List<Transaction> transactions,
-                  Instant lastModifiedAt) {
-    this(id, type, budgetDate, name, new MonetaryAmount(plannedAmount), category, description, transactions, lastModifiedAt);
-  }
-
-  @SuppressWarnings("java:S107") // SonarLint thinks this is too many constructor parameters
-  public LineItem(Long id,
-                  @NotNull ItemType type,
-                  @NotNull YearMonth budgetDate,
-                  @NotNull String name,
-                  @NotNull MonetaryAmount plannedAmount,
                   @NotNull Category category,
                   String description,
                   List<Transaction> transactions,
@@ -78,25 +65,23 @@ public class LineItem extends BaseDomain {
     this.totalRemaining = calculateTotalRemaining();
   }
 
-  private MonetaryAmount calculateTotalTransactions() {
-    return new MonetaryAmount(
-        transactions
-            .stream()
-            .map(Transaction::getAmount)
-            .mapToInt(MonetaryAmount::inCents)
-            .sum());
+  private int calculateTotalTransactions() {
+    return transactions
+        .stream()
+        .mapToInt(Transaction::getAmount)
+        .sum();
   }
 
   private double calculatePercentageOfPlanned() {
     // Without this check, plannedAmount could be 0 in the divisor below.
-    if (plannedAmount.inCents() == 0) {
-      // If plannedAmount is 0, but totalTransactions is 5.50 the percentage should be %105.50
-      return 100 + this.totalTransactions.inDollars();
+    if (plannedAmount == 0) {
+      // If plannedAmount is 0, but totalTransactions is 5.50(converted to dollars) the percentage should be %105.50
+      return 100.0 + this.totalTransactions * 100;
     }
-    return this.totalTransactions.inCents() * 100.0 / plannedAmount.inCents();
+    return this.totalTransactions * 100.0 / plannedAmount;
   }
 
-  private MonetaryAmount calculateTotalRemaining() {
-    return new MonetaryAmount(plannedAmount.inCents() - this.totalTransactions.inCents());
+  private int calculateTotalRemaining() {
+    return plannedAmount - this.totalTransactions;
   }
 }

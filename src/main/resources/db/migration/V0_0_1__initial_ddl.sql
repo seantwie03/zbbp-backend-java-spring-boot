@@ -7,24 +7,24 @@ create sequence hibernate_sequence start with 10000 increment by 1;
 
 create table line_items
 (
-  id               bigint      not null,
-  type             varchar(10) not null default 'EXPENSE',
-  budget_date      timestamp   not null,
-  name             varchar(50) not null,
-  planned_amount   int         not null,
-  category         varchar(20) not null,
-  description      varchar(255),
-  last_modified_at timestamptz not null,
-  primary key (id),
-  constraint type_not_empty check (
-    not (type = '' or type = ' ')
-    ),
-  constraint name_not_empty check (
-    not (name = '' or name = ' ')
-    ),
-  constraint category_name_not_empty check (
-    not (category = '' or category = ' ')
-    )
+    id                   bigint      not null,
+    type                 varchar(10) not null default 'EXPENSE',
+    budget_date          timestamp   not null,
+    name                 varchar(50) not null,
+    planned_amount_cents int         not null,
+    category             varchar(20) not null,
+    description          varchar(255),
+    last_modified_at     timestamptz not null,
+    primary key (id),
+    constraint type_not_empty check (
+        not (type = '' or type = ' ')
+        ),
+    constraint name_not_empty check (
+        not (name = '' or name = ' ')
+        ),
+    constraint category_name_not_empty check (
+        not (category = '' or category = ' ')
+        )
 );
 comment on column line_items.type is 'ItemType: "INCOME" | "EXPENSE" the default is "EXPENSE"';
 comment on column line_items.budget_date is 'A budget_date represents the Month and Year of a monthly budget.
@@ -50,28 +50,28 @@ comment on index unique_insensitive_name_category_date_idx is 'This constraint w
 
 create table transactions
 (
-  id               bigint      not null,
-  type             varchar(10) not null default 'EXPENSE',
-  date             date        not null,
-  merchant         varchar(50) not null,
-  amount           int         not null,
-  line_item_id     bigint,
-  description      varchar(255),
-  last_modified_at timestamptz not null,
-  primary key (id),
-  constraint type_not_empty check (
-    not (type = '' or type = ' ')
-    ),
-  constraint merchant_not_empty check (
-    not (merchant = '' or merchant = ' ')
-    ),
-  constraint description_not_empty check (
-    not (merchant = '' or merchant = ' ')
-    )
+    id               bigint      not null,
+    type             varchar(10) not null default 'EXPENSE',
+    date             date        not null,
+    merchant         varchar(50) not null,
+    amount_cents     int         not null,
+    line_item_id     bigint,
+    description      varchar(255),
+    last_modified_at timestamptz not null,
+    primary key (id),
+    constraint type_not_empty check (
+        not (type = '' or type = ' ')
+        ),
+    constraint merchant_not_empty check (
+        not (merchant = '' or merchant = ' ')
+        ),
+    constraint description_not_empty check (
+        not (merchant = '' or merchant = ' ')
+        )
 );
 comment on column line_items.type is 'ItemType: "INCOME" | "EXPENSE" the default is "EXPENSE"';
 
 alter table transactions
-  add constraint FK_line_item_id
-    foreign key (line_item_id)
-      references line_items;
+    add constraint FK_line_item_id
+        foreign key (line_item_id)
+            references line_items;

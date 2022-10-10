@@ -1,8 +1,10 @@
 package me.seantwiehaus.zbbp.dto.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import me.seantwiehaus.zbbp.domain.Category;
 import me.seantwiehaus.zbbp.domain.LineItem;
+import me.seantwiehaus.zbbp.dto.serialize.CentsToDollarsSerializer;
 
 import java.time.YearMonth;
 import java.util.List;
@@ -12,13 +14,16 @@ public class LineItemResponse extends BaseResponse {
   private final Long id;
   private final YearMonth budgetDate;
   private final String name;
-  private final Double plannedAmount;
+  @JsonSerialize(using = CentsToDollarsSerializer.class)
+  private final Integer plannedAmount;
   private final Category category;
 
   private final String description;
-  private final Double totalTransactions;
+  @JsonSerialize(using = CentsToDollarsSerializer.class)
+  private final Integer totalTransactions;
   private final Double percentageOfPlanned;
-  private final Double totalRemaining;
+  @JsonSerialize(using = CentsToDollarsSerializer.class)
+  private final Integer totalRemaining;
 
   /**
    * Unmodifiable List
@@ -30,7 +35,7 @@ public class LineItemResponse extends BaseResponse {
     this.id = lineItem.getId();
     this.budgetDate = lineItem.getBudgetDate();
     this.name = lineItem.getName();
-    this.plannedAmount = lineItem.getPlannedAmount().inDollars();
+    this.plannedAmount = lineItem.getPlannedAmount();
     this.category = lineItem.getCategory();
     this.description = lineItem.getDescription();
     this.transactionResponses = lineItem.getTransactions()
@@ -38,8 +43,8 @@ public class LineItemResponse extends BaseResponse {
         .map(TransactionResponse::new)
         .toList();
 
-    this.totalTransactions = lineItem.getTotalTransactions().inDollars();
+    this.totalTransactions = lineItem.getTotalTransactions();
     this.percentageOfPlanned = lineItem.getPercentageOfPlanned();
-    this.totalRemaining = lineItem.getTotalRemaining().inDollars();
+    this.totalRemaining = lineItem.getTotalRemaining();
   }
 }
