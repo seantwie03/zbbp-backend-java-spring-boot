@@ -36,6 +36,18 @@ class LineItemEntityIT {
     }
 
     @Test
+    void shouldConvertYearMonth() {
+      // Given a LineItemEntity with specific YearMonth
+      LineItemEntity expected = createLineItemEntity("LineItemIT.shouldConvert", YearMonth.now(), Category.FOOD);
+      entityManager.persistAndFlush(expected);
+      entityManager.clear();
+      // When that LineItemEntity is retrieved
+      LineItemEntity retrieved = entityManager.find(LineItemEntity.class, expected.getId());
+      // Then the YearMonth should be the same (This means it converted to java.sql.Date and back correctly)
+      assertEquals(expected.getBudgetDate(), retrieved.getBudgetDate());
+    }
+
+    @Test
     void shouldSortTransactionsByDateAndAmount() {
       // Given a LineItemEntity
       LineItemEntity mockLineItem = new LineItemEntity();
