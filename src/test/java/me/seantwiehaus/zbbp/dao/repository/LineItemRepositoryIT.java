@@ -25,7 +25,7 @@ class LineItemRepositoryIT {
   LineItemRepository repository;
 
   @Nested
-  class WhenFindTopByOrderByBudgetDateDesc {
+  class FindTopByOrderByBudgetDateDesc {
     @Test
     void shouldReturnMostRecentLineItem() {
       // Given two LineItems with different dates
@@ -44,7 +44,7 @@ class LineItemRepositoryIT {
   }
 
   @Nested
-  class WhenFindAllByBudgetDateBetween {
+  class FindAllByBudgetDateBetween {
     @Test
     void shouldReturnLineItemsBetweenTwoDates() {
       // Given three LineItems with different dates
@@ -68,7 +68,7 @@ class LineItemRepositoryIT {
   }
 
   @Nested
-  class WhenDelete {
+  class Delete {
     @Test
     void shouldDeleteLineItemWithNoTransactions() {
       // Given a LineItem with no Transactions
