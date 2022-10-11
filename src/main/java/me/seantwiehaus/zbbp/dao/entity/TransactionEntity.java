@@ -27,7 +27,7 @@ public class TransactionEntity extends BaseEntity {
   @Column(name = "merchant", nullable = false, length = 50)
   private String merchant;
   @Column(name = "amount_cents", nullable = false)
-  private Integer amount;
+  private int amount;
   @Column(name = "line_item_id")
   private Long lineItemId;
   @Column(name = "description")
