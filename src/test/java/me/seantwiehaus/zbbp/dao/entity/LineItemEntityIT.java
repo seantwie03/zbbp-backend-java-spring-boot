@@ -2,7 +2,6 @@ package me.seantwiehaus.zbbp.dao.entity;
 
 import me.seantwiehaus.zbbp.domain.Category;
 import me.seantwiehaus.zbbp.domain.ItemType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ class LineItemEntityIT {
   @Nested
   class WhenRetrievingTheEntity {
     @Test
-    // SQL script is used because it is not possible to save mixed-case via java code.
+    // SQL script is used because it is not possible to save mixed-case via TestEntityManager.
     @Sql("insertMixedCaseTypeAndCategoryIntoLineItems.sql")
     void shouldRetrieveEnumsFromDatabaseWhenDatabaseContainsMixedCaseValues() {
       // Given a database record with mixed-case Type and Category (ID = 1 from @SQL)
@@ -69,10 +68,6 @@ class LineItemEntityIT {
 
   @Nested
   class WhenPersistingTheEntity {
-    @BeforeEach
-    void setup() {
-    }
-
     @Test
     void shouldNotSaveNullName() {
       // Given a LineItemEntity with a null name
