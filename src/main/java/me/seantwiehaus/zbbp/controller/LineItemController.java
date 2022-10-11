@@ -1,5 +1,6 @@
 package me.seantwiehaus.zbbp.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dto.request.LineItemRequest;
 import me.seantwiehaus.zbbp.dto.response.LineItemResponse;
@@ -17,16 +18,13 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Slf4j
 @RestController
 public class LineItemController {
   private static final String URI = "/line-item/";
   private static final String LINE_ITEM = "Line Item";
-  LineItemService service;
-
-  public LineItemController(LineItemService service) {
-    this.service = service;
-  }
+  private final LineItemService service;
 
   /**
    * @param startingBudgetDate The first budgetDate to include in the list of results.

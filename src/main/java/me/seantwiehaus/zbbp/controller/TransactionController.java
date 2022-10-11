@@ -1,5 +1,6 @@
 package me.seantwiehaus.zbbp.controller;
 
+import lombok.RequiredArgsConstructor;
 import me.seantwiehaus.zbbp.dto.request.TransactionRequest;
 import me.seantwiehaus.zbbp.dto.response.TransactionResponse;
 import me.seantwiehaus.zbbp.exception.NotFoundException;
@@ -17,15 +18,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @RestController
 public class TransactionController {
   private static final String URI = "/transaction/";
   private static final String TRANSACTION = "Transaction";
   private final TransactionService service;
-
-  public TransactionController(TransactionService service) {
-    this.service = service;
-  }
 
   /**
    * @param startDate Include transactions with dates greater-than-or-equal-to this day.

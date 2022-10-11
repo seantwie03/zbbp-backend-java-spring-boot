@@ -1,5 +1,6 @@
 package me.seantwiehaus.zbbp.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dao.entity.TransactionEntity;
 import me.seantwiehaus.zbbp.dao.repository.TransactionRepository;
@@ -16,16 +17,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class TransactionService {
   private final TransactionRepository repository;
   private final LineItemService lineItemService;
-
-  public TransactionService(TransactionRepository repository, LineItemService lineItemService) {
-    this.repository = repository;
-    this.lineItemService = lineItemService;
-  }
 
   /**
    * @param startDate Include transactions with dates greater-than-or-equal-to this day

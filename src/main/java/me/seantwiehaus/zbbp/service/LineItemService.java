@@ -1,5 +1,6 @@
 package me.seantwiehaus.zbbp.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dao.entity.LineItemEntity;
 import me.seantwiehaus.zbbp.dao.repository.LineItemRepository;
@@ -12,14 +13,11 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class LineItemService {
   private final LineItemRepository repository;
-
-  public LineItemService(LineItemRepository repository) {
-    this.repository = repository;
-  }
 
   /**
    * @param startingBudgetDate The first budgetDate to include in the list of results.

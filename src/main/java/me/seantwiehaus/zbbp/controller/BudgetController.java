@@ -1,5 +1,6 @@
 package me.seantwiehaus.zbbp.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dto.response.BudgetResponse;
 import me.seantwiehaus.zbbp.service.BudgetService;
@@ -11,15 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import java.time.YearMonth;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Slf4j
 @RestController
 @Validated
 public class BudgetController {
-  BudgetService budgetService;
-
-  public BudgetController(BudgetService budgetService) {
-    this.budgetService = budgetService;
-  }
+  private final BudgetService budgetService;
 
   /**
    * @param budgetDate The date of the budget you are requesting.

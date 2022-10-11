@@ -3,6 +3,7 @@ package me.seantwiehaus.zbbp.domain;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
@@ -24,6 +25,7 @@ public class LineItem extends BaseDomain {
   private final Category category;
   private final String description;
 
+  @Min(0)
   private final int totalTransactions;
   private final double percentageOfPlanned;
   private final int totalRemaining;
