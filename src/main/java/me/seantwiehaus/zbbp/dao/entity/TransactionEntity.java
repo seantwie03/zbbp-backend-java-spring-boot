@@ -24,7 +24,7 @@ public class TransactionEntity extends BaseEntity {
   @Column(name = "date", nullable = false)
   private LocalDate date;
   @NotBlank
-  @Column(name = "merchant", nullable = false)
+  @Column(name = "merchant", nullable = false, length = 50)
   private String merchant;
   @Column(name = "amount_cents", nullable = false)
   private Integer amount;

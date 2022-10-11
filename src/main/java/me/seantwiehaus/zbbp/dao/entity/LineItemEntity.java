@@ -36,11 +36,11 @@ public class LineItemEntity extends BaseEntity {
   @Convert(converter = YearMonthDateAttributeConverter.class)
   private YearMonth budgetDate;
   @NotBlank
-  @Column(name = "name", nullable = false)
+  @Column(name = "name", nullable = false, length = 50)
   private String name;
   @Column(name = "planned_amount_cents", nullable = false)
   private int plannedAmount;
-  @Column(name = "category", nullable = false)
+  @Column(name = "category", nullable = false, length = 20)
   @ColumnTransformer(read = "upper(category)", write = "upper(?)")
   @Enumerated(EnumType.STRING)
   private Category category;

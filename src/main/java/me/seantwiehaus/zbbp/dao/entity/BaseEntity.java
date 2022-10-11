@@ -17,7 +17,7 @@ import java.time.Instant;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
-  @Column(name = "type", nullable = false)
+  @Column(name = "type", nullable = false, length = 10)
   @ColumnTransformer(read = "upper(type)", write = "upper(?)")
   @Enumerated(EnumType.STRING)
   protected ItemType type = ItemType.EXPENSE;
