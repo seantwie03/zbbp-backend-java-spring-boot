@@ -32,6 +32,7 @@ public class TransactionEntity extends BaseEntity {
   @Min(0)
   @Column(name = "amount_cents", nullable = false)
   private int amount;
+  @Min(0)
   @Column(name = "line_item_id")
   private Long lineItemId;
   @Column(name = "description")

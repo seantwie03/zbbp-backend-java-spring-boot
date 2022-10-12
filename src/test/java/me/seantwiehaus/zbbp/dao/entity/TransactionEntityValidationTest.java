@@ -65,4 +65,14 @@ class TransactionEntityValidationTest {
     assertEquals(1, violations.size());
     assertTrue(violations.stream().allMatch(v -> v.getMessage().equals("must be greater than or equal to 0")));
   }
+
+  @Test
+  void shouldNotAllowNegativeLineItemId() {
+    entity.setLineItemId(- 1L);
+
+    Set<ConstraintViolation<TransactionEntity>> violations = validator.validate(entity);
+
+    assertEquals(1, violations.size());
+    assertTrue(violations.stream().allMatch(v -> v.getMessage().equals("must be greater than or equal to 0")));
+  }
 }
