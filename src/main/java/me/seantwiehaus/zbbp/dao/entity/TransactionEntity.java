@@ -7,7 +7,9 @@ import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.Transaction;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -21,11 +23,13 @@ public class TransactionEntity extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
+  @NotNull
   @Column(name = "date", nullable = false)
   private LocalDate date;
   @NotBlank
   @Column(name = "merchant", nullable = false, length = 50)
   private String merchant;
+  @Min(0)
   @Column(name = "amount_cents", nullable = false)
   private int amount;
   @Column(name = "line_item_id")
