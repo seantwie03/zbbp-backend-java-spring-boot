@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 @Getter
@@ -17,6 +18,7 @@ import java.time.Instant;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
+  @NotNull
   @Column(name = "type", nullable = false, length = 10)
   @ColumnTransformer(read = "upper(type)", write = "upper(?)")
   @Enumerated(EnumType.STRING)
