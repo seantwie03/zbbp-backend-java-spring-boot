@@ -10,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.jdbc.Sql;
 
 import javax.persistence.PersistenceException;
-import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
@@ -80,34 +79,6 @@ class LineItemEntityIT {
 
   @Nested
   class WhenPersistingTheEntity {
-    @Test
-    void shouldNotSaveNullName() {
-      // Given a LineItemEntity with a null name
-      LineItemEntity lineItemEntity = createLineItemEntity("Groceries", YearMonth.now(), Category.FOOD);
-      lineItemEntity.setName(null);
-      // When the entity is persisted
-      // Then a ConstraintViolationException should be thrown
-      ConstraintViolationException exception =
-          assertThrows(ConstraintViolationException.class, () -> entityManager.persistAndFlush(lineItemEntity));
-      // And the exception message should contain the following:
-      assertTrue(exception.getMessage().contains("propertyPath=name"));
-      assertTrue(exception.getMessage().contains("interpolatedMessage='must not be blank'"));
-    }
-
-    @Test
-    void shouldNotSaveWhiteSpaceName() {
-      // Given a LineItemEntity with a name that contains only whitespace
-      LineItemEntity lineItemEntity = createLineItemEntity("Groceries", YearMonth.now(), Category.FOOD);
-      lineItemEntity.setName(" ");
-      // When the entity is persisted
-      // Then a ConstraintViolationException should be thrown
-      ConstraintViolationException exception =
-          assertThrows(ConstraintViolationException.class, () -> entityManager.persistAndFlush(lineItemEntity));
-      // And the exception message should contain the following:
-      assertTrue(exception.getMessage().contains("propertyPath=name"));
-      assertTrue(exception.getMessage().contains("interpolatedMessage='must not be blank'"));
-    }
-
     @Test
     void shouldEnforceUniqueConstraint() {
       // Given two entities with the same name, budgetDate, and category

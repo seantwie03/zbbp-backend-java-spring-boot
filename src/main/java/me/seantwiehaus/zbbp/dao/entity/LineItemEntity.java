@@ -10,7 +10,9 @@ import me.seantwiehaus.zbbp.domain.LineItem;
 import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,14 +34,17 @@ public class LineItemEntity extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   @Column(name = "id", nullable = false)
   private Long id;
+  @NotNull
   @Column(name = "budget_date", nullable = false)
   @Convert(converter = YearMonthDateAttributeConverter.class)
   private YearMonth budgetDate;
   @NotBlank
   @Column(name = "name", nullable = false, length = 50)
   private String name;
+  @Min(0)
   @Column(name = "planned_amount_cents", nullable = false)
   private int plannedAmount;
+  @NotNull
   @Column(name = "category", nullable = false, length = 20)
   @ColumnTransformer(read = "upper(category)", write = "upper(?)")
   @Enumerated(EnumType.STRING)
