@@ -6,6 +6,7 @@ import me.seantwiehaus.zbbp.dto.request.LineItemRequest;
 import me.seantwiehaus.zbbp.dto.response.LineItemResponse;
 import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.service.LineItemService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,9 +84,10 @@ public class LineItemController {
   }
 
   @DeleteMapping("/line-item/{id}")
-  public ResponseEntity<Long> deleteLineItem(@PathVariable @Min(0) Long id) {
-    return service.delete(id)
-        .map(i -> ResponseEntity.ok(id))
-        .orElseThrow(() -> new NotFoundException(LINE_ITEM, id));
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  @SuppressWarnings("java:S2201") // 'The return value of orElseThrow must be used'...... Wat?
+  public void deleteLineItem(@PathVariable @Min(0) Long id) {
+    service.delete(id).orElseThrow(() -> new NotFoundException(LINE_ITEM, id));
   }
 }
