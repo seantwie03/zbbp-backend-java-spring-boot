@@ -24,13 +24,12 @@ class LineItemEntityIT {
   class WhenRetrievingTheEntity {
     @Test
     // SQL script is used because it is not possible to save mixed-case via TestEntityManager.
-    @Sql("insertMixedCaseTypeAndCategoryIntoLineItems.sql")
-    void shouldRetrieveEnumsFromDatabaseWhenDatabaseContainsMixedCaseValues() {
+    @Sql("insertMixedCaseCategoryIntoLineItems.sql")
+    void shouldRetrieveCategoryEnumFromDatabaseWhenRowContainsMixedCaseCategoryValue() {
       // Given a database record with mixed-case Type and Category (ID = 1 from @SQL)
       // When that record is retrieved from the database
       LineItemEntity lineItem = entityManager.find(LineItemEntity.class, 1L);
       // Then the Enum values should be set correctly
-      assertEquals(ItemType.EXPENSE, lineItem.getType());
       assertEquals(Category.FOOD, lineItem.getCategory());
     }
 
