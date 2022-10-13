@@ -58,17 +58,17 @@ class LineItemTest {
     }
 
     @Test
-    void shouldCalculateCorrectTotal() {
+    void calculateTotalTransactions() {
       assertEquals(2550, lineItem.getTotalTransactions());
     }
 
     @Test
-    void shouldCalculateCorrectPercentageSpent() {
+    void calculatePercentageOfPlanned() {
       assertEquals(51.0, lineItem.getPercentageOfPlanned());
     }
 
     @Test
-    void shouldCalculateCorrectAmountRemaining() {
+    void calculateTotalRemaining() {
       assertEquals(2450, lineItem.getTotalRemaining());
     }
   }
@@ -93,17 +93,17 @@ class LineItemTest {
     }
 
     @Test
-    void shouldCalculateCorrectTotal() {
+    void calculateTotalTransactions() {
       assertEquals(0, lineItem.getTotalTransactions());
     }
 
     @Test
-    void shouldCalculateCorrectPercentageSpent() {
+    void calculatePercentageOfPlanned() {
       assertEquals(0, lineItem.getPercentageOfPlanned());
     }
 
     @Test
-    void shouldCalculateCorrectAmountRemaining() {
+    void calculateTotalRemaining() {
       assertEquals(5000, lineItem.getTotalRemaining());
     }
   }

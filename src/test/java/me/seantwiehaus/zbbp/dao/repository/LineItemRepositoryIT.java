@@ -27,15 +27,17 @@ class LineItemRepositoryIT {
   @Nested
   class FindTopByOrderByBudgetDateDesc {
     @Test
-    void shouldReturnMostRecentLineItem() {
+    void getMostRecentLineItem() {
       // Given two LineItems with different dates
       LineItemEntity shouldBeTop = createLineItemEntity(YearMonth.of(2022, 2));
       entityManager.persistAndFlush(shouldBeTop);
       LineItemEntity shouldNot = createLineItemEntity(YearMonth.of(2022, 1));
       entityManager.persistAndFlush(shouldNot);
       entityManager.clear(); // Clear the context so that entities are not fetched from the first-level cache
-      // When findTopByOrderByBudgetDateDesc is called
+
+      // When the method under test is called
       Optional<LineItemEntity> mostRecent = repository.findTopByOrderByBudgetDateDesc();
+
       // Then the most recent LineItemEntity should be returned
       assertTrue(mostRecent.isPresent());
       assertEquals(shouldBeTop, mostRecent.get());
@@ -46,7 +48,7 @@ class LineItemRepositoryIT {
   @Nested
   class FindAllByBudgetDateBetween {
     @Test
-    void shouldReturnLineItemsBetweenTwoDates() {
+    void getLineItemsBetweenTwoDates() {
       // Given three LineItems with different dates
       LineItemEntity shouldBeIncluded = createLineItemEntity(YearMonth.of(2022, 2));
       entityManager.persistAndFlush(shouldBeIncluded);
@@ -55,9 +57,11 @@ class LineItemRepositoryIT {
       LineItemEntity shouldNotBeIncluded = createLineItemEntity(YearMonth.of(2022, 3));
       entityManager.persistAndFlush(shouldNotBeIncluded);
       entityManager.clear(); // Clear the context so that entities are not fetched from the first-level cache
-      // When findAllByBudgetDateBetween is called
+
+      // When the method under test is called
       List<LineItemEntity> allBetween =
           repository.findAllByBudgetDateBetween(YearMonth.of(2022, 1), YearMonth.of(2022, 2));
+
       // Then only one LineItem should be returned
       assertEquals(2, allBetween.size());
       // And the LineItems for 2022,1 and 2022,2 should be included in the list
@@ -70,20 +74,22 @@ class LineItemRepositoryIT {
   @Nested
   class Delete {
     @Test
-    void shouldDeleteLineItemWithNoTransactions() {
+    void deleteLineItemWithNoTransactions() {
       // Given a LineItem with no Transactions
       LineItemEntity toDelete = createLineItemEntity(YearMonth.now());
       entityManager.persistAndFlush(toDelete);
       entityManager.clear();
-      // When the repository delete method is called
+
+      // When the method under test is called
       repository.delete(toDelete);
+
       // Then the item should be deleted
       Optional<LineItemEntity> shouldBeDeleted = repository.findLineItemEntityById(toDelete.getId());
       assertTrue(shouldBeDeleted.isEmpty());
     }
 
     @Test
-    void shouldDeleteLineItemWithTwoTransactionsAndTransactionsShouldRemain() {
+    void transactionsAreNotDeletedWhenAssociatedLineItemIsDeleted() {
       // Given a LineItem with two Transactions
       LineItemEntity toDelete = createLineItemEntity(YearMonth.now());
       entityManager.persistAndFlush(toDelete); // Persist and flush to get ID
@@ -95,8 +101,10 @@ class LineItemRepositoryIT {
       entityManager.persist(toDelete);
       entityManager.flush();
       entityManager.clear();
-      // When the repository delete method is called
+
+      // When the method under test is called
       repository.delete(toDelete);
+
       // Then the item should be deleted
       Optional<LineItemEntity> shouldBeDeleted = repository.findLineItemEntityById(toDelete.getId());
       assertTrue(shouldBeDeleted.isEmpty());

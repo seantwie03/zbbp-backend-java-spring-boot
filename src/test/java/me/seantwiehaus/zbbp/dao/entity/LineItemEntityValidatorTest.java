@@ -14,7 +14,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class LineItemEntityValidationTest {
+class LineItemEntityValidatorTest {
   private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
   private LineItemEntity entity;
 
@@ -29,7 +29,7 @@ class LineItemEntityValidationTest {
   }
 
   @Test
-  void shouldNotAllowNullBudgetDate() {
+  void budgetDateMustNotBeNull() {
     entity.setBudgetDate(null);
 
     Set<ConstraintViolation<LineItemEntity>> violations = validator.validate(entity);
@@ -39,7 +39,7 @@ class LineItemEntityValidationTest {
   }
 
   @Test
-  void shouldNotAllowNullName() {
+  void nameMustNotBeNull() {
     entity.setName(null);
 
     Set<ConstraintViolation<LineItemEntity>> violations = validator.validate(entity);
@@ -49,7 +49,7 @@ class LineItemEntityValidationTest {
   }
 
   @Test
-  void shouldNotAllowBlankName() {
+  void nameMustNotBeBlank() {
     entity.setName(" ");
 
     Set<ConstraintViolation<LineItemEntity>> violations = validator.validate(entity);
@@ -59,7 +59,7 @@ class LineItemEntityValidationTest {
   }
 
   @Test
-  void shouldNotAllowNegativePlannedAmount() {
+  void plannedAmountMustNotBeNegative() {
     entity.setPlannedAmount(- 1);
 
     Set<ConstraintViolation<LineItemEntity>> violations = validator.validate(entity);
@@ -69,7 +69,7 @@ class LineItemEntityValidationTest {
   }
 
   @Test
-  void shouldNotAllowNullCategory() {
+  void categoryMustNotBeNull() {
     entity.setCategory(null);
 
     Set<ConstraintViolation<LineItemEntity>> violations = validator.validate(entity);

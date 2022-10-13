@@ -23,7 +23,7 @@ class BaseEntityValidationTest {
   }
 
   @Test
-  void shouldNotAllowNullType() {
+  void typeMustNotBeNull() {
     entity.setType(null);
 
     Set<ConstraintViolation<BaseEntity>> violations = validator.validate(entity);

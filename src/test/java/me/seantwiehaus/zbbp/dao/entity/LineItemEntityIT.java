@@ -25,33 +25,36 @@ class LineItemEntityIT {
     @Test
     // SQL script is used because it is not possible to save mixed-case via TestEntityManager.
     @Sql("insertMixedCaseCategoryIntoLineItems.sql")
-    void shouldRetrieveCategoryEnumFromDatabaseWhenRowContainsMixedCaseCategoryValue() {
+    void convertDbDataToCategoryEnumWhenMixedCaseDbData() {
       // Given a database record with mixed-case Type and Category (ID = 1 from @SQL)
-      // When that record is retrieved from the database
+
+      // When that record is retrieved
       LineItemEntity lineItem = entityManager.find(LineItemEntity.class, 1L);
+
       // Then the Enum values should be set correctly
       assertEquals(Category.FOOD, lineItem.getCategory());
     }
 
     @Test
-    void shouldConvertYearMonth() {
+    void convertDbDateToEntityYearMonth() {
       // Given a LineItemEntity with specific YearMonth
-      LineItemEntity expected = createLineItemEntity("LineItemIT.shouldConvert", YearMonth.now(), Category.FOOD);
+      LineItemEntity expected = createLineItemEntity("Convert DB Date To", YearMonth.now(), Category.FOOD);
       entityManager.persistAndFlush(expected);
       entityManager.clear();
+
       // When that LineItemEntity is retrieved
       LineItemEntity retrieved = entityManager.find(LineItemEntity.class, expected.getId());
+
       // Then the YearMonth should be the same (This means it converted to java.sql.Date and back correctly)
       assertEquals(expected.getBudgetDate(), retrieved.getBudgetDate());
     }
 
     @Test
-    void shouldSortTransactionsByDateAndAmount() {
+    void sortTransactionsByDateAndAmount() {
       // Given a LineItemEntity
       LineItemEntity mockLineItem = new LineItemEntity();
       mockLineItem.setBudgetDate(YearMonth.now());
-      // Name the Line Item the class and method name to try to guarantee uniqueness
-      mockLineItem.setName("LineItemEntityIT.shouldSortTransactions");
+      mockLineItem.setName("Sort Transactions By Date And");
       mockLineItem.setPlannedAmount(1000);
       mockLineItem.setCategory(Category.FOOD);
       entityManager.persistAndFlush(mockLineItem);
@@ -67,6 +70,7 @@ class LineItemEntityIT {
 
       // When that record is retrieved from the database
       LineItemEntity lineItem = entityManager.find(LineItemEntity.class, mockLineItem.getId());
+
       // Then there should be three TransactionEntities
       assertEquals(3, lineItem.getTransactionEntities().size());
       // And the TransactionEntities should be sorted by Date then by Amount
@@ -79,13 +83,15 @@ class LineItemEntityIT {
   @Nested
   class WhenPersistingTheEntity {
     @Test
-    void shouldEnforceUniqueConstraint() {
+    void enforceCaseInsensitiveUniqueConstraint() {
       // Given two entities with the same name, budgetDate, and category
-      LineItemEntity lineItem1 = createLineItemEntity("name", YearMonth.now(), Category.FOOD);
-      LineItemEntity lineItem2 = createLineItemEntity("name", YearMonth.now(), Category.FOOD);
+      LineItemEntity lineItem1 = createLineItemEntity("eNfOrCe CaSe InSeNsItIvE uNiQu", YearMonth.now(), Category.FOOD);
+      LineItemEntity lineItem2 = createLineItemEntity("EnFoRcE cAsE iNsEnSiTiVe UnIqU", YearMonth.now(), Category.FOOD);
+
       // When the first entity is persisted, no exceptions should be thrown
       assertDoesNotThrow(() -> entityManager.persistAndFlush(lineItem1));
-      // And when the second entity is saved, a PersistenceException should be thrown
+
+      // Then, when the second entity is saved, an exception should be thrown
       PersistenceException exception =
           assertThrows(PersistenceException.class, () -> entityManager.persistAndFlush(lineItem2));
       // And the exception should contain the following
@@ -94,32 +100,24 @@ class LineItemEntityIT {
     }
 
     @Test
-    void shouldEnforceUniqueConstraintEvenWhenMixedCase() {
-      // Given two entities with the different mIxEdCaSe names but the same budgetDate and category
-      LineItemEntity lineItem1 = createLineItemEntity("MiXeDcAsE", YearMonth.now(), Category.FOOD);
-      LineItemEntity lineItem2 = createLineItemEntity("mIxEdCaSe", YearMonth.now(), Category.FOOD);
-      // When the first entity is persisted, no exceptions should be thrown
-      assertDoesNotThrow(() -> entityManager.persistAndFlush(lineItem1));
-      // And when the second entity is saved, a PersistenceException should be thrown
-      PersistenceException exception =
-          assertThrows(PersistenceException.class, () -> entityManager.persistAndFlush(lineItem2));
-      // And the exception should contain the following
-      assertTrue(exception.getCause().getCause().getMessage()
-          .contains("duplicate key value violates unique constraint \"unique_insensitive_name_category_date_idx\""));
-    }
-
-    @Test
-    void shouldAllowTwoItemsToHaveSameNameIfDifferentCategory() {
+    void twoLineItemsCanHaveSameNameWhenCategoryIsDifferent() {
       // Given two entities with the same name, budgetDate but different categories
-      LineItemEntity lineItem1 = createLineItemEntity("Insurance", YearMonth.now(), Category.HEALTH);
-      LineItemEntity lineItem2 = createLineItemEntity("Insurance", YearMonth.now(), Category.HOUSING);
+      LineItemEntity lineItem1 = createLineItemEntity("Have Same Name Not Category", YearMonth.now(), Category.HEALTH);
+      LineItemEntity lineItem2 = createLineItemEntity("Have Same Name Not Category", YearMonth.now(), Category.HOUSING);
+
       // When the first entity is saved, no exceptions should be thrown
       assertDoesNotThrow(() -> entityManager.persistAndFlush(lineItem1));
-      // And when the second entity is saved, no exceptions should be thrown
+
+      // Then, when the second entity is saved, no exceptions should be thrown
       assertDoesNotThrow(() -> entityManager.persistAndFlush(lineItem2));
     }
   }
 
+  /**
+   * These test are designed to run in parallel. This means if you try to persist a LineItemEntity that has the
+   * same name, budgetDate, and Category as another test, you will get Unique Constraint Violation errors.
+   * To avoid this, name the entity after the test class and method because that combination is guaranteed to be unique.
+   */
   private LineItemEntity createLineItemEntity(String name, YearMonth budgetDate, Category category) {
     LineItemEntity lineItemEntity = new LineItemEntity();
     lineItemEntity.setType(ItemType.EXPENSE);

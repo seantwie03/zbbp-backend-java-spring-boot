@@ -27,7 +27,7 @@ class BaseEntityIT {
     @Test
     // SQL script is used because it is not possible to save mixed-case via TestEntityManager.
     @Sql("insertMixedCaseTypeIntoLineItems.sql")
-    void shouldRetrieveTypeEnumFromDatabaseWhenRowDatabaseContainsMixedCaseTypeValue() {
+    void convertDbDataToItemTypeEnumWhenMixedCaseDbData() {
       // Given a database record with mixed-case Type and Category (ID = 2 from @SQL)
       // When that record is retrieved from the database
       LineItemEntity lineItem = entityManager.find(LineItemEntity.class, 2L);
@@ -40,7 +40,7 @@ class BaseEntityIT {
   class WhenPersistingTheEntity {
     // shouldSaveLastModifiedDate
     @Test
-    void shouldInsertLastModifiedAtInNewEntity() {
+    void insertLastModifiedAtInNewEntity() {
       // Given a new LineItemEntity
       LineItemEntity lineItemEntity = createLineItemEntity("shouldInsertLastModified");
       // When that entity is persisted
@@ -50,7 +50,7 @@ class BaseEntityIT {
     }
 
     @Test
-    void shouldUpdateLastModifiedAtWhenUpdatingEntity() {
+    void updateLastModifiedAtWhenUpdatingEntity() {
       // Given a new LineItemEntity
       LineItemEntity lineItemEntity = createLineItemEntity("shouldUpdateLastModified");
       LineItemEntity saved = entityManager.persistAndFlush(lineItemEntity);

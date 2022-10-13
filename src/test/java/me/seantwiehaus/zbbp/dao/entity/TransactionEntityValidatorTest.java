@@ -13,7 +13,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class TransactionEntityValidationTest {
+class TransactionEntityValidatorTest {
   private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
   private TransactionEntity entity;
 
@@ -27,7 +27,7 @@ class TransactionEntityValidationTest {
   }
 
   @Test
-  void shouldNotAllowNullDate() {
+  void dateMustNotBeNull() {
     entity.setDate(null);
 
     Set<ConstraintViolation<TransactionEntity>> violations = validator.validate(entity);
@@ -37,7 +37,7 @@ class TransactionEntityValidationTest {
   }
 
   @Test
-  void shouldNotAllowNullMerchant() {
+  void merchantMustNotBeNull() {
     entity.setMerchant(null);
 
     Set<ConstraintViolation<TransactionEntity>> violations = validator.validate(entity);
@@ -47,7 +47,7 @@ class TransactionEntityValidationTest {
   }
 
   @Test
-  void shouldNotAllowBlankMerchant() {
+  void merchantMustNotBeEmpty() {
     entity.setMerchant(" ");
 
     Set<ConstraintViolation<TransactionEntity>> violations = validator.validate(entity);
@@ -57,7 +57,7 @@ class TransactionEntityValidationTest {
   }
 
   @Test
-  void shouldNotAllowNegativeAmount() {
+  void amountMustNotBeNegative() {
     entity.setAmount(- 1);
 
     Set<ConstraintViolation<TransactionEntity>> violations = validator.validate(entity);
@@ -67,7 +67,7 @@ class TransactionEntityValidationTest {
   }
 
   @Test
-  void shouldNotAllowNegativeLineItemId() {
+  void lineItemIdMustNotBeNegative() {
     entity.setLineItemId(- 1L);
 
     Set<ConstraintViolation<TransactionEntity>> violations = validator.validate(entity);
