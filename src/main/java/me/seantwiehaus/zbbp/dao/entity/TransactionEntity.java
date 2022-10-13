@@ -11,7 +11,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -60,15 +59,15 @@ public class TransactionEntity extends BaseEntity {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    TransactionEntity that = (TransactionEntity) o;
-    return Objects.equals(id, that.id);
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    TransactionEntity other = (TransactionEntity) obj;
+    return id != null && id.equals(other.id);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id);
+    return 59;
   }
 }

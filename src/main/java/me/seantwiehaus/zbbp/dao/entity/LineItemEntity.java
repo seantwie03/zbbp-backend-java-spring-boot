@@ -16,7 +16,6 @@ import javax.validation.constraints.NotNull;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -90,15 +89,15 @@ public class LineItemEntity extends BaseEntity {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    LineItemEntity that = (LineItemEntity) o;
-    return Objects.equals(id, that.id);
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    LineItemEntity other = (LineItemEntity) obj;
+    return id != null && id.equals(other.id);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id);
+    return 13;
   }
 }
