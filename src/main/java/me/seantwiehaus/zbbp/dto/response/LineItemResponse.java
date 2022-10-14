@@ -31,7 +31,7 @@ public class LineItemResponse extends BaseResponse {
   private final List<TransactionResponse> transactionResponses;
 
   public LineItemResponse(LineItem lineItem) {
-    super(lineItem.getType(), lineItem.getLastModifiedAt());
+    super(lineItem.getLastModifiedAt());
     this.id = lineItem.getId();
     this.budgetDate = lineItem.getBudgetDate();
     this.name = lineItem.getName();

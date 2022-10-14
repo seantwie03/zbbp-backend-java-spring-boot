@@ -20,7 +20,6 @@ class LineItemTest {
       List<Transaction> transactions = List.of(
           new Transaction(
               1L,
-              ItemType.EXPENSE,
               LocalDate.now(),
               "Merchant 1",
               1050,
@@ -28,7 +27,6 @@ class LineItemTest {
               "Transaction 1"),
           new Transaction(
               1L,
-              ItemType.EXPENSE,
               LocalDate.now(),
               "Merchant 2",
               1100,
@@ -37,7 +35,6 @@ class LineItemTest {
               null),
           new Transaction(
               1L,
-              ItemType.EXPENSE,
               LocalDate.now(),
               "Merchant 3",
               400,
@@ -47,7 +44,6 @@ class LineItemTest {
       );
       lineItem = new LineItem(
           1L,
-          ItemType.EXPENSE,
           YearMonth.now(),
           "Groceries",
           5000,
@@ -81,7 +77,6 @@ class LineItemTest {
     static void setup() {
       lineItem = new LineItem(
           null,
-          ItemType.EXPENSE,
           YearMonth.now(),
           "Restaurants",
           5000,

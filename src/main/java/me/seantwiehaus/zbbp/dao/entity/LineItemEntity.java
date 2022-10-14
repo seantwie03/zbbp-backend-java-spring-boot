@@ -68,7 +68,6 @@ public class LineItemEntity extends BaseEntity {
   public LineItem convertToLineItem() {
     return new LineItem(
         id,
-        type,
         budgetDate,
         name,
         plannedAmount,

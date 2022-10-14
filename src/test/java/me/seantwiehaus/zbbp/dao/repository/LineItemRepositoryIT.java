@@ -3,7 +3,6 @@ package me.seantwiehaus.zbbp.dao.repository;
 import me.seantwiehaus.zbbp.dao.entity.LineItemEntity;
 import me.seantwiehaus.zbbp.dao.entity.TransactionEntity;
 import me.seantwiehaus.zbbp.domain.Category;
-import me.seantwiehaus.zbbp.domain.ItemType;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +117,6 @@ class LineItemRepositoryIT {
 
   private LineItemEntity createLineItemEntity(YearMonth budgetDate) {
     LineItemEntity lineItemEntity = new LineItemEntity();
-    lineItemEntity.setType(ItemType.EXPENSE);
     lineItemEntity.setBudgetDate(budgetDate);
     lineItemEntity.setName("Name");
     lineItemEntity.setPlannedAmount(120000);

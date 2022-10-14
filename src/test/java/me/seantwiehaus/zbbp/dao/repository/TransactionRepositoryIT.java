@@ -1,7 +1,6 @@
 package me.seantwiehaus.zbbp.dao.repository;
 
 import me.seantwiehaus.zbbp.dao.entity.TransactionEntity;
-import me.seantwiehaus.zbbp.domain.ItemType;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ class TransactionRepositoryIT {
       entityManager.clear(); // Clear the context so that entities are not fetched from the first-level cache
 
       // When the method under test is called with the 12th - 18th of January
-      List<TransactionEntity> between = repository.findAllByDateBetweenOrderByDateDescAmountDescTypeDesc(
+      List<TransactionEntity> between = repository.findAllByDateBetweenOrderByDateDescAmountDesc(
           LocalDate.of(2022, 1, 12),
           LocalDate.of(2022, 1, 18));
 
@@ -51,28 +50,25 @@ class TransactionRepositoryIT {
 
     @Test
     void findTransactionsBetweenTwoDatesWithCorrectOrder() {
-      // Given four TransactionEntities with values
-      TransactionEntity sameDateAndAmountIncomeFirst = createEntity(LocalDate.of(2022, 1, 2), 2600, ItemType.INCOME);
-      entityManager.persist(sameDateAndAmountIncomeFirst);
-      TransactionEntity sameDateAndAmountExpenseSecond = createEntity(LocalDate.of(2022, 1, 2), 2600, ItemType.EXPENSE);
-      entityManager.persist(sameDateAndAmountExpenseSecond);
-      TransactionEntity lowestAmountOnSameDateThird = createEntity(LocalDate.of(2022, 1, 2), 2500, ItemType.INCOME);
+      // Given three TransactionEntities with values
+      TransactionEntity highestAmountOnSameDateFirst = createEntity(LocalDate.of(2022, 1, 2), 2600);
+      entityManager.persist(highestAmountOnSameDateFirst);
+      TransactionEntity lowestAmountOnSameDateThird = createEntity(LocalDate.of(2022, 1, 2), 2500);
       entityManager.persist(lowestAmountOnSameDateThird);
-      TransactionEntity lowestDateFourth = createEntity(LocalDate.of(2022, 1, 1), 100, ItemType.INCOME);
+      TransactionEntity lowestDateFourth = createEntity(LocalDate.of(2022, 1, 1), 100);
       entityManager.persist(lowestDateFourth);
       entityManager.flush();
       entityManager.clear(); // Clear the context so that entities are not fetched from the first-level cache
 
       // When the method under test is called
-      List<TransactionEntity> returned = repository.findAllByDateBetweenOrderByDateDescAmountDescTypeDesc(
+      List<TransactionEntity> returned = repository.findAllByDateBetweenOrderByDateDescAmountDesc(
           LocalDate.of(2022, 1, 1),
           LocalDate.of(2022, 1, 3));
 
       // Then the TransactionEntities should be returned in the correct order
-      assertEquals(sameDateAndAmountIncomeFirst, returned.get(0));
-      assertEquals(sameDateAndAmountExpenseSecond, returned.get(1));
-      assertEquals(lowestAmountOnSameDateThird, returned.get(2));
-      assertEquals(lowestDateFourth, returned.get(3));
+      assertEquals(highestAmountOnSameDateFirst, returned.get(0));
+      assertEquals(lowestAmountOnSameDateThird, returned.get(1));
+      assertEquals(lowestDateFourth, returned.get(2));
     }
   }
 
@@ -84,9 +80,8 @@ class TransactionRepositoryIT {
     return transactionEntity;
   }
 
-  private TransactionEntity createEntity(LocalDate date, int amount, ItemType type) {
+  private TransactionEntity createEntity(LocalDate date, int amount) {
     TransactionEntity transactionEntity = new TransactionEntity();
-    transactionEntity.setType(type);
     transactionEntity.setDate(date);
     transactionEntity.setMerchant("Merchant");
     transactionEntity.setAmount(amount);

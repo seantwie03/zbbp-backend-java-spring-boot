@@ -85,23 +85,43 @@ public class Budget {
     List<LineItem> lifestyleItems = new ArrayList<>();
 
     lineItems.forEach(lineItem -> {
-      switch (lineItem.getType()) {
-        case INCOME -> allIncomes.add(lineItem);
-        case EXPENSE -> allExpenses.add(lineItem);
-        default ->
-            throw new InternalServerException("LineItem with ID: " + lineItem.getId() + " has an invalid ItemType.");
-      }
-
       switch (lineItem.getCategory()) {
-        case INCOME -> incomeItems.add(lineItem);
-        case SAVINGS -> savingItems.add(lineItem);
-        case INVESTMENTS -> investmentItems.add(lineItem);
-        case HOUSING -> housingItems.add(lineItem);
-        case TRANSPORTATION -> transportationItems.add(lineItem);
-        case FOOD -> foodItems.add(lineItem);
-        case PERSONAL -> personalItems.add(lineItem);
-        case HEALTH -> healthItems.add(lineItem);
-        case LIFESTYLE -> lifestyleItems.add(lineItem);
+        case INCOME -> {
+          allIncomes.add(lineItem);
+          incomeItems.add(lineItem);
+        }
+        case SAVINGS -> {
+          allExpenses.add(lineItem);
+          savingItems.add(lineItem);
+        }
+        case INVESTMENTS -> {
+          allExpenses.add(lineItem);
+          investmentItems.add(lineItem);
+        }
+        case HOUSING -> {
+          allExpenses.add(lineItem);
+          housingItems.add(lineItem);
+        }
+        case TRANSPORTATION -> {
+          allExpenses.add(lineItem);
+          transportationItems.add(lineItem);
+        }
+        case FOOD -> {
+          allExpenses.add(lineItem);
+          foodItems.add(lineItem);
+        }
+        case PERSONAL -> {
+          allExpenses.add(lineItem);
+          personalItems.add(lineItem);
+        }
+        case HEALTH -> {
+          allExpenses.add(lineItem);
+          healthItems.add(lineItem);
+        }
+        case LIFESTYLE -> {
+          allExpenses.add(lineItem);
+          lifestyleItems.add(lineItem);
+        }
         default ->
             throw new InternalServerException("LineItem with ID: " + lineItem.getId() + " has an invalid Category.");
       }

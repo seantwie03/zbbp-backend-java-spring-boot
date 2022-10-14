@@ -20,7 +20,7 @@ public class TransactionResponse extends BaseResponse {
   private final String description;
 
   public TransactionResponse(Transaction transaction) {
-    super(transaction.getType(), transaction.getLastModifiedAt());
+    super(transaction.getLastModifiedAt());
     this.id = transaction.getId();
     this.date = transaction.getDate();
     this.merchant = transaction.getMerchant();

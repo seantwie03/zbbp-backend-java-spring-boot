@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.Category;
-import me.seantwiehaus.zbbp.domain.ItemType;
 import me.seantwiehaus.zbbp.domain.LineItem;
 import me.seantwiehaus.zbbp.dto.serialize.DollarsToCentsDeserializer;
 
@@ -21,8 +20,6 @@ import java.time.YearMonth;
 @NoArgsConstructor
 public class LineItemRequest {
   @NotNull
-  private ItemType type;
-  @NotNull
   private YearMonth budgetDate;
   @NotBlank
   private String name;
@@ -36,7 +33,6 @@ public class LineItemRequest {
 
   public LineItem convertToLineItem() {
     return new LineItem(
-        type,
         budgetDate,
         name,
         plannedAmount,

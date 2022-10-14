@@ -35,17 +35,15 @@ public class LineItem extends BaseDomain {
    */
   private final List<Transaction> transactions;
 
-  public LineItem(@NotNull ItemType type,
-                  @NotNull YearMonth budgetDate,
+  public LineItem(@NotNull YearMonth budgetDate,
                   @NotNull String name,
                   int plannedAmount,
                   @NotNull Category category) {
-    this(null, type, budgetDate, name, plannedAmount, category, null, null, null);
+    this(null, budgetDate, name, plannedAmount, category, null, null, null);
   }
 
-  @SuppressWarnings("java:S107") // SonarLint thinks this is too many constructor parameters
+  @SuppressWarnings("java:S107")
   public LineItem(Long id,
-                  @NotNull ItemType type,
                   @NotNull YearMonth budgetDate,
                   @NotNull String name,
                   int plannedAmount,
@@ -53,7 +51,7 @@ public class LineItem extends BaseDomain {
                   String description,
                   List<Transaction> transactions,
                   Instant lastModifiedAt) {
-    super(type, lastModifiedAt);
+    super(lastModifiedAt);
     this.id = id;
     this.budgetDate = budgetDate;
     this.name = name;

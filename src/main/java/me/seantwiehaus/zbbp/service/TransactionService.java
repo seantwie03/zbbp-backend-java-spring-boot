@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dao.entity.TransactionEntity;
 import me.seantwiehaus.zbbp.dao.repository.TransactionRepository;
-import me.seantwiehaus.zbbp.domain.LineItem;
 import me.seantwiehaus.zbbp.domain.Transaction;
-import me.seantwiehaus.zbbp.exception.BadRequestException;
 import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.exception.ResourceConflictException;
 import org.springframework.stereotype.Service;
@@ -29,7 +27,7 @@ public class TransactionService {
    * @return All Transactions between the start and end Dates (inclusive).
    */
   public List<Transaction> getAllBetween(LocalDate startDate, LocalDate endDate) {
-    return repository.findAllByDateBetweenOrderByDateDescAmountDescTypeDesc(startDate, endDate)
+    return repository.findAllByDateBetweenOrderByDateDescAmountDesc(startDate, endDate)
         .stream()
         .map(TransactionEntity::convertToTransaction)
         .toList();
@@ -43,17 +41,7 @@ public class TransactionService {
 
   public Transaction create(Transaction transaction) {
     log.info("Creating new Transaction -> " + transaction);
-    throwIfLineItemHasDifferentType(transaction);
     return repository.save(new TransactionEntity(transaction)).convertToTransaction();
-  }
-
-  private void throwIfLineItemHasDifferentType(Transaction transaction) {
-    if (transaction.getLineItemId() == null) return;
-    LineItem lineItem = lineItemService.findById(transaction.getLineItemId());
-    if (lineItem.getType() != transaction.getType()) {
-      throw new BadRequestException("Unable to add Transaction with type: " + transaction.getType().toString() +
-          " to Line Item with type: " + lineItem.getType().toString());
-    }
   }
 
   public Transaction update(Long id, Instant ifUnmodifiedSince, Transaction transaction) {
@@ -64,8 +52,6 @@ public class TransactionService {
             throw new ResourceConflictException(
                 "Transaction with ID: " + id + " has been modified since this client requested it.");
           }
-          throwIfLineItemHasDifferentType(transaction);
-          entity.setType(transaction.getType());
           entity.setAmount(transaction.getAmount());
           entity.setDate(transaction.getDate());
           entity.setDescription(transaction.getDescription());

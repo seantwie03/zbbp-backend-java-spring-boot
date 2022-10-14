@@ -49,7 +49,6 @@ public class TransactionEntity extends BaseEntity {
   public Transaction convertToTransaction() {
     return new Transaction(
         id,
-        type,
         date,
         merchant,
         amount,

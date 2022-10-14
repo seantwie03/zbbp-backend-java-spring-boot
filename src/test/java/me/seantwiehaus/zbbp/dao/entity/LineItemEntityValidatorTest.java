@@ -1,7 +1,6 @@
 package me.seantwiehaus.zbbp.dao.entity;
 
 import me.seantwiehaus.zbbp.domain.Category;
-import me.seantwiehaus.zbbp.domain.ItemType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,6 @@ class LineItemEntityValidatorTest {
   @BeforeEach
   void setup() {
     entity = new LineItemEntity();
-    entity.setType(ItemType.EXPENSE);
     entity.setBudgetDate(YearMonth.now());
     entity.setName("Name");
     entity.setPlannedAmount(120000);

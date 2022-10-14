@@ -1,7 +1,6 @@
 package me.seantwiehaus.zbbp.dao.entity;
 
 import me.seantwiehaus.zbbp.domain.Category;
-import me.seantwiehaus.zbbp.domain.ItemType;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +119,6 @@ class LineItemEntityIT {
    */
   private LineItemEntity createLineItemEntity(String name, YearMonth budgetDate, Category category) {
     LineItemEntity lineItemEntity = new LineItemEntity();
-    lineItemEntity.setType(ItemType.EXPENSE);
     lineItemEntity.setBudgetDate(budgetDate);
     lineItemEntity.setName(name);
     lineItemEntity.setPlannedAmount(120000);

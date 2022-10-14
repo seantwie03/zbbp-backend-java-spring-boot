@@ -1,6 +1,5 @@
 package me.seantwiehaus.zbbp.dao.entity;
 
-import me.seantwiehaus.zbbp.domain.ItemType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +19,6 @@ class TransactionEntityValidatorTest {
   @BeforeEach
   void setup() {
     entity = new TransactionEntity();
-    entity.setType(ItemType.EXPENSE);
     entity.setDate(LocalDate.now());
     entity.setMerchant("Merchant");
     entity.setAmount(120000);

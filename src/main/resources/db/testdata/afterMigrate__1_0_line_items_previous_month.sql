@@ -5,14 +5,13 @@
 --
 -- Income
 --
-INSERT INTO line_items (id, type, budget_date, name, planned_amount_cents, category, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount_cents, category, description, last_modified_at)
 VALUES (100,
-        'INCOME',
         make_timestamp(
-                extract(year FROM current_date)::int, -- Year
-                extract(month FROM current_date)::int - 1, -- Month
-                1, -- Day
-                0, 0, 0.0), -- Hour, Minute, Second
+            extract(year FROM current_date)::int, -- Year
+            extract(month FROM current_date)::int - 1, -- Month
+            1, -- Day
+            0, 0, 0.0), -- Hour, Minute, Second
         'Spouse 1 Income',
         300000,
         'INCOME',
@@ -26,14 +25,13 @@ VALUES (100,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, type, budget_date, name, planned_amount_cents, category, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount_cents, category, description, last_modified_at)
 VALUES (101,
-        'INCOME',
         make_timestamp(
-                extract(year FROM current_date)::int, -- Year
-                extract(month FROM current_date)::int - 1, -- Month
-                1, -- Day
-                0, 0, 0.0), -- Hour, Minute, Second
+            extract(year FROM current_date)::int, -- Year
+            extract(month FROM current_date)::int - 1, -- Month
+            1, -- Day
+            0, 0, 0.0), -- Hour, Minute, Second
         'Spouse 2 Income',
         250000,
         'INCOME',
@@ -47,14 +45,13 @@ VALUES (101,
                          'utc'))
 ON CONFLICT DO NOTHING;
 
-INSERT INTO line_items (id, type, budget_date, name, planned_amount_cents, category, description, last_modified_at)
+INSERT INTO line_items (id, budget_date, name, planned_amount_cents, category, description, last_modified_at)
 VALUES (102,
-        'INCOME',
         make_timestamp(
-                extract(year FROM current_date)::int, -- Year
-                extract(month FROM current_date)::int - 1, -- Month
-                1, -- Day
-                0, 0, 0.0), -- Hour, Minute, Second
+            extract(year FROM current_date)::int, -- Year
+            extract(month FROM current_date)::int - 1, -- Month
+            1, -- Day
+            0, 0, 0.0), -- Hour, Minute, Second
         'Side Hustle - Photography',
         50000,
         'INCOME',
@@ -75,10 +72,10 @@ ON CONFLICT DO NOTHING;
 INSERT INTO line_items (id, budget_date, name, planned_amount_cents, category, description, last_modified_at)
 VALUES (201,
         make_timestamp(
-                extract(year FROM current_date)::int, -- Year
-                extract(month FROM current_date)::int - 1, -- Month
-                1, -- Day
-                0, 0, 0.0), -- Hour, Minute, Second
+            extract(year FROM current_date)::int, -- Year
+            extract(month FROM current_date)::int - 1, -- Month
+            1, -- Day
+            0, 0, 0.0), -- Hour, Minute, Second
         'Emergency Fund / Family Savings',
         10000,
         'SAVINGS',
@@ -95,10 +92,10 @@ ON CONFLICT DO NOTHING;
 INSERT INTO line_items (id, budget_date, name, planned_amount_cents, category, description, last_modified_at)
 VALUES (202,
         make_timestamp(
-                extract(year FROM current_date)::int, -- Year
-                extract(month FROM current_date)::int - 1, -- Month
-                1, -- Day
-                0, 0, 0.0), -- Hour, Minute, Second
+            extract(year FROM current_date)::int, -- Year
+            extract(month FROM current_date)::int - 1, -- Month
+            1, -- Day
+            0, 0, 0.0), -- Hour, Minute, Second
         'Spouse 1 Savings',
         10000,
         'SAVINGS',
@@ -115,10 +112,10 @@ ON CONFLICT DO NOTHING;
 INSERT INTO line_items (id, budget_date, name, planned_amount_cents, category, description, last_modified_at)
 VALUES (203,
         make_timestamp(
-                extract(year FROM current_date)::int, -- Year
-                extract(month FROM current_date)::int - 1, -- Month
-                1, -- Day
-                0, 0, 0.0), -- Hour, Minute, Second
+            extract(year FROM current_date)::int, -- Year
+            extract(month FROM current_date)::int - 1, -- Month
+            1, -- Day
+            0, 0, 0.0), -- Hour, Minute, Second
         'Spouse 2 Savings',
         10000,
         'SAVINGS',
@@ -135,10 +132,10 @@ ON CONFLICT DO NOTHING;
 INSERT INTO line_items (id, budget_date, name, planned_amount_cents, category, description, last_modified_at)
 VALUES (204,
         make_timestamp(
-                extract(year FROM current_date)::int, -- Year
-                extract(month FROM current_date)::int - 1, -- Month
-                1, -- Day
-                0, 0, 0.0), -- Hour, Minute, Second
+            extract(year FROM current_date)::int, -- Year
+            extract(month FROM current_date)::int - 1, -- Month
+            1, -- Day
+            0, 0, 0.0), -- Hour, Minute, Second
         '529 College Savings Plan',
         50000,
         'INVESTMENTS',

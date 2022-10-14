@@ -67,7 +67,6 @@ public class BudgetService {
                                                                     List<LineItemEntity> exitingEntities) {
     return exitingEntities.stream().map(existingEntity -> {
       LineItemEntity newEntity = new LineItemEntity();
-      newEntity.setType(existingEntity.getType());
       newEntity.setBudgetDate(budgetDate);
       newEntity.setName(existingEntity.getName());
       newEntity.setPlannedAmount(existingEntity.getPlannedAmount());

@@ -1,6 +1,5 @@
 Table line_items {
   id bigint [pk]
-  type varchar(10)
   budget_date date
   name varchar(50)
   planned_amount_cents int
@@ -14,7 +13,6 @@ Table line_items {
 
 Table transactions {
   id bigint [pk]
-  type varchar(10)
   date date
   merchant varchar(50)
   amount_cents int
