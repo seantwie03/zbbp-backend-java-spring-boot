@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,10 +29,6 @@ public class TransactionService {
    * @return All transactions with dates between the start and end dates (inclusive)
    */
   public List<Transaction> getAllBetween(LocalDate startDate, LocalDate endDate) {
-    if (startDate == null || endDate == null) {
-      log.warn("TransactionService::getAllBetween was called with null startDate and/or endDate.");
-      return Collections.emptyList();
-    }
     return repository.findAllByDateBetweenOrderByDateDescAmountDescTypeDesc(startDate, endDate)
         .stream()
         .map(TransactionEntity::convertToTransaction)
@@ -41,16 +36,11 @@ public class TransactionService {
   }
 
   public Optional<Transaction> findById(Long id) {
-    if (id == null) {
-      log.warn("TransactionService::findById was called with null ID");
-      return Optional.empty();
-    }
     return repository.findById(id)
         .map(TransactionEntity::convertToTransaction);
   }
 
   public Transaction create(Transaction transaction) {
-    if (transaction == null) throw new InternalServerException("Unable to create null Transaction.");
     log.info("Creating new Transaction -> " + transaction);
     throwIfLineItemHasDifferentType(transaction);
     return repository.save(new TransactionEntity(transaction)).convertToTransaction();
@@ -68,9 +58,6 @@ public class TransactionService {
   }
 
   public Optional<Transaction> update(Long id, Instant ifUnmodifiedSince, Transaction transaction) {
-    if (id == null || ifUnmodifiedSince == null || transaction == null) {
-      throw new InternalServerException("Unable to update Transaction. One or more parameters are null");
-    }
     Optional<TransactionEntity> existingEntity = repository.findById(id);
     return existingEntity
         .map(entity -> {
@@ -78,10 +65,10 @@ public class TransactionService {
             throw new ResourceConflictException(
                 "Transaction with ID: " + id + " has been modified since this client requested it.");
           }
+          throwIfLineItemHasDifferentType(transaction);
           entity.setAmount(transaction.getAmount());
           entity.setDate(transaction.getDate());
           entity.setDescription(transaction.getDescription());
-          throwIfLineItemHasDifferentType(transaction);
           entity.setLineItemId(transaction.getLineItemId());
           log.info("Updating Transaction with ID=" + id + " -> " + entity);
           return Optional.of(repository.save(entity).convertToTransaction());
