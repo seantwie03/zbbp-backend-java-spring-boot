@@ -35,9 +35,9 @@ public class TransactionController {
   public List<TransactionResponse> getAllTransactionsBetween(
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> startingDate,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> endingDate) {
-    LocalDate startDate = startingDate.orElse(LocalDate.now().minusYears(100));
-    LocalDate endDate = endingDate.orElse(LocalDate.now().plusYears(100));
-    return service.getAllBetween(startDate, endDate)
+    return service.getAllBetween(
+            startingDate.orElse(LocalDate.now().minusYears(100)),
+            endingDate.orElse(LocalDate.now().plusYears(100)))
         .stream()
         .map(TransactionResponse::new)
         .toList();
