@@ -34,7 +34,7 @@ public class TransactionService {
       log.warn("TransactionService::getAllBetween was called with null startDate and/or endDate.");
       return Collections.emptyList();
     }
-    return repository.findAllByDateBetweenOrderByDateAscAmountDescTypeDesc(startDate, endDate)
+    return repository.findAllByDateBetweenOrderByDateDescAmountDescTypeDesc(startDate, endDate)
         .stream()
         .map(TransactionEntity::convertToTransaction)
         .toList();
