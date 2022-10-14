@@ -3,7 +3,6 @@ package me.seantwiehaus.zbbp.domain;
 import lombok.Getter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.time.LocalDate;
 
@@ -18,26 +17,26 @@ public class Transaction {
   private final String description;
   private final Instant lastModifiedAt;
 
-  public Transaction(@NotNull LocalDate date,
-                     @NotNull String merchant,
-                     @NotNull int amount,
+  public Transaction(LocalDate date,
+                     String merchant,
+                     int amount,
                      Long lineItemId,
                      String description) {
     this(null, date, merchant, amount, lineItemId, description, null);
   }
 
   public Transaction(Long id,
-                     @NotNull LocalDate date,
-                     @NotNull String merchant,
-                     @NotNull int amount,
+                     LocalDate date,
+                     String merchant,
+                     int amount,
                      Long lineItemId,
                      String description) {
     this(id, date, merchant, amount, lineItemId, description, null);
   }
 
   public Transaction(Long id,
-                     @NotNull LocalDate date,
-                     @NotNull String merchant,
+                     LocalDate date,
+                     String merchant,
                      int amount,
                      Long lineItemId,
                      String description,

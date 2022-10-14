@@ -3,30 +3,21 @@ package me.seantwiehaus.zbbp.domain;
 import lombok.Getter;
 import lombok.ToString;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.time.YearMonth;
-import java.util.Collections;
 import java.util.List;
 
 @Getter
 @ToString
 public class LineItem {
   private final Long id;
-  @NotNull
   private final YearMonth budgetDate;
-  @NotBlank
   private final String name;
-  @Min(0)
   private final int plannedAmount;
-  @NotNull
   private final Category category;
   private final String description;
   private final Instant lastModifiedAt;
 
-  @Min(0)
   private final int totalTransactions;
   private final double percentageOfPlanned;
   private final int totalRemaining;
@@ -36,19 +27,19 @@ public class LineItem {
    */
   private final List<Transaction> transactions;
 
-  public LineItem(@NotNull YearMonth budgetDate,
-                  @NotNull String name,
+  public LineItem(YearMonth budgetDate,
+                  String name,
                   int plannedAmount,
-                  @NotNull Category category) {
+                  Category category) {
     this(null, budgetDate, name, plannedAmount, category, null, null, null);
   }
 
   @SuppressWarnings("java:S107")
   public LineItem(Long id,
-                  @NotNull YearMonth budgetDate,
-                  @NotNull String name,
+                  YearMonth budgetDate,
+                  String name,
                   int plannedAmount,
-                  @NotNull Category category,
+                  Category category,
                   String description,
                   List<Transaction> transactions,
                   Instant lastModifiedAt) {
@@ -59,7 +50,7 @@ public class LineItem {
     this.category = category;
     this.description = description;
     this.lastModifiedAt = lastModifiedAt;
-    this.transactions = transactions != null ? Collections.unmodifiableList(transactions) : List.of();
+    this.transactions = transactions != null ? List.copyOf(transactions) : List.of();
 
     this.totalTransactions = calculateTotalTransactions();
     this.percentageOfPlanned = calculatePercentageOfPlanned();

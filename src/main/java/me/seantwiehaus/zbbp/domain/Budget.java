@@ -4,10 +4,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import me.seantwiehaus.zbbp.exception.InternalServerException;
 
-import javax.validation.constraints.NotNull;
 import java.time.YearMonth;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -63,7 +61,7 @@ public class Budget {
   private final int totalSpent;
   private final int totalLeftToSpend;
 
-  public Budget(@NotNull YearMonth budgetDate, @NotNull List<LineItem> lineItems) {
+  public Budget(YearMonth budgetDate, List<LineItem> lineItems) {
     this.budgetDate = budgetDate;
     this.uncategorized = lineItems;
 
@@ -128,17 +126,17 @@ public class Budget {
     });
 
     // Set fields as immutable lists
-    this.allIncomeItems = Collections.unmodifiableList(allIncomes);
-    this.allExpenseItems = Collections.unmodifiableList(allExpenses);
-    this.incomes = Collections.unmodifiableList(incomeItems);
-    this.savings = Collections.unmodifiableList(savingItems);
-    this.investments = Collections.unmodifiableList(investmentItems);
-    this.housing = Collections.unmodifiableList(housingItems);
-    this.transportation = Collections.unmodifiableList(transportationItems);
-    this.food = Collections.unmodifiableList(foodItems);
-    this.personal = Collections.unmodifiableList(personalItems);
-    this.health = Collections.unmodifiableList(healthItems);
-    this.lifestyle = Collections.unmodifiableList(lifestyleItems);
+    this.allIncomeItems = List.copyOf(allIncomes);
+    this.allExpenseItems = List.copyOf(allExpenses);
+    this.incomes = List.copyOf(incomeItems);
+    this.savings = List.copyOf(savingItems);
+    this.investments = List.copyOf(investmentItems);
+    this.housing = List.copyOf(housingItems);
+    this.transportation = List.copyOf(transportationItems);
+    this.food = List.copyOf(foodItems);
+    this.personal = List.copyOf(personalItems);
+    this.health = List.copyOf(healthItems);
+    this.lifestyle = List.copyOf(lifestyleItems);
 
     this.totalPlannedIncome = calculateTotalPlannedIncome();
     this.totalPlannedExpense = calculateTotalPlannedExpense();
