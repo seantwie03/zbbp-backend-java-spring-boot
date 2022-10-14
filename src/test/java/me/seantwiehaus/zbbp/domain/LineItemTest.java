@@ -49,23 +49,23 @@ class LineItemTest {
           5000,
           Category.FOOD,
           "Description",
-          transactions,
-          null);
+          null,
+          transactions);
     }
 
     @Test
     void calculateTotalTransactions() {
-      assertEquals(2550, lineItem.getTotalTransactions());
+      assertEquals(2550, lineItem.calculateTotalTransactions());
     }
 
     @Test
     void calculatePercentageOfPlanned() {
-      assertEquals(51.0, lineItem.getPercentageOfPlanned());
+      assertEquals(51.0, lineItem.calculatePercentageOfPlanned());
     }
 
     @Test
     void calculateTotalRemaining() {
-      assertEquals(2450, lineItem.getTotalRemaining());
+      assertEquals(2450, lineItem.calculateTotalRemaining());
     }
   }
 
@@ -89,17 +89,17 @@ class LineItemTest {
 
     @Test
     void calculateTotalTransactions() {
-      assertEquals(0, lineItem.getTotalTransactions());
+      assertEquals(0, lineItem.calculateTotalTransactions());
     }
 
     @Test
     void calculatePercentageOfPlanned() {
-      assertEquals(0, lineItem.getPercentageOfPlanned());
+      assertEquals(0, lineItem.calculatePercentageOfPlanned());
     }
 
     @Test
     void calculateTotalRemaining() {
-      assertEquals(5000, lineItem.getTotalRemaining());
+      assertEquals(5000, lineItem.calculateTotalRemaining());
     }
   }
 }

@@ -83,7 +83,7 @@ public class Budget {
     List<LineItem> lifestyleItems = new ArrayList<>();
 
     lineItems.forEach(lineItem -> {
-      switch (lineItem.getCategory()) {
+      switch (lineItem.category()) {
         case INCOME -> {
           allIncomes.add(lineItem);
           incomeItems.add(lineItem);
@@ -121,7 +121,7 @@ public class Budget {
           lifestyleItems.add(lineItem);
         }
         default ->
-            throw new InternalServerException("LineItem with ID: " + lineItem.getId() + " has an invalid Category.");
+            throw new InternalServerException("LineItem with ID: " + lineItem.id() + " has an invalid Category.");
       }
     });
 
@@ -148,27 +148,27 @@ public class Budget {
   private boolean notAllLineItemsHaveCorrectBudgetMonth() {
     return uncategorized
         .stream()
-        .anyMatch(lineItem -> ! lineItem.getBudgetDate().equals(budgetDate));
+        .anyMatch(lineItem -> ! lineItem.budgetDate().equals(budgetDate));
   }
 
   private int calculateTotalPlannedIncome() {
     return allIncomeItems
         .stream()
-        .mapToInt(LineItem::getPlannedAmount)
+        .mapToInt(LineItem::plannedAmount)
         .sum();
   }
 
   private int calculateTotalPlannedExpense() {
     return allExpenseItems
         .stream()
-        .mapToInt(LineItem::getPlannedAmount)
+        .mapToInt(LineItem::plannedAmount)
         .sum();
   }
 
   private int calculateTotalSpent() {
     return allExpenseItems
         .stream()
-        .mapToInt(LineItem::getTotalTransactions)
+        .mapToInt(LineItem::calculateTotalTransactions)
         .sum();
   }
 

@@ -18,18 +18,13 @@ import java.time.YearMonth;
 @Setter
 @ToString
 @NoArgsConstructor
-public class LineItemRequest {
-  @NotNull
-  private YearMonth budgetDate;
-  @NotBlank
-  private String name;
-  @NotNull
-  @Min(0)
-  @JsonDeserialize(using = DollarsToCentsDeserializer.class)
-  private Integer plannedAmount;
-  @NotNull
-  private Category category;
-  private String description;
+public record LineItemRequest(
+    @NotNull YearMonth budgetDate,
+    @NotBlank String name,
+    @NotNull @Min(0) @JsonDeserialize(using = DollarsToCentsDeserializer.class)
+    Integer plannedAmount,
+    @NotNull Category category,
+    String description) {
 
   public LineItem convertToLineItem() {
     return new LineItem(

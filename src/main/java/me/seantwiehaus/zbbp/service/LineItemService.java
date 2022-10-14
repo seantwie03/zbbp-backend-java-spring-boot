@@ -51,11 +51,11 @@ public class LineItemService {
             throw new ResourceConflictException(
                 "Line Item with ID: " + id + " has been modified since this client requested it.");
           }
-          entity.setBudgetDate(lineItem.getBudgetDate());
-          entity.setName(lineItem.getName());
-          entity.setPlannedAmount(lineItem.getPlannedAmount());
-          entity.setCategory(lineItem.getCategory());
-          entity.setDescription(lineItem.getDescription());
+          entity.setBudgetDate(lineItem.budgetDate());
+          entity.setName(lineItem.name());
+          entity.setPlannedAmount(lineItem.plannedAmount());
+          entity.setCategory(lineItem.category());
+          entity.setDescription(lineItem.description());
           log.info("Updating Line Item with ID=" + id + " -> " + entity);
           return repository.save(entity).convertToLineItem();
         })

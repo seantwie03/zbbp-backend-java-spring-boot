@@ -49,7 +49,7 @@ public class LineItemController {
     return ResponseEntity
         .ok()
         .location(location)
-        .lastModified(lineItem.getLastModifiedAt())
+        .lastModified(lineItem.lastModifiedAt())
         .body(new LineItemResponse(lineItem));
   }
 
@@ -57,10 +57,10 @@ public class LineItemController {
   public ResponseEntity<LineItemResponse> createLineItem(
       @RequestBody @Valid LineItemRequest request) {
     LineItem lineItem = service.create(request.convertToLineItem());
-    URI location = UriComponentsBuilder.fromPath("/line-items/{id}").buildAndExpand(lineItem.getId()).toUri();
+    URI location = UriComponentsBuilder.fromPath("/line-items/{id}").buildAndExpand(lineItem.id()).toUri();
     return ResponseEntity
         .created(location)
-        .lastModified(lineItem.getLastModifiedAt())
+        .lastModified(lineItem.lastModifiedAt())
         .body(new LineItemResponse(lineItem));
   }
 

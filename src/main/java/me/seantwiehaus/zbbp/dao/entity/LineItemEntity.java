@@ -57,12 +57,12 @@ public class LineItemEntity extends BaseEntity {
   private List<TransactionEntity> transactionEntities = new ArrayList<>();
 
   public LineItemEntity(LineItem lineItem) {
-    this.id = lineItem.getId();
-    this.budgetDate = lineItem.getBudgetDate();
-    this.name = lineItem.getName();
-    this.plannedAmount = lineItem.getPlannedAmount();
-    this.category = lineItem.getCategory();
-    this.description = lineItem.getDescription();
+    this.id = lineItem.id();
+    this.budgetDate = lineItem.budgetDate();
+    this.name = lineItem.name();
+    this.plannedAmount = lineItem.plannedAmount();
+    this.category = lineItem.category();
+    this.description = lineItem.description();
   }
 
   public LineItem convertToLineItem() {
@@ -73,11 +73,11 @@ public class LineItemEntity extends BaseEntity {
         plannedAmount,
         category,
         description,
+        lastModifiedAt,
         transactionEntities
             .stream()
             .map(TransactionEntity::convertToTransaction)
-            .toList(),
-        lastModifiedAt);
+            .toList());
   }
 
   public static List<LineItem> convertToLineItems(List<LineItemEntity> lineItems) {
