@@ -49,8 +49,7 @@ public class TransactionService {
 
   private void throwIfLineItemHasDifferentType(Transaction transaction) {
     if (transaction.getLineItemId() == null) return;
-    LineItem lineItem = lineItemService.findById(transaction.getLineItemId())
-        .orElseThrow(() -> new BadRequestException("Unable to find Line Item with ID: " + transaction.getLineItemId()));
+    LineItem lineItem = lineItemService.findById(transaction.getLineItemId());
     if (lineItem.getType() != transaction.getType()) {
       throw new BadRequestException("Unable to add Transaction with type: " + transaction.getType().toString() +
           " to Line Item with type: " + lineItem.getType().toString());
@@ -66,6 +65,7 @@ public class TransactionService {
                 "Transaction with ID: " + id + " has been modified since this client requested it.");
           }
           throwIfLineItemHasDifferentType(transaction);
+          entity.setType(transaction.getType());
           entity.setAmount(transaction.getAmount());
           entity.setDate(transaction.getDate());
           entity.setDescription(transaction.getDescription());

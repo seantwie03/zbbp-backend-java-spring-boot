@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dao.entity.LineItemEntity;
 import me.seantwiehaus.zbbp.dao.repository.LineItemRepository;
 import me.seantwiehaus.zbbp.domain.LineItem;
+import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.exception.ResourceConflictException;
 import org.springframework.stereotype.Service;
 
@@ -20,20 +21,21 @@ public class LineItemService {
   private final LineItemRepository repository;
 
   /**
-   * @param startingBudgetDate The first budgetDate to include in the list of results.
-   * @param endingBudgetDate   The last budgetDate to include in the list of results.
-   * @return All Line Items between starting and ending budgetDates (inclusive).
+   * @param startBudgetDate The first budgetDate to include in the list of results.
+   * @param endBudgetDate   The last budgetDate to include in the list of results.
+   * @return All Line Items between the starting and ending budgetDates (inclusive).
    */
-  public List<LineItem> getAllBetween(YearMonth startingBudgetDate, YearMonth endingBudgetDate) {
-    return repository.findAllByBudgetDateBetween(startingBudgetDate, endingBudgetDate)
+  public List<LineItem> getAllBetween(YearMonth startBudgetDate, YearMonth endBudgetDate) {
+    return repository.findAllByBudgetDateBetween(startBudgetDate, endBudgetDate)
         .stream()
         .map(LineItemEntity::convertToLineItem)
         .toList();
   }
 
-  public Optional<LineItem> findById(Long id) {
+  public LineItem findById(Long id) {
     return repository.findLineItemEntityById(id)
-        .map(LineItemEntity::convertToLineItem);
+        .map(LineItemEntity::convertToLineItem)
+        .orElseThrow(() -> new NotFoundException("Line Item", id));
   }
 
   public LineItem create(LineItem lineItem) {
@@ -41,7 +43,7 @@ public class LineItemService {
     return repository.save(new LineItemEntity(lineItem)).convertToLineItem();
   }
 
-  public Optional<LineItem> update(Long id, Instant ifUnmodifiedSince, LineItem lineItem) {
+  public LineItem update(Long id, Instant ifUnmodifiedSince, LineItem lineItem) {
     Optional<LineItemEntity> existingEntity = repository.findLineItemEntityById(id);
     return existingEntity
         .map(entity -> {
@@ -55,17 +57,14 @@ public class LineItemService {
           entity.setCategory(lineItem.getCategory());
           entity.setDescription(lineItem.getDescription());
           log.info("Updating Line Item with ID=" + id + " -> " + entity);
-          return Optional.of(repository.save(entity).convertToLineItem());
+          return repository.save(entity).convertToLineItem();
         })
-        .orElse(Optional.empty());
+        .orElseThrow(() -> new NotFoundException("Line Item", id));
   }
 
-  public Optional<Long> delete(Long id) {
-    return repository.findById(id)
-        .map(entity -> {
-          log.info("Deleting Line Item with ID=" + id + " -> " + entity);
-          repository.delete(entity);
-          return id;
-        });
+  public void delete(Long id) {
+    LineItemEntity entity = repository.findById(id).orElseThrow(() -> new NotFoundException("Line Item", id));
+    log.info("Deleting Line Item with ID=" + id + " -> " + entity);
+    repository.delete(entity);
   }
 }
