@@ -9,13 +9,14 @@ import java.time.LocalDate;
 
 @Getter
 @ToString
-public class Transaction extends BaseDomain {
+public class Transaction {
   private final Long id;
   private final LocalDate date;
   private final String merchant;
   private final int amount;
   private final Long lineItemId;
   private final String description;
+  private final Instant lastModifiedAt;
 
   public Transaction(@NotNull LocalDate date,
                      @NotNull String merchant,
@@ -41,12 +42,12 @@ public class Transaction extends BaseDomain {
                      Long lineItemId,
                      String description,
                      Instant lastModifiedAt) {
-    super(lastModifiedAt);
     this.id = id;
     this.date = date;
     this.merchant = merchant;
     this.amount = amount;
     this.lineItemId = lineItemId;
     this.description = description;
+    this.lastModifiedAt = lastModifiedAt;
   }
 }

@@ -6,11 +6,12 @@ import lombok.ToString;
 import me.seantwiehaus.zbbp.domain.Transaction;
 import me.seantwiehaus.zbbp.dto.serialize.CentsToDollarsSerializer;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Getter
 @ToString
-public class TransactionResponse extends BaseResponse {
+public class TransactionResponse {
   private final Long id;
   private final LocalDate date;
   private final String merchant;
@@ -18,14 +19,15 @@ public class TransactionResponse extends BaseResponse {
   private final int amount;
   private final Long lineItemId;
   private final String description;
+  private final Instant lastModifiedAt;
 
   public TransactionResponse(Transaction transaction) {
-    super(transaction.getLastModifiedAt());
     this.id = transaction.getId();
     this.date = transaction.getDate();
     this.merchant = transaction.getMerchant();
     this.amount = transaction.getAmount();
     this.lineItemId = transaction.getLineItemId();
     this.description = transaction.getDescription();
+    this.lastModifiedAt = transaction.getLastModifiedAt();
   }
 }

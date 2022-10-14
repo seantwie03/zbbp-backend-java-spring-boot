@@ -13,17 +13,18 @@ import java.util.List;
 
 @Getter
 @ToString
-public class LineItem extends BaseDomain {
+public class LineItem {
   private final Long id;
   @NotNull
   private final YearMonth budgetDate;
   @NotBlank
   private final String name;
-  @NotNull
+  @Min(0)
   private final int plannedAmount;
   @NotNull
   private final Category category;
   private final String description;
+  private final Instant lastModifiedAt;
 
   @Min(0)
   private final int totalTransactions;
@@ -51,13 +52,13 @@ public class LineItem extends BaseDomain {
                   String description,
                   List<Transaction> transactions,
                   Instant lastModifiedAt) {
-    super(lastModifiedAt);
     this.id = id;
     this.budgetDate = budgetDate;
     this.name = name;
     this.plannedAmount = plannedAmount;
     this.category = category;
     this.description = description;
+    this.lastModifiedAt = lastModifiedAt;
     this.transactions = transactions != null ? Collections.unmodifiableList(transactions) : List.of();
 
     this.totalTransactions = calculateTotalTransactions();
