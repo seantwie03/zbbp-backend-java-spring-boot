@@ -7,7 +7,7 @@ import me.seantwiehaus.zbbp.dao.repository.TransactionRepository;
 import me.seantwiehaus.zbbp.domain.LineItem;
 import me.seantwiehaus.zbbp.domain.Transaction;
 import me.seantwiehaus.zbbp.exception.BadRequestException;
-import me.seantwiehaus.zbbp.exception.InternalServerException;
+import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.exception.ResourceConflictException;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +24,9 @@ public class TransactionService {
   private final LineItemService lineItemService;
 
   /**
-   * @param startDate Include transactions with dates greater-than-or-equal-to this day
-   * @param endDate   Include transactions with dates less-than-or-equal-to this day
-   * @return All transactions with dates between the start and end dates (inclusive)
+   * @param startDate The first Date to include in the list of results.
+   * @param endDate   The last Date to include in the list of results.
+   * @return All Transactions between the start and end Dates (inclusive).
    */
   public List<Transaction> getAllBetween(LocalDate startDate, LocalDate endDate) {
     return repository.findAllByDateBetweenOrderByDateDescAmountDescTypeDesc(startDate, endDate)
@@ -35,9 +35,10 @@ public class TransactionService {
         .toList();
   }
 
-  public Optional<Transaction> findById(Long id) {
+  public Transaction findById(Long id) {
     return repository.findById(id)
-        .map(TransactionEntity::convertToTransaction);
+        .map(TransactionEntity::convertToTransaction)
+        .orElseThrow(() -> new NotFoundException("Transaction", id));
   }
 
   public Transaction create(Transaction transaction) {
@@ -48,16 +49,15 @@ public class TransactionService {
 
   private void throwIfLineItemHasDifferentType(Transaction transaction) {
     if (transaction.getLineItemId() == null) return;
-    Optional<LineItem> lineItemOptional = lineItemService.findById(transaction.getLineItemId());
-    LineItem lineItem = lineItemOptional.orElseThrow(
-        () -> new BadRequestException("Unable to find Line Item with ID: " + transaction.getLineItemId()));
+    LineItem lineItem = lineItemService.findById(transaction.getLineItemId())
+        .orElseThrow(() -> new BadRequestException("Unable to find Line Item with ID: " + transaction.getLineItemId()));
     if (lineItem.getType() != transaction.getType()) {
       throw new BadRequestException("Unable to add Transaction with type: " + transaction.getType().toString() +
           " to Line Item with type: " + lineItem.getType().toString());
     }
   }
 
-  public Optional<Transaction> update(Long id, Instant ifUnmodifiedSince, Transaction transaction) {
+  public Transaction update(Long id, Instant ifUnmodifiedSince, Transaction transaction) {
     Optional<TransactionEntity> existingEntity = repository.findById(id);
     return existingEntity
         .map(entity -> {
@@ -71,18 +71,14 @@ public class TransactionService {
           entity.setDescription(transaction.getDescription());
           entity.setLineItemId(transaction.getLineItemId());
           log.info("Updating Transaction with ID=" + id + " -> " + entity);
-          return Optional.of(repository.save(entity).convertToTransaction());
+          return repository.save(entity).convertToTransaction();
         })
-        .orElse(Optional.empty());
+        .orElseThrow(() -> new NotFoundException("Transaction", id));
   }
 
-  public Optional<Long> delete(Long id) {
-    if (id == null) throw new InternalServerException("Unable to delete Transaction. ID is null");
-    return repository.findById(id)
-        .map(entity -> {
-          log.info("Deleting Transaction with ID=" + id + " -> " + entity);
-          repository.delete(entity);
-          return id;
-        });
+  public void delete(Long id) {
+    TransactionEntity entity = repository.findById(id).orElseThrow(() -> new NotFoundException("Transaction", id));
+    log.info("Deleting Transaction with ID=" + id + " -> " + entity);
+    repository.delete(entity);
   }
 }

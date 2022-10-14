@@ -1,18 +1,19 @@
 package me.seantwiehaus.zbbp.controller;
 
 import lombok.RequiredArgsConstructor;
+import me.seantwiehaus.zbbp.domain.Transaction;
 import me.seantwiehaus.zbbp.dto.request.TransactionRequest;
 import me.seantwiehaus.zbbp.dto.response.TransactionResponse;
-import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.service.TransactionService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
@@ -21,74 +22,66 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RestController
 public class TransactionController {
-  private static final String URI = "/transaction/";
-  private static final String TRANSACTION = "Transaction";
   private final TransactionService service;
 
   /**
-   * @param startDate Include transactions with dates greater-than-or-equal-to this day.
-   *                  If no value is supplied, the default value will be the current day of the current month
-   *                  100 years in the past.
-   * @param endDate   Include transactions with dates less-than-or-equal-to this day.
-   *                  If no value is supplied, the default value will be the current day of the current month
-   *                  100 years in the future.
-   * @return All transactions with dates between the start and end dates (inclusive)
+   * @param startingDate The first Date to include in the list of results.
+   *                     The default value is the current Date 100 years in the past.
+   * @param endingDate   The last Date to include in the list of results.
+   *                     The default value is the current Date 100 years in the future.
+   * @return All Transactions between the starting and ending Dates (inclusive).
    */
   @GetMapping("/transactions")
   public List<TransactionResponse> getAllTransactionsBetween(
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> startDate,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> endDate) {
-    LocalDate start = startDate.orElse(LocalDate.now().minusYears(100));
-    LocalDate end = endDate.orElse(LocalDate.now().plusYears(100));
-    return service.getAllBetween(start, end)
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> startingDate,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> endingDate) {
+    LocalDate startDate = startingDate.orElse(LocalDate.now().minusYears(100));
+    LocalDate endDate = endingDate.orElse(LocalDate.now().plusYears(100));
+    return service.getAllBetween(startDate, endDate)
         .stream()
         .map(TransactionResponse::new)
         .toList();
   }
 
-  @GetMapping("/transaction/{id}")
-  public ResponseEntity<TransactionResponse> getTransactionById(@PathVariable @Min(0) Long id) throws URISyntaxException {
-    TransactionResponse response = service.findById(id)
-        .map(TransactionResponse::new)
-        .orElseThrow(() -> new NotFoundException(TRANSACTION, id));
+  @GetMapping("/transactions/{id}")
+  public ResponseEntity<TransactionResponse> getTransactionById(@PathVariable @Min(0) Long id) {
+    Transaction transaction = service.findById(id);
+    URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(id).toUri();
     return ResponseEntity
         .ok()
-        .location(new URI(URI + response.getId()))
-        .lastModified(response.getLastModifiedAt())
-        .body(response);
+        .location(location)
+        .lastModified(transaction.getLastModifiedAt())
+        .body(new TransactionResponse(transaction));
   }
 
-  @PostMapping("/transaction")
+  @PostMapping("/transactions")
   public ResponseEntity<TransactionResponse> createTransaction(
-      @RequestBody @Valid TransactionRequest request) throws URISyntaxException {
-    TransactionResponse response =
-        new TransactionResponse(service.create(request.convertToTransaction()));
+      @RequestBody @Valid TransactionRequest request) {
+    Transaction transaction = service.create(request.convertToTransaction());
+    URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(transaction.getId()).toUri();
     return ResponseEntity
-        .created(new URI(URI + response.getId()))
-        .lastModified(response.getLastModifiedAt())
-        .body(response);
+        .created(location)
+        .lastModified(transaction.getLastModifiedAt())
+        .body(new TransactionResponse(transaction));
   }
 
-  @PutMapping("/transaction/{id}")
+  @PutMapping("/transactions/{id}")
   public ResponseEntity<TransactionResponse> updateTransaction(
       @RequestBody @Valid TransactionRequest request,
       @PathVariable @Min(0) Long id,
-      @RequestHeader("If-Unmodified-Since") Instant ifUnmodifiedSince) throws URISyntaxException {
-    TransactionResponse response =
-        service.update(id, ifUnmodifiedSince, request.convertToTransaction())
-            .map(TransactionResponse::new)
-            .orElseThrow(() -> new NotFoundException(TRANSACTION, id));
+      @RequestHeader("If-Unmodified-Since") Instant ifUnmodifiedSince) {
+    URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(id).toUri();
+    Transaction transaction = service.update(id, ifUnmodifiedSince, request.convertToTransaction());
     return ResponseEntity
         .ok()
-        .location(new URI(URI + response.getId()))
-        .lastModified(response.getLastModifiedAt())
-        .body(response);
+        .location(location)
+        .lastModified(transaction.getLastModifiedAt())
+        .body(new TransactionResponse(transaction));
   }
 
-  @DeleteMapping("/transaction/{id}")
-  public ResponseEntity<Long> deleteTransaction(@PathVariable @Min(0) Long id) {
-    return service.delete(id)
-        .map(i -> ResponseEntity.ok(id))
-        .orElseThrow(() -> new NotFoundException(TRANSACTION, id));
+  @DeleteMapping("/transactions/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteTransaction(@PathVariable @Min(0) Long id) {
+    service.delete(id);
   }
 }
