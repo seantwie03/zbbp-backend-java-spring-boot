@@ -71,11 +71,11 @@ class LineItemEntityIT {
       LineItemEntity lineItem = entityManager.find(LineItemEntity.class, mockLineItem.getId());
 
       // Then there should be three TransactionEntities
-      assertEquals(3, lineItem.getTransactionEntities().size());
+      assertEquals(3, lineItem.getTransactions().size());
       // And the TransactionEntities should be sorted by Date then by Amount
-      assertEquals(shouldBeFirst.getId(), lineItem.getTransactionEntities().get(0).getId());
-      assertEquals(shouldBeSecond.getId(), lineItem.getTransactionEntities().get(1).getId());
-      assertEquals(shouldBeThird.getId(), lineItem.getTransactionEntities().get(2).getId());
+      assertEquals(shouldBeFirst.getId(), lineItem.getTransactions().get(0).getId());
+      assertEquals(shouldBeSecond.getId(), lineItem.getTransactions().get(1).getId());
+      assertEquals(shouldBeThird.getId(), lineItem.getTransactions().get(2).getId());
     }
   }
 

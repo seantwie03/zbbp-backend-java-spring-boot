@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import me.seantwiehaus.zbbp.domain.Transaction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Min;
@@ -29,13 +28,4 @@ public class TransactionRequest {
   private int amount;
   private Long lineItemId;
   private String description;
-
-  public Transaction convertToTransaction() {
-    return new Transaction(
-        date,
-        merchant,
-        amount,
-        lineItemId,
-        description);
-  }
 }

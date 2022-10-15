@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.seantwiehaus.zbbp.domain.Transaction;
 import me.seantwiehaus.zbbp.dto.request.TransactionRequest;
 import me.seantwiehaus.zbbp.dto.response.TransactionResponse;
+import me.seantwiehaus.zbbp.mapper.TransactionMapper;
 import me.seantwiehaus.zbbp.service.TransactionService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -39,30 +40,33 @@ public class TransactionController {
             startingDate.orElse(LocalDate.now().minusYears(100)),
             endingDate.orElse(LocalDate.now().plusYears(100)))
         .stream()
-        .map(TransactionResponse::new)
+        .map(TransactionMapper.INSTANCE::domainToResponse)
         .toList();
   }
 
   @GetMapping("/transactions/{id}")
   public ResponseEntity<TransactionResponse> getTransactionById(@PathVariable @Min(0) Long id) {
-    Transaction transaction = service.findById(id);
     URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(id).toUri();
+    Transaction transaction = service.findById(id);
+    TransactionResponse response = TransactionMapper.INSTANCE.domainToResponse(transaction);
     return ResponseEntity
         .ok()
         .location(location)
         .lastModified(transaction.getLastModifiedAt())
-        .body(new TransactionResponse(transaction));
+        .body(response);
   }
 
   @PostMapping("/transactions")
   public ResponseEntity<TransactionResponse> createTransaction(
       @RequestBody @Valid TransactionRequest request) {
-    Transaction transaction = service.create(request.convertToTransaction());
+    Transaction requestTransaction = TransactionMapper.INSTANCE.requestToDomain(request);
+    Transaction transaction = service.create(requestTransaction);
+    TransactionResponse response = TransactionMapper.INSTANCE.domainToResponse(transaction);
     URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(transaction.getId()).toUri();
     return ResponseEntity
         .created(location)
         .lastModified(transaction.getLastModifiedAt())
-        .body(new TransactionResponse(transaction));
+        .body(response);
   }
 
   @PutMapping("/transactions/{id}")
@@ -71,12 +75,14 @@ public class TransactionController {
       @PathVariable @Min(0) Long id,
       @RequestHeader("If-Unmodified-Since") Instant ifUnmodifiedSince) {
     URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(id).toUri();
-    Transaction transaction = service.update(id, ifUnmodifiedSince, request.convertToTransaction());
+    Transaction requestTransaction = TransactionMapper.INSTANCE.requestToDomain(request);
+    Transaction transaction = service.update(id, ifUnmodifiedSince, requestTransaction);
+    TransactionResponse response = TransactionMapper.INSTANCE.domainToResponse(transaction);
     return ResponseEntity
         .ok()
         .location(location)
         .lastModified(transaction.getLastModifiedAt())
-        .body(new TransactionResponse(transaction));
+        .body(response);
   }
 
   @DeleteMapping("/transactions/{id}")

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.seantwiehaus.zbbp.domain.LineItem;
 import me.seantwiehaus.zbbp.dto.request.LineItemRequest;
 import me.seantwiehaus.zbbp.dto.response.LineItemResponse;
+import me.seantwiehaus.zbbp.mapper.LineItemMapper;
 import me.seantwiehaus.zbbp.service.LineItemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class LineItemController {
             startingBudgetDate.orElse(YearMonth.now().minusYears(100)),
             endingBudgetDate.orElse(YearMonth.now().plusYears(100)))
         .stream()
-        .map(LineItemResponse::new)
+        .map(LineItemMapper.INSTANCE::domainToResponse)
         .toList();
   }
 
@@ -46,22 +47,25 @@ public class LineItemController {
   public ResponseEntity<LineItemResponse> getLineItemById(@PathVariable @Min(0) Long id) {
     URI location = UriComponentsBuilder.fromPath("/line-items/{id}").buildAndExpand(id).toUri();
     LineItem lineItem = service.findById(id);
+    LineItemResponse response = LineItemMapper.INSTANCE.domainToResponse(lineItem);
     return ResponseEntity
         .ok()
         .location(location)
         .lastModified(lineItem.lastModifiedAt())
-        .body(new LineItemResponse(lineItem));
+        .body(response);
   }
 
   @PostMapping("/line-items")
   public ResponseEntity<LineItemResponse> createLineItem(
       @RequestBody @Valid LineItemRequest request) {
-    LineItem lineItem = service.create(request.convertToLineItem());
+    LineItem requestLineItem = LineItemMapper.INSTANCE.requestToDomain(request);
+    LineItem lineItem = service.create(requestLineItem);
+    LineItemResponse response = LineItemMapper.INSTANCE.domainToResponse(lineItem);
     URI location = UriComponentsBuilder.fromPath("/line-items/{id}").buildAndExpand(lineItem.id()).toUri();
     return ResponseEntity
         .created(location)
         .lastModified(lineItem.lastModifiedAt())
-        .body(new LineItemResponse(lineItem));
+        .body(response);
   }
 
   @PutMapping("/line-items/{id}")
@@ -69,12 +73,14 @@ public class LineItemController {
       @RequestBody @Valid LineItemRequest request,
       @PathVariable @Min(0) Long id,
       @RequestHeader("If-Unmodified-Since") Instant ifUnmodifiedSince) {
+    LineItem requestLineItem = LineItemMapper.INSTANCE.requestToDomain(request);
     URI location = UriComponentsBuilder.fromPath("/line-items/{id}").buildAndExpand(id).toUri();
-    LineItem lineItem = service.update(id, ifUnmodifiedSince, request.convertToLineItem());
+    LineItem lineItem = service.update(id, ifUnmodifiedSince, requestLineItem);
+    LineItemResponse response = LineItemMapper.INSTANCE.domainToResponse(lineItem);
     return ResponseEntity
         .ok()
         .location(location)
-        .body(new LineItemResponse(lineItem));
+        .body(response);
   }
 
   @DeleteMapping("/line-items/{id}")

@@ -2,7 +2,9 @@ package me.seantwiehaus.zbbp.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.seantwiehaus.zbbp.domain.Budget;
 import me.seantwiehaus.zbbp.dto.response.BudgetResponse;
+import me.seantwiehaus.zbbp.mapper.BudgetMapper;
 import me.seantwiehaus.zbbp.service.BudgetService;
 import me.seantwiehaus.zbbp.validation.MustBeCurrentOrFutureBudgetDate;
 import me.seantwiehaus.zbbp.validation.MustNotBeMoreThanSixMonthsInFuture;
@@ -25,10 +27,11 @@ public class BudgetController {
    *                   If no value is supplied, the default value will be the current month and year
    * @return A Budget for the specified budgetDate.
    */
-  @GetMapping("/budget")
+  @GetMapping("/budgets")
   public BudgetResponse getBudgetFor(
       @RequestParam Optional<YearMonth> budgetDate) {
-    return new BudgetResponse(budgetService.getForBudgetMonth(budgetDate.orElse(YearMonth.now())));
+    Budget budget = budgetService.getForBudgetMonth(budgetDate.orElse(YearMonth.now()));
+    return BudgetMapper.INSTANCE.domainToResponse(budget);
   }
 
   /**
@@ -37,9 +40,10 @@ public class BudgetController {
    * @param budgetDate The budgetDate to copy the LineItems to
    * @return The newly copied budget
    */
-  @PostMapping("/budget/{budgetDate}")
+  @PostMapping("/budgets/{budgetDate}")
   public BudgetResponse createBudgetFor(
       @PathVariable @MustBeCurrentOrFutureBudgetDate @MustNotBeMoreThanSixMonthsInFuture YearMonth budgetDate) {
-    return new BudgetResponse(budgetService.create(budgetDate));
+    Budget budget = budgetService.create(budgetDate);
+    return BudgetMapper.INSTANCE.domainToResponse(budget);
   }
 }

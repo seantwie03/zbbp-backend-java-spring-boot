@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dao.entity.LineItemEntity;
 import me.seantwiehaus.zbbp.dao.repository.LineItemRepository;
 import me.seantwiehaus.zbbp.domain.Budget;
+import me.seantwiehaus.zbbp.domain.LineItem;
 import me.seantwiehaus.zbbp.exception.BadRequestException;
+import me.seantwiehaus.zbbp.mapper.LineItemMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.YearMonth;
@@ -25,7 +27,8 @@ public class BudgetService {
    */
   public Budget getForBudgetMonth(YearMonth budgetDate) {
     List<LineItemEntity> entities = lineItemRepository.findAllByBudgetDate(budgetDate);
-    return new Budget(budgetDate, LineItemEntity.convertToLineItems(entities));
+    List<LineItem> lineItems = LineItemMapper.INSTANCE.entitiesToDomains(entities);
+    return new Budget(budgetDate, lineItems);
   }
 
   /**
@@ -44,8 +47,9 @@ public class BudgetService {
     List<LineItemEntity> exiting = lineItemRepository.findAllByBudgetDate(mostRecentBudgetDate.get());
     List<LineItemEntity> copied = copyLineItemEntitiesToNewBudgetMonth(budgetMonth, exiting);
     copied.forEach(item -> log.info("Creating new Line Item -> " + item));
-    List<LineItemEntity> saved = lineItemRepository.saveAll(copied);
-    return new Budget(budgetMonth, LineItemEntity.convertToLineItems(saved));
+    List<LineItemEntity> savedItems = lineItemRepository.saveAll(copied);
+    List<LineItem> lineItems = LineItemMapper.INSTANCE.entitiesToDomains(savedItems);
+    return new Budget(budgetMonth, lineItems);
   }
 
   private void throwIfLineItemsAlreadyExistForThisBudgetMonth(YearMonth budgetMonth) {
@@ -75,5 +79,4 @@ public class BudgetService {
       return newEntity;
     }).toList();
   }
-
 }

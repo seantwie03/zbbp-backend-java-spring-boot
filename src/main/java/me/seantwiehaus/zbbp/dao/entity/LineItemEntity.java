@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.ToString;
 import me.seantwiehaus.zbbp.dao.converter.YearMonthDateAttributeConverter;
 import me.seantwiehaus.zbbp.domain.Category;
-import me.seantwiehaus.zbbp.domain.LineItem;
 import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
@@ -23,7 +22,7 @@ import java.util.List;
 @ToString
 @Entity
 @NamedEntityGraph(name = "lineItem.transactions", attributeNodes = {
-    @NamedAttributeNode("transactionEntities"),
+    @NamedAttributeNode("transactions"),
 })
 @Table(
     name = "line_items",
@@ -54,38 +53,7 @@ public class LineItemEntity extends BaseEntity {
   @OneToMany
   @JoinColumn(name = "line_item_id")
   @OrderBy("date asc, amount desc")
-  private List<TransactionEntity> transactionEntities = new ArrayList<>();
-
-  public LineItemEntity(LineItem lineItem) {
-    this.id = lineItem.id();
-    this.budgetDate = lineItem.budgetDate();
-    this.name = lineItem.name();
-    this.plannedAmount = lineItem.plannedAmount();
-    this.category = lineItem.category();
-    this.description = lineItem.description();
-  }
-
-  public LineItem convertToLineItem() {
-    return new LineItem(
-        id,
-        budgetDate,
-        name,
-        plannedAmount,
-        category,
-        description,
-        lastModifiedAt,
-        transactionEntities
-            .stream()
-            .map(TransactionEntity::convertToTransaction)
-            .toList());
-  }
-
-  public static List<LineItem> convertToLineItems(List<LineItemEntity> lineItems) {
-    return lineItems
-        .stream()
-        .map(LineItemEntity::convertToLineItem)
-        .toList();
-  }
+  private List<TransactionEntity> transactions = new ArrayList<>();
 
   @Override
   public boolean equals(Object obj) {

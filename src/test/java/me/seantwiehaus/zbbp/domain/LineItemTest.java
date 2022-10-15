@@ -24,7 +24,8 @@ class LineItemTest {
               "Merchant 1",
               1050,
               null,
-              "Transaction 1"),
+              "Transaction 1",
+              null),
           new Transaction(
               1L,
               LocalDate.now(),

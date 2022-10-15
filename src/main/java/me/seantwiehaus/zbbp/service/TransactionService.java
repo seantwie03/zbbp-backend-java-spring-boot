@@ -7,6 +7,7 @@ import me.seantwiehaus.zbbp.dao.repository.TransactionRepository;
 import me.seantwiehaus.zbbp.domain.Transaction;
 import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.exception.ResourceConflictException;
+import me.seantwiehaus.zbbp.mapper.TransactionMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -29,19 +30,21 @@ public class TransactionService {
   public List<Transaction> getAllBetween(LocalDate startDate, LocalDate endDate) {
     return repository.findAllByDateBetweenOrderByDateDescAmountDesc(startDate, endDate)
         .stream()
-        .map(TransactionEntity::convertToTransaction)
+        .map(TransactionMapper.INSTANCE::entityToDomain)
         .toList();
   }
 
   public Transaction findById(Long id) {
     return repository.findById(id)
-        .map(TransactionEntity::convertToTransaction)
+        .map(TransactionMapper.INSTANCE::entityToDomain)
         .orElseThrow(() -> new NotFoundException("Transaction", id));
   }
 
   public Transaction create(Transaction transaction) {
-    log.info("Creating new Transaction -> " + transaction);
-    return repository.save(new TransactionEntity(transaction)).convertToTransaction();
+    TransactionEntity entity = TransactionMapper.INSTANCE.domainToEntity(transaction);
+    log.info("Creating new Transaction -> " + entity);
+    TransactionEntity saved = repository.save(entity);
+    return TransactionMapper.INSTANCE.entityToDomain(saved);
   }
 
   public Transaction update(Long id, Instant ifUnmodifiedSince, Transaction transaction) {
@@ -57,7 +60,8 @@ public class TransactionService {
           entity.setDescription(transaction.getDescription());
           entity.setLineItemId(transaction.getLineItemId());
           log.info("Updating Transaction with ID=" + id + " -> " + entity);
-          return repository.save(entity).convertToTransaction();
+          TransactionEntity saved = repository.save(entity);
+          return TransactionMapper.INSTANCE.entityToDomain(saved);
         })
         .orElseThrow(() -> new NotFoundException("Transaction", id));
   }

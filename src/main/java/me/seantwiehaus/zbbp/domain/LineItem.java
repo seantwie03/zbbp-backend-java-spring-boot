@@ -4,6 +4,9 @@ import java.time.Instant;
 import java.time.YearMonth;
 import java.util.List;
 
+/**
+ * @param transactions Unmodifiable List
+ */
 public record LineItem(
     Long id,
     YearMonth budgetDate,
@@ -13,14 +16,6 @@ public record LineItem(
     String description,
     Instant lastModifiedAt,
     List<Transaction> transactions) {
-
-  public LineItem(YearMonth budgetDate,
-                  String name,
-                  int plannedAmount,
-                  Category category) {
-    this(null, budgetDate, name, plannedAmount, category, null, null, null);
-  }
-
   public LineItem {
     transactions = transactions != null ? List.copyOf(transactions) : List.of();
   }

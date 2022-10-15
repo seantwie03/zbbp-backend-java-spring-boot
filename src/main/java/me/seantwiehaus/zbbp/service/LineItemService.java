@@ -7,6 +7,7 @@ import me.seantwiehaus.zbbp.dao.repository.LineItemRepository;
 import me.seantwiehaus.zbbp.domain.LineItem;
 import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.exception.ResourceConflictException;
+import me.seantwiehaus.zbbp.mapper.LineItemMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -28,19 +29,21 @@ public class LineItemService {
   public List<LineItem> getAllBetween(YearMonth startBudgetDate, YearMonth endBudgetDate) {
     return repository.findAllByBudgetDateBetween(startBudgetDate, endBudgetDate)
         .stream()
-        .map(LineItemEntity::convertToLineItem)
+        .map(LineItemMapper.INSTANCE::entityToDomain)
         .toList();
   }
 
   public LineItem findById(Long id) {
     return repository.findLineItemEntityById(id)
-        .map(LineItemEntity::convertToLineItem)
+        .map(LineItemMapper.INSTANCE::entityToDomain)
         .orElseThrow(() -> new NotFoundException("Line Item", id));
   }
 
   public LineItem create(LineItem lineItem) {
-    log.info("Creating new Line Item -> " + lineItem);
-    return repository.save(new LineItemEntity(lineItem)).convertToLineItem();
+    LineItemEntity entity = LineItemMapper.INSTANCE.domainToEntity(lineItem);
+    log.info("Creating new Line Item -> " + entity);
+    LineItemEntity saved = repository.save(entity);
+    return LineItemMapper.INSTANCE.entityToDomain(saved);
   }
 
   public LineItem update(Long id, Instant ifUnmodifiedSince, LineItem lineItem) {
@@ -57,7 +60,8 @@ public class LineItemService {
           entity.setCategory(lineItem.category());
           entity.setDescription(lineItem.description());
           log.info("Updating Line Item with ID=" + id + " -> " + entity);
-          return repository.save(entity).convertToLineItem();
+          LineItemEntity saved = repository.save(entity);
+          return LineItemMapper.INSTANCE.entityToDomain(saved);
         })
         .orElseThrow(() -> new NotFoundException("Line Item", id));
   }

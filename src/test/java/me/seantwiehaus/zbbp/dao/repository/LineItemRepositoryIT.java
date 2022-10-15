@@ -96,7 +96,7 @@ class LineItemRepositoryIT {
       entityManager.persist(transaction1);
       TransactionEntity transaction2 = createTransactionEntity(LocalDate.now(), 6000, toDelete.getId());
       entityManager.persist(transaction2);
-      toDelete.setTransactionEntities(List.of(transaction1, transaction2));
+      toDelete.setTransactions(List.of(transaction1, transaction2));
       entityManager.persist(toDelete);
       entityManager.flush();
       entityManager.clear();
