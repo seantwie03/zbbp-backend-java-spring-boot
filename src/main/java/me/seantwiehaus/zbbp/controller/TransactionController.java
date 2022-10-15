@@ -52,7 +52,7 @@ public class TransactionController {
     return ResponseEntity
         .ok()
         .location(location)
-        .lastModified(transaction.getLastModifiedAt())
+        .lastModified(transaction.lastModifiedAt())
         .body(response);
   }
 
@@ -62,10 +62,10 @@ public class TransactionController {
     Transaction requestTransaction = TransactionMapper.INSTANCE.requestToDomain(request);
     Transaction transaction = service.create(requestTransaction);
     TransactionResponse response = TransactionMapper.INSTANCE.domainToResponse(transaction);
-    URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(transaction.getId()).toUri();
+    URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(transaction.id()).toUri();
     return ResponseEntity
         .created(location)
-        .lastModified(transaction.getLastModifiedAt())
+        .lastModified(transaction.lastModifiedAt())
         .body(response);
   }
 
@@ -81,7 +81,7 @@ public class TransactionController {
     return ResponseEntity
         .ok()
         .location(location)
-        .lastModified(transaction.getLastModifiedAt())
+        .lastModified(transaction.lastModifiedAt())
         .body(response);
   }
 

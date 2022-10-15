@@ -12,8 +12,8 @@ import org.mapstruct.factory.Mappers;
 public interface TransactionMapper {
   TransactionMapper INSTANCE = Mappers.getMapper(TransactionMapper.class);
 
-  @Mapping(target = "lastModifiedAt", ignore = true)
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "lastModifiedAt", ignore = true)
   Transaction requestToDomain(TransactionRequest request);
 
   TransactionEntity domainToEntity(Transaction domain);

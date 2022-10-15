@@ -20,7 +20,6 @@ import java.util.Optional;
 @Service
 public class TransactionService {
   private final TransactionRepository repository;
-  private final LineItemService lineItemService;
 
   /**
    * @param startDate The first Date to include in the list of results.
@@ -55,10 +54,10 @@ public class TransactionService {
             throw new ResourceConflictException(
                 "Transaction with ID: " + id + " has been modified since this client requested it.");
           }
-          entity.setAmount(transaction.getAmount());
-          entity.setDate(transaction.getDate());
-          entity.setDescription(transaction.getDescription());
-          entity.setLineItemId(transaction.getLineItemId());
+          entity.setAmount(transaction.amount());
+          entity.setDate(transaction.date());
+          entity.setDescription(transaction.description());
+          entity.setLineItemId(transaction.lineItemId());
           log.info("Updating Transaction with ID=" + id + " -> " + entity);
           TransactionEntity saved = repository.save(entity);
           return TransactionMapper.INSTANCE.entityToDomain(saved);

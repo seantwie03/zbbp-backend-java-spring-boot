@@ -23,7 +23,7 @@ public record LineItem(
   public int calculateTotalTransactions() {
     return transactions
         .stream()
-        .mapToInt(Transaction::getAmount)
+        .mapToInt(Transaction::amount)
         .sum();
   }
 
