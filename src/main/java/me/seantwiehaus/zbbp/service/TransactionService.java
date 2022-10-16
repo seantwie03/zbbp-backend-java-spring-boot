@@ -5,21 +5,22 @@ import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dao.entity.TransactionEntity;
 import me.seantwiehaus.zbbp.dao.repository.TransactionRepository;
 import me.seantwiehaus.zbbp.domain.Transaction;
-import me.seantwiehaus.zbbp.exception.NotFoundException;
-import me.seantwiehaus.zbbp.exception.ResourceConflictException;
+import me.seantwiehaus.zbbp.exception.ResourceNotFoundException;
 import me.seantwiehaus.zbbp.mapper.TransactionMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+
+import static me.seantwiehaus.zbbp.validation.IfUnmodifiedSinceValidation.throwWhenEntityLastModifiedAtIsAfterIfUnmodifiedSince;
 
 @RequiredArgsConstructor
 @Slf4j
 @Service
 public class TransactionService {
   private final TransactionRepository repository;
+  private final TransactionMapper mapper;
 
   /**
    * @param startDate The first Date to include in the list of results.
@@ -29,45 +30,41 @@ public class TransactionService {
   public List<Transaction> getAllBetween(LocalDate startDate, LocalDate endDate) {
     return repository.findAllByDateBetweenOrderByDateDescAmountDesc(startDate, endDate)
         .stream()
-        .map(TransactionMapper.INSTANCE::entityToDomain)
+        .map(mapper::mapEntityToDomain)
         .toList();
   }
 
   public Transaction findById(Long id) {
     return repository.findById(id)
-        .map(TransactionMapper.INSTANCE::entityToDomain)
-        .orElseThrow(() -> new NotFoundException("Transaction", id));
+        .map(mapper::mapEntityToDomain)
+        .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
   }
 
   public Transaction create(Transaction transaction) {
-    TransactionEntity entity = TransactionMapper.INSTANCE.domainToEntity(transaction);
-    log.info("Creating new Transaction -> " + entity);
+    TransactionEntity entity = mapper.mapDomainToEntity(transaction);
+    log.info("Creating new TransactionEntity -> %s ".formatted(entity));
     TransactionEntity saved = repository.save(entity);
-    return TransactionMapper.INSTANCE.entityToDomain(saved);
+    return mapper.mapEntityToDomain(saved);
   }
 
   public Transaction update(Long id, Instant ifUnmodifiedSince, Transaction transaction) {
-    Optional<TransactionEntity> existingEntity = repository.findById(id);
-    return existingEntity
-        .map(entity -> {
-          if (entity.getLastModifiedAt().isAfter(ifUnmodifiedSince)) {
-            throw new ResourceConflictException(
-                "Transaction with ID: " + id + " has been modified since this client requested it.");
-          }
-          entity.setAmount(transaction.amount());
-          entity.setDate(transaction.date());
-          entity.setDescription(transaction.description());
-          entity.setLineItemId(transaction.lineItemId());
-          log.info("Updating Transaction with ID=" + id + " -> " + entity);
-          TransactionEntity saved = repository.save(entity);
-          return TransactionMapper.INSTANCE.entityToDomain(saved);
-        })
-        .orElseThrow(() -> new NotFoundException("Transaction", id));
+    TransactionEntity entity = repository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
+    throwWhenEntityLastModifiedAtIsAfterIfUnmodifiedSince(entity, ifUnmodifiedSince);
+    entity.setDate(transaction.date());
+    entity.setMerchant(transaction.merchant());
+    entity.setAmount(transaction.amount());
+    entity.setLineItemId(transaction.lineItemId());
+    entity.setDescription(transaction.description());
+    log.info("Updating TransactionEntity with ID=%d -> %s".formatted(id, entity));
+    TransactionEntity saved = repository.save(entity);
+    return mapper.mapEntityToDomain(saved);
   }
 
   public void delete(Long id) {
-    TransactionEntity entity = repository.findById(id).orElseThrow(() -> new NotFoundException("Transaction", id));
-    log.info("Deleting Transaction with ID=" + id + " -> " + entity);
+    TransactionEntity entity = repository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
+    log.info("Deleting TransactionEntity with ID=%d -> %s".formatted(id, entity));
     repository.delete(entity);
   }
 }

@@ -8,5 +8,4 @@ public class ResourceConflictException extends RuntimeException {
     super(message);
     log.error(message);
   }
-
 }

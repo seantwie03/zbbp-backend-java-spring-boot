@@ -28,10 +28,6 @@ import java.util.List;
     name = "line_items",
     uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "budget_date", "category" }) })
 public class LineItemEntity extends BaseEntity {
-  @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE)
-  @Column(name = "id", nullable = false)
-  private Long id;
   @NotNull
   @Column(name = "budget_date", nullable = false)
   @Convert(converter = YearMonthDateAttributeConverter.class)

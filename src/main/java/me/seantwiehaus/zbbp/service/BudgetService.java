@@ -11,7 +11,6 @@ import me.seantwiehaus.zbbp.mapper.LineItemMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +19,7 @@ import java.util.Optional;
 @Service
 public class BudgetService {
   private final LineItemRepository lineItemRepository;
+  private final LineItemMapper mapper;
 
   /**
    * @param budgetDate The monthly Budget to return
@@ -27,7 +27,7 @@ public class BudgetService {
    */
   public Budget getForBudgetMonth(YearMonth budgetDate) {
     List<LineItemEntity> entities = lineItemRepository.findAllByBudgetDate(budgetDate);
-    List<LineItem> lineItems = LineItemMapper.INSTANCE.entitiesToDomains(entities);
+    List<LineItem> lineItems = mapper.mapEntitiesToDomains(entities);
     return new Budget(budgetDate, lineItems);
   }
 
@@ -42,20 +42,20 @@ public class BudgetService {
     Optional<YearMonth> mostRecentBudgetDate = findMostRecentBudgetDateWithAtLeastOneLineItem();
     if (mostRecentBudgetDate.isEmpty()) {
       // If no previous budgetMonths have at least one LineItem, this is a completely new user
-      return new Budget(budgetMonth, new ArrayList<>());
+      return new Budget(budgetMonth, List.of());
     }
     List<LineItemEntity> exiting = lineItemRepository.findAllByBudgetDate(mostRecentBudgetDate.get());
     List<LineItemEntity> copied = copyLineItemEntitiesToNewBudgetMonth(budgetMonth, exiting);
-    copied.forEach(item -> log.info("Creating new Line Item -> " + item));
+    copied.forEach(item -> log.info("Creating new Line Item -> %s".formatted(item)));
     List<LineItemEntity> savedItems = lineItemRepository.saveAll(copied);
-    List<LineItem> lineItems = LineItemMapper.INSTANCE.entitiesToDomains(savedItems);
+    List<LineItem> lineItems = mapper.mapEntitiesToDomains(savedItems);
     return new Budget(budgetMonth, lineItems);
   }
 
   private void throwIfLineItemsAlreadyExistForThisBudgetMonth(YearMonth budgetMonth) {
     List<LineItemEntity> allByBudgetDate = lineItemRepository.findAllByBudgetDate(budgetMonth);
     if (! allByBudgetDate.isEmpty()) {
-      throw new BadRequestException("LineItems for: " + budgetMonth + " already exists.");
+      throw new BadRequestException("Line Items for: %s already exists.".formatted(budgetMonth));
     }
   }
 

@@ -20,6 +20,7 @@ import java.util.Optional;
 @Validated
 public class BudgetController {
   private final BudgetService budgetService;
+  private final BudgetMapper mapper;
 
   /**
    * @param budgetDate The date of the budget you are requesting.
@@ -31,7 +32,7 @@ public class BudgetController {
   public BudgetResponse getBudgetFor(
       @RequestParam Optional<YearMonth> budgetDate) {
     Budget budget = budgetService.getForBudgetMonth(budgetDate.orElse(YearMonth.now()));
-    return BudgetMapper.INSTANCE.domainToResponse(budget);
+    return mapper.mapDomainToResponse(budget);
   }
 
   /**
@@ -44,6 +45,6 @@ public class BudgetController {
   public BudgetResponse createBudgetFor(
       @PathVariable @MustBeCurrentOrFutureBudgetDate @MustNotBeMoreThanSixMonthsInFuture YearMonth budgetDate) {
     Budget budget = budgetService.create(budgetDate);
-    return BudgetMapper.INSTANCE.domainToResponse(budget);
+    return mapper.mapDomainToResponse(budget);
   }
 }

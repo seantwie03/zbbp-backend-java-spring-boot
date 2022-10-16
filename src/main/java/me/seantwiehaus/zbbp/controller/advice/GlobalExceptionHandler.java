@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dto.response.ExceptionResponse;
 import me.seantwiehaus.zbbp.exception.BadRequestException;
 import me.seantwiehaus.zbbp.exception.InternalServerException;
-import me.seantwiehaus.zbbp.exception.NotFoundException;
 import me.seantwiehaus.zbbp.exception.ResourceConflictException;
+import me.seantwiehaus.zbbp.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -41,8 +41,8 @@ public class GlobalExceptionHandler {
         .body(new ExceptionResponse(500, exception.getMessage(), formatFullPath(request)));
   }
 
-  @ExceptionHandler(NotFoundException.class)
-  protected ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException exception,
+  @ExceptionHandler(ResourceNotFoundException.class)
+  protected ResponseEntity<ExceptionResponse> handleNotFoundException(ResourceNotFoundException exception,
                                                                       HttpServletRequest request) {
     return ResponseEntity
         .status(HttpStatus.NOT_FOUND)

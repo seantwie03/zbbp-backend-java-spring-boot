@@ -6,19 +6,16 @@ import me.seantwiehaus.zbbp.dto.request.TransactionRequest;
 import me.seantwiehaus.zbbp.dto.response.TransactionResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface TransactionMapper {
-  TransactionMapper INSTANCE = Mappers.getMapper(TransactionMapper.class);
-
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "lastModifiedAt", ignore = true)
-  Transaction requestToDomain(TransactionRequest request);
+  Transaction mapRequestToDomain(TransactionRequest request);
 
-  TransactionEntity domainToEntity(Transaction domain);
+  TransactionEntity mapDomainToEntity(Transaction domain);
 
-  Transaction entityToDomain(TransactionEntity entity);
+  Transaction mapEntityToDomain(TransactionEntity entity);
 
-  TransactionResponse domainToResponse(Transaction domain);
+  TransactionResponse mapDomainToResponse(Transaction domain);
 }

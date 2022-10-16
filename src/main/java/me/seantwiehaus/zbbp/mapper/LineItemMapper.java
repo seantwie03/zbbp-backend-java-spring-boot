@@ -6,27 +6,24 @@ import me.seantwiehaus.zbbp.dto.request.LineItemRequest;
 import me.seantwiehaus.zbbp.dto.response.LineItemResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(uses = TransactionMapper.class)
+@Mapper(uses = TransactionMapper.class, componentModel = "spring")
 public interface LineItemMapper {
-  LineItemMapper INSTANCE = Mappers.getMapper(LineItemMapper.class);
-
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "lastModifiedAt", ignore = true)
   @Mapping(target = "transactions", ignore = true)
-  LineItem requestToDomain(LineItemRequest request);
+  LineItem mapRequestToDomain(LineItemRequest request);
 
-  LineItemEntity domainToEntity(LineItem domain);
+  LineItemEntity mapDomainToEntity(LineItem domain);
 
-  LineItem entityToDomain(LineItemEntity entity);
+  LineItem mapEntityToDomain(LineItemEntity entity);
 
-  List<LineItem> entitiesToDomains(List<LineItemEntity> entities);
+  List<LineItem> mapEntitiesToDomains(List<LineItemEntity> entities);
 
   @Mapping(target = "totalTransactions", expression = "java(domain.calculateTotalTransactions())")
   @Mapping(target = "percentageOfPlanned", expression = "java(domain.calculatePercentageOfPlanned())")
   @Mapping(target = "totalRemaining", expression = "java(domain.calculateTotalRemaining())")
-  LineItemResponse domainToResponse(LineItem domain);
+  LineItemResponse mapDomainToResponse(LineItem domain);
 }

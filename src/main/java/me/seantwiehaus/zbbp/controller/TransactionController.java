@@ -24,6 +24,7 @@ import java.util.Optional;
 @RestController
 public class TransactionController {
   private final TransactionService service;
+  private final TransactionMapper mapper;
 
   /**
    * @param startingDate The first Date to include in the list of results.
@@ -40,7 +41,7 @@ public class TransactionController {
             startingDate.orElse(LocalDate.now().minusYears(100)),
             endingDate.orElse(LocalDate.now().plusYears(100)))
         .stream()
-        .map(TransactionMapper.INSTANCE::domainToResponse)
+        .map(mapper::mapDomainToResponse)
         .toList();
   }
 
@@ -48,7 +49,7 @@ public class TransactionController {
   public ResponseEntity<TransactionResponse> getTransactionById(@PathVariable @Min(0) Long id) {
     URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(id).toUri();
     Transaction transaction = service.findById(id);
-    TransactionResponse response = TransactionMapper.INSTANCE.domainToResponse(transaction);
+    TransactionResponse response = mapper.mapDomainToResponse(transaction);
     return ResponseEntity
         .ok()
         .location(location)
@@ -59,9 +60,9 @@ public class TransactionController {
   @PostMapping("/transactions")
   public ResponseEntity<TransactionResponse> createTransaction(
       @RequestBody @Valid TransactionRequest request) {
-    Transaction requestTransaction = TransactionMapper.INSTANCE.requestToDomain(request);
+    Transaction requestTransaction = mapper.mapRequestToDomain(request);
     Transaction transaction = service.create(requestTransaction);
-    TransactionResponse response = TransactionMapper.INSTANCE.domainToResponse(transaction);
+    TransactionResponse response = mapper.mapDomainToResponse(transaction);
     URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(transaction.id()).toUri();
     return ResponseEntity
         .created(location)
@@ -75,9 +76,9 @@ public class TransactionController {
       @PathVariable @Min(0) Long id,
       @RequestHeader("If-Unmodified-Since") Instant ifUnmodifiedSince) {
     URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(id).toUri();
-    Transaction requestTransaction = TransactionMapper.INSTANCE.requestToDomain(request);
+    Transaction requestTransaction = mapper.mapRequestToDomain(request);
     Transaction transaction = service.update(id, ifUnmodifiedSince, requestTransaction);
-    TransactionResponse response = TransactionMapper.INSTANCE.domainToResponse(transaction);
+    TransactionResponse response = mapper.mapDomainToResponse(transaction);
     return ResponseEntity
         .ok()
         .location(location)
