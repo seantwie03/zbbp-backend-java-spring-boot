@@ -35,9 +35,9 @@ public class TransactionService {
   }
 
   public Transaction findById(Long id) {
-    return repository.findById(id)
-        .map(mapper::mapEntityToDomain)
+    TransactionEntity entity = repository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
+    return mapper.mapEntityToDomain(entity);
   }
 
   public Transaction create(Transaction transaction) {
