@@ -1,5 +1,7 @@
 package me.seantwiehaus.zbbp.domain;
 
+import lombok.Builder;
+
 import java.time.Instant;
 import java.time.YearMonth;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.List;
 /**
  * @param transactions Unmodifiable List
  */
+@Builder
 public record LineItem(
     Long id,
     YearMonth budgetDate,
@@ -18,6 +21,10 @@ public record LineItem(
     List<Transaction> transactions) {
   public LineItem {
     transactions = transactions != null ? List.copyOf(transactions) : List.of();
+  }
+
+  public static LineItemBuilder builder(YearMonth budgetDate, String name, int plannedAmount, Category category) {
+    return new LineItemBuilder().budgetDate(budgetDate).name(name).plannedAmount(plannedAmount).category(category);
   }
 
   public int calculateTotalTransactions() {

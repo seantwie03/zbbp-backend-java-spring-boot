@@ -1,9 +1,7 @@
 package me.seantwiehaus.zbbp.dao.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +13,8 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@SuperBuilder(toBuilder = true)
+@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Entity

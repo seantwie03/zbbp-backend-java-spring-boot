@@ -1,9 +1,7 @@
 package me.seantwiehaus.zbbp.dao.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import me.seantwiehaus.zbbp.dao.converter.YearMonthDateAttributeConverter;
 import me.seantwiehaus.zbbp.domain.Category;
 import org.hibernate.annotations.ColumnTransformer;
@@ -18,6 +16,8 @@ import java.util.List;
 
 @Getter
 @Setter
+@SuperBuilder(toBuilder = true)
+@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Entity
@@ -49,6 +49,7 @@ public class LineItemEntity extends BaseEntity {
   @OneToMany
   @JoinColumn(name = "line_item_id")
   @OrderBy("date asc, amount desc")
+  @Builder.Default
   private List<TransactionEntity> transactions = new ArrayList<>();
 
   @Override
