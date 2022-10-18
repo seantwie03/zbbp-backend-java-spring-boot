@@ -148,7 +148,7 @@ public class Budget {
   private boolean notAllLineItemsHaveCorrectBudgetMonth() {
     return uncategorized
         .stream()
-        .anyMatch(lineItem -> ! lineItem.budgetDate().equals(budgetDate));
+        .anyMatch(lineItem -> !lineItem.budgetDate().equals(budgetDate));
   }
 
   private int calculateTotalPlannedIncome() {

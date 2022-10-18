@@ -54,7 +54,7 @@ public class BudgetService {
 
   private void throwIfLineItemsAlreadyExistForThisBudgetMonth(YearMonth budgetMonth) {
     List<LineItemEntity> allByBudgetDate = lineItemRepository.findAllByBudgetDate(budgetMonth);
-    if (! allByBudgetDate.isEmpty()) {
+    if (!allByBudgetDate.isEmpty()) {
       throw new BadRequestException("Line Items for: %s already exists.".formatted(budgetMonth));
     }
   }
