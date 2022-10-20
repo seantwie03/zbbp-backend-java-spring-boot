@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -21,70 +22,73 @@ class TransactionRepositoryIT {
 
   @Nested
   class FindAllByDateBetweenOrderByDateAscAmountDescTypeDesc {
-    @Test
-    void findTransactionsBetweenTwoDatesInclusive() {
-      // Given four TransactionEntities with different dates in January 2022
-      TransactionEntity shouldNotBeReturned1 = createEntity(LocalDate.of(2022, 1, 1));
-      entityManager.persist(shouldNotBeReturned1);
-      TransactionEntity shouldBeReturned1 = createEntity(LocalDate.of(2022, 1, 12));
-      entityManager.persist(shouldBeReturned1);
-      TransactionEntity shouldBeReturned2 = createEntity(LocalDate.of(2022, 1, 18));
-      entityManager.persist(shouldBeReturned2);
-      TransactionEntity shouldNotBeReturned2 = createEntity(LocalDate.of(2022, 1, 20));
-      entityManager.persist(shouldNotBeReturned2);
-      entityManager.flush();
-      entityManager.clear(); // Clear the context so that entities are not fetched from the first-level cache
-
-      // When the method under test is called with the 12th - 18th of January
-      List<TransactionEntity> between = repository.findAllByDateBetweenOrderByDateDescAmountDesc(
-          LocalDate.of(2022, 1, 12),
-          LocalDate.of(2022, 1, 18));
-
-      // Then the two TransactionEntities between the 12th and 18th should be returned
-      assertTrue(between.contains(shouldBeReturned1));
-      assertTrue(between.contains(shouldBeReturned2));
-      // And the two outside those boundaries should not
-      assertFalse(between.contains(shouldNotBeReturned1));
-      assertFalse(between.contains(shouldNotBeReturned2));
-    }
+    private final LocalDate startDate = LocalDate.of(2021, 1, 12);
+    private final LocalDate endDate = LocalDate.of(2021, 1, 18);
 
     @Test
-    void findTransactionsBetweenTwoDatesWithCorrectOrder() {
-      // Given three TransactionEntities with values
-      TransactionEntity highestAmountOnSameDateFirst = createEntity(LocalDate.of(2022, 1, 2), 2600);
-      entityManager.persist(highestAmountOnSameDateFirst);
-      TransactionEntity lowestAmountOnSameDateThird = createEntity(LocalDate.of(2022, 1, 2), 2500);
-      entityManager.persist(lowestAmountOnSameDateThird);
-      TransactionEntity lowestDateFourth = createEntity(LocalDate.of(2022, 1, 1), 100);
-      entityManager.persist(lowestDateFourth);
-      entityManager.flush();
-      entityManager.clear(); // Clear the context so that entities are not fetched from the first-level cache
+    void returnEntitiesBetweenTwoDatesInclusive() {
+      // Given two entities inside the inclusive date range
+      TransactionEntity inRange1 = createEntity().date(startDate).build();
+      TransactionEntity inRange2 = createEntity().date(endDate).build();
+      // And two entities outside the date range
+      TransactionEntity outOfRange1 = createEntity().date(startDate.minusDays(1)).build();
+      TransactionEntity outOfRange2 = createEntity().date(endDate.plusDays(1)).build();
+      // That are persisted out of order
+      persistAndFlushList(List.of(outOfRange2, outOfRange1, inRange2, inRange1));
 
       // When the method under test is called
-      List<TransactionEntity> returned = repository.findAllByDateBetweenOrderByDateDescAmountDesc(
-          LocalDate.of(2022, 1, 1),
-          LocalDate.of(2022, 1, 3));
+      List<TransactionEntity> returned = repository.findAllByDateBetweenOrderByDateDescAmountDesc(startDate, endDate);
 
-      // Then the TransactionEntities should be returned in the correct order
+      // Then the two entities should be returned
+      assertEquals(2, returned.size());
+      // And the two returned entities should be the ones inside the date range
+      assertTrue(returned.contains(inRange1));
+      assertTrue(returned.contains(inRange2));
+      // And the two outside the date range should not be returned
+      assertFalse(returned.contains(outOfRange1));
+      assertFalse(returned.contains(outOfRange2));
+    }
+
+    @Test
+    void returnEntitiesInCorrectOrder() {
+      // Given three entities
+      TransactionEntity highestAmountOnSameDateFirst = createEntity()
+          .date(startDate.plusDays(1))
+          .amount(2600)
+          .build();
+      TransactionEntity lowestAmountOnSameDateSecond = createEntity()
+          .date(startDate.plusDays(1))
+          .amount(2500)
+          .build();
+      TransactionEntity lowestDateThird = createEntity()
+          .date(startDate)
+          .amount(100)
+          .build();
+      // That are persisted out of order
+      persistAndFlushList(List.of(lowestDateThird, lowestAmountOnSameDateSecond, highestAmountOnSameDateFirst));
+
+      // When the method under test is called
+      List<TransactionEntity> returned = repository.findAllByDateBetweenOrderByDateDescAmountDesc(startDate, endDate);
+
+      // Then the entities should be returned in the correct order
       assertEquals(highestAmountOnSameDateFirst, returned.get(0));
-      assertEquals(lowestAmountOnSameDateThird, returned.get(1));
-      assertEquals(lowestDateFourth, returned.get(2));
+      assertEquals(lowestAmountOnSameDateSecond, returned.get(1));
+      assertEquals(lowestDateThird, returned.get(2));
     }
   }
 
-  private TransactionEntity createEntity(LocalDate date) {
-    TransactionEntity transactionEntity = new TransactionEntity();
-    transactionEntity.setDate(date);
-    transactionEntity.setMerchant("Merchant");
-    transactionEntity.setAmount(2500);
-    return transactionEntity;
+  private void persistAndFlushList(List<TransactionEntity> entities) {
+    entities.forEach(entityManager::persist);
+    entityManager.flush();
+    entityManager.clear(); // Clear the context so that entities are not fetched from the first-level cache
   }
 
-  private TransactionEntity createEntity(LocalDate date, int amount) {
-    TransactionEntity transactionEntity = new TransactionEntity();
-    transactionEntity.setDate(date);
-    transactionEntity.setMerchant("Merchant");
-    transactionEntity.setAmount(amount);
-    return transactionEntity;
+  private TransactionEntity.TransactionEntityBuilder<?, ?> createEntity() {
+    return TransactionEntity.builder()
+        .id(null)
+        .date(LocalDate.now())
+        .merchant("Merchant")
+        .amount(2500)
+        .lastModifiedAt(Instant.now());
   }
 }
