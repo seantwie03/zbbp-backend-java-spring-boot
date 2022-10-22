@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -56,8 +57,10 @@ public class LineItemEntity extends BaseEntity {
   public boolean equals(Object obj) {
     if (this == obj) return true;
     if (obj == null || getClass() != obj.getClass()) return false;
-    LineItemEntity other = (LineItemEntity) obj;
-    return id != null && id.equals(other.id);
+    LineItemEntity lineItem = (LineItemEntity) obj;
+    return Objects.equals(budgetDate, lineItem.budgetDate)
+        && Objects.equals(name, lineItem.name)
+        && category == lineItem.category;
   }
 
   @Override
