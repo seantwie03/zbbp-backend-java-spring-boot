@@ -20,7 +20,6 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 /**
  * There isn't a BaseEntity table so the BaseEntity must be tested indirectly.
  */
-//@DataJpaTest
 @DataJpaTest(includeFilters = @ComponentScan.Filter(
     type = ASSIGNABLE_TYPE,
     classes = { JpaAuditingConfiguration.class }

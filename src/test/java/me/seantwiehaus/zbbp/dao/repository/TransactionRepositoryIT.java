@@ -1,5 +1,6 @@
 package me.seantwiehaus.zbbp.dao.repository;
 
+import me.seantwiehaus.zbbp.dao.config.JpaAuditingConfiguration;
 import me.seantwiehaus.zbbp.dao.entity.BaseEntity;
 import me.seantwiehaus.zbbp.dao.entity.TransactionEntity;
 import org.junit.jupiter.api.Nested;
@@ -7,14 +8,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
-@DataJpaTest
+@DataJpaTest(includeFilters = @ComponentScan.Filter(
+    type = ASSIGNABLE_TYPE,
+    classes = { JpaAuditingConfiguration.class }
+))
 class TransactionRepositoryIT {
   @Autowired
   TestEntityManager entityManager;
