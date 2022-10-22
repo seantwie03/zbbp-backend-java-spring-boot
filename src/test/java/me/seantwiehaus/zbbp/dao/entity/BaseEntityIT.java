@@ -1,22 +1,30 @@
 package me.seantwiehaus.zbbp.dao.entity;
 
+import me.seantwiehaus.zbbp.dao.config.JpaAuditingConfiguration;
 import me.seantwiehaus.zbbp.domain.Category;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.time.Instant;
 import java.time.YearMonth;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
 /**
  * There isn't a BaseEntity table so the BaseEntity must be tested indirectly.
  */
-@DataJpaTest
+//@DataJpaTest
+@DataJpaTest(includeFilters = @ComponentScan.Filter(
+    type = ASSIGNABLE_TYPE,
+    classes = { JpaAuditingConfiguration.class }
+))
 class BaseEntityIT {
   @Autowired
   private TestEntityManager entityManager;
@@ -27,7 +35,7 @@ class BaseEntityIT {
     @Test
     void insertLastModifiedAtInNewEntity() {
       // Given a new LineItemEntity
-      LineItemEntity lineItemEntity = createLineItemEntity("shouldInsertLastModified");
+      LineItemEntity lineItemEntity = createEntity().build();
       // When that entity is persisted
       LineItemEntity saved = entityManager.persistAndFlush(lineItemEntity);
       // Then the lastModifiedAt should be set
@@ -37,7 +45,7 @@ class BaseEntityIT {
     @Test
     void updateLastModifiedAtWhenUpdatingEntity() {
       // Given a new LineItemEntity
-      LineItemEntity lineItemEntity = createLineItemEntity("shouldUpdateLastModified");
+      LineItemEntity lineItemEntity = createEntity().build();
       LineItemEntity saved = entityManager.persistAndFlush(lineItemEntity);
       Instant savedLastModifiedAt = saved.getLastModifiedAt();
       // When that lineItemEntity is updated
@@ -48,12 +56,13 @@ class BaseEntityIT {
     }
   }
 
-  private LineItemEntity createLineItemEntity(String name) {
-    LineItemEntity lineItemEntity = new LineItemEntity();
-    lineItemEntity.setBudgetDate(YearMonth.now());
-    lineItemEntity.setName(name);
-    lineItemEntity.setPlannedAmount(120000);
-    lineItemEntity.setCategory(Category.HEALTH);
-    return lineItemEntity;
+  private LineItemEntity.LineItemEntityBuilder<?, ?> createEntity() {
+    return LineItemEntity
+        .builder()
+        .budgetDate(YearMonth.now())
+        .name("Groceries " + UUID.randomUUID()) // UUID to ensure uniqueness
+        .plannedAmount(120000)
+        .category(Category.FOOD)
+        .description("Description");
   }
 }
