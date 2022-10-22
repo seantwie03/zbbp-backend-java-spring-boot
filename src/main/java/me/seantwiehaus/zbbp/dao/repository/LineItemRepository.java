@@ -15,10 +15,11 @@ public interface LineItemRepository extends JpaRepository<LineItemEntity, Long> 
   Optional<LineItemEntity> findLineItemEntityById(Long id);
 
   @EntityGraph("lineItem.transactions")
-  List<LineItemEntity> findAllByBudgetDateBetween(YearMonth startDate, YearMonth endDate);
+  List<LineItemEntity> findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAsc(YearMonth startDate,
+                                                                                  YearMonth endDate);
 
   @EntityGraph("lineItem.transactions")
-  List<LineItemEntity> findAllByBudgetDate(YearMonth budgetDate);
+  List<LineItemEntity> findAllByBudgetDateOrderByCategoryAscPlannedAmountDesc(YearMonth budgetDate);
 
   Optional<LineItemEntity> findTopByOrderByBudgetDateDesc();
 }

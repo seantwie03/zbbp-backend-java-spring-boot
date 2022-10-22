@@ -1,5 +1,6 @@
 package me.seantwiehaus.zbbp.dao.repository;
 
+import me.seantwiehaus.zbbp.dao.entity.BaseEntity;
 import me.seantwiehaus.zbbp.dao.entity.TransactionEntity;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -77,7 +78,7 @@ class TransactionRepositoryIT {
     }
   }
 
-  private void persistAndFlushList(List<TransactionEntity> entities) {
+  private void persistAndFlushList(List<? extends BaseEntity> entities) {
     entities.forEach(entityManager::persist);
     entityManager.flush();
     entityManager.clear(); // Clear the context so that entities are not fetched from the first-level cache
