@@ -7,13 +7,12 @@ import me.seantwiehaus.zbbp.dao.repository.TransactionRepository;
 import me.seantwiehaus.zbbp.domain.Transaction;
 import me.seantwiehaus.zbbp.exception.ResourceNotFoundException;
 import me.seantwiehaus.zbbp.mapper.TransactionMapper;
+import me.seantwiehaus.zbbp.validation.IfUnmodifiedSinceValidation;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
-
-import static me.seantwiehaus.zbbp.validation.IfUnmodifiedSinceValidation.throwWhenEntityLastModifiedAtIsAfterIfUnmodifiedSince;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -50,7 +49,7 @@ public class TransactionService {
   public Transaction update(Long id, Instant ifUnmodifiedSince, Transaction transaction) {
     TransactionEntity entity = repository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
-    throwWhenEntityLastModifiedAtIsAfterIfUnmodifiedSince(entity, ifUnmodifiedSince);
+    IfUnmodifiedSinceValidation.throwWhenEntityLastModifiedAtIsAfterIfUnmodifiedSince(entity, ifUnmodifiedSince);
     entity.setDate(transaction.date());
     entity.setMerchant(transaction.merchant());
     entity.setAmount(transaction.amount());

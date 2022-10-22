@@ -7,13 +7,12 @@ import me.seantwiehaus.zbbp.dao.repository.LineItemRepository;
 import me.seantwiehaus.zbbp.domain.LineItem;
 import me.seantwiehaus.zbbp.exception.ResourceNotFoundException;
 import me.seantwiehaus.zbbp.mapper.LineItemMapper;
+import me.seantwiehaus.zbbp.validation.IfUnmodifiedSinceValidation;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.YearMonth;
 import java.util.List;
-
-import static me.seantwiehaus.zbbp.validation.IfUnmodifiedSinceValidation.throwWhenEntityLastModifiedAtIsAfterIfUnmodifiedSince;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -28,7 +27,7 @@ public class LineItemService {
    * @return All Line Items between the starting and ending budgetDates (inclusive).
    */
   public List<LineItem> getAllBetween(YearMonth startBudgetDate, YearMonth endBudgetDate) {
-    return repository.findAllByBudgetDateBetween(startBudgetDate, endBudgetDate)
+    return repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAsc(startBudgetDate, endBudgetDate)
         .stream()
         .map(mapper::mapEntityToDomain)
         .toList();
@@ -50,7 +49,7 @@ public class LineItemService {
   public LineItem update(Long id, Instant ifUnmodifiedSince, LineItem lineItem) {
     LineItemEntity entity = repository.findLineItemEntityById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Line Item", id));
-    throwWhenEntityLastModifiedAtIsAfterIfUnmodifiedSince(entity, ifUnmodifiedSince);
+    IfUnmodifiedSinceValidation.throwWhenEntityLastModifiedAtIsAfterIfUnmodifiedSince(entity, ifUnmodifiedSince);
     entity.setBudgetDate(lineItem.budgetDate());
     entity.setName(lineItem.name());
     entity.setPlannedAmount(lineItem.plannedAmount());
