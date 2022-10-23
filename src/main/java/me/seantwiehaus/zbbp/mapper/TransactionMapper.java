@@ -11,11 +11,11 @@ import org.mapstruct.Mapping;
 public interface TransactionMapper {
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "lastModifiedAt", ignore = true)
-  Transaction mapRequestToDomain(TransactionRequest request);
+  Transaction mapToDomain(TransactionRequest request);
 
-  TransactionEntity mapDomainToEntity(Transaction domain);
+  TransactionEntity mapToEntity(Transaction domain);
 
-  Transaction mapEntityToDomain(TransactionEntity entity);
+  Transaction mapToDomain(TransactionEntity entity);
 
-  TransactionResponse mapDomainToResponse(Transaction domain);
+  TransactionResponse mapToResponse(Transaction domain);
 }

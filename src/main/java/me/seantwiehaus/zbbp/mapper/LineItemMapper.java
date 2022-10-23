@@ -14,16 +14,16 @@ public interface LineItemMapper {
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "lastModifiedAt", ignore = true)
   @Mapping(target = "transactions", ignore = true)
-  LineItem mapRequestToDomain(LineItemRequest request);
+  LineItem mapToDomain(LineItemRequest request);
 
-  LineItemEntity mapDomainToEntity(LineItem domain);
+  LineItemEntity mapToEntity(LineItem domain);
 
-  LineItem mapEntityToDomain(LineItemEntity entity);
+  LineItem mapToDomain(LineItemEntity entity);
 
-  List<LineItem> mapEntitiesToDomains(List<LineItemEntity> entities);
+  List<LineItem> mapToDomains(List<LineItemEntity> entities);
 
   @Mapping(target = "totalTransactions", expression = "java(domain.calculateTotalTransactions())")
   @Mapping(target = "percentageOfPlanned", expression = "java(domain.calculatePercentageOfPlanned())")
   @Mapping(target = "totalRemaining", expression = "java(domain.calculateTotalRemaining())")
-  LineItemResponse mapDomainToResponse(LineItem domain);
+  LineItemResponse mapToResponse(LineItem domain);
 }

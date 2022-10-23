@@ -58,7 +58,7 @@ class LineItemServiceTest {
       service.getAllBetween(startDate, endDate);
 
       // Then the mapper should be called one time
-      verify(mapper, times(1)).mapEntityToDomain(entityCaptor.capture());
+      verify(mapper, times(1)).mapToDomain(entityCaptor.capture());
       // And the entity passed to the mapper should be the same as the one returned from the repository
       assertEquals(entityFromRepo, entityCaptor.getValue());
       // And all the properties should be the same
@@ -80,7 +80,7 @@ class LineItemServiceTest {
       service.getAllBetween(startDate, endDate);
 
       // Then the mapper should be called two times
-      verify(mapper, times(2)).mapEntityToDomain(entityCaptor.capture());
+      verify(mapper, times(2)).mapToDomain(entityCaptor.capture());
       // And the entities passed to the mapper should be in the same order as the ones returned from the repository
       assertEquals(orderedByDate.get(0), entityCaptor.getAllValues().get(0));
       assertEquals(orderedByDate.get(1), entityCaptor.getAllValues().get(1));
@@ -118,7 +118,7 @@ class LineItemServiceTest {
       service.findById(id);
 
       // Then the mapper should be called one time
-      verify(mapper, times(1)).mapEntityToDomain(entityCaptor.capture());
+      verify(mapper, times(1)).mapToDomain(entityCaptor.capture());
       // And the entity passed to the mapper should be the same as the one returned from the repository
       assertEquals(entityFromRepo, entityCaptor.getValue());
       // And all the properties should be the same
@@ -136,7 +136,7 @@ class LineItemServiceTest {
       LineItem parameter = createDomain().id(null).lastModifiedAt(null).build();
       // And that parameter mapper to an entity
       LineItemEntity entityFromParameter = createEntity().id(null).lastModifiedAt(null).build();
-      when(mapper.mapDomainToEntity(parameter))
+      when(mapper.mapToEntity(parameter))
           .thenReturn(entityFromParameter);
 
       // When the method under test is called
@@ -165,7 +165,7 @@ class LineItemServiceTest {
       service.create(parameter);
 
       // Then the mapper should be called one time
-      verify(mapper, times(1)).mapEntityToDomain(entityCaptor.capture());
+      verify(mapper, times(1)).mapToDomain(entityCaptor.capture());
       // And the entity passed to the mapper should be the same as the one returned from the repository.save()
       assertEquals(entityFromSave, entityCaptor.getValue());
       // And all the properties should be the same
@@ -259,7 +259,7 @@ class LineItemServiceTest {
       service.update(id, ifUnmodifiedSince, createDomain().id(id).build());
 
       // Then the mapper should be called one time
-      verify(mapper, times(1)).mapEntityToDomain(entityCaptor.capture());
+      verify(mapper, times(1)).mapToDomain(entityCaptor.capture());
       // And the entity passed to the mapper should be the same as the one returned from the repository.save()
       assertEquals(entityFromSave, entityCaptor.getValue());
       // And all the properties should be the same

@@ -48,7 +48,7 @@ class LineItemMapperIT {
         .build();
 
     // When the request is mapped to a domain object
-    LineItem returned = mapper.mapRequestToDomain(request);
+    LineItem returned = mapper.mapToDomain(request);
 
     // Then the returned domain should equal the expected domain object
     assertEquals(expectedDomain, returned);
@@ -90,7 +90,7 @@ class LineItemMapperIT {
         .build();
 
     // When the domain is mapped to an entity
-    LineItemEntity returned = mapper.mapDomainToEntity(domain);
+    LineItemEntity returned = mapper.mapToEntity(domain);
 
     // Then the returned domain should equal the expected domain object
     assertEquals(expectedEntity, returned);
@@ -136,7 +136,7 @@ class LineItemMapperIT {
         .build();
 
     // When the request is mapped to a domain object
-    LineItem returned = mapper.mapEntityToDomain(entity);
+    LineItem returned = mapper.mapToDomain(entity);
 
     // Then the returned domain should equal the expected domain object
     assertEquals(expectedDomain, returned);
@@ -190,7 +190,7 @@ class LineItemMapperIT {
     List<LineItem> expectedDomains = List.of(expectedDomain1, expectedDomain2);
 
     // When the request is mapped to a domain object
-    List<LineItem> returned = mapper.mapEntitiesToDomains(entities);
+    List<LineItem> returned = mapper.mapToDomains(entities);
 
     // Then the returned domain objects should equal the expected domain objects
     assertThat(expectedDomains)
@@ -225,7 +225,7 @@ class LineItemMapperIT {
         List.of());
 
     // When the domain is mapped to a response object
-    LineItemResponse returned = mapper.mapDomainToResponse(domain);
+    LineItemResponse returned = mapper.mapToResponse(domain);
 
     // Then the returned domain should equal the expected domain object
     assertEquals(expectedResponse, returned);

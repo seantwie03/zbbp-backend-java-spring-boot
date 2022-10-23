@@ -32,7 +32,7 @@ public class BudgetController {
   public BudgetResponse getBudgetFor(
       @RequestParam Optional<YearMonth> budgetDate) {
     Budget budget = budgetService.getForBudgetMonth(budgetDate.orElse(YearMonth.now()));
-    return mapper.mapDomainToResponse(budget);
+    return mapper.mapToResponse(budget);
   }
 
   /**
@@ -45,6 +45,6 @@ public class BudgetController {
   public BudgetResponse createBudgetFor(
       @PathVariable @MustBeCurrentOrFutureBudgetDate @MustNotBeMoreThanSixMonthsInFuture YearMonth budgetDate) {
     Budget budget = budgetService.create(budgetDate);
-    return mapper.mapDomainToResponse(budget);
+    return mapper.mapToResponse(budget);
   }
 }

@@ -27,7 +27,7 @@ public class BudgetService {
    */
   public Budget getForBudgetMonth(YearMonth budgetDate) {
     List<LineItemEntity> entities = lineItemRepository.findAllByBudgetDateOrderByCategoryAscPlannedAmountDesc(budgetDate);
-    List<LineItem> lineItems = mapper.mapEntitiesToDomains(entities);
+    List<LineItem> lineItems = mapper.mapToDomains(entities);
     return new Budget(budgetDate, lineItems);
   }
 
@@ -49,7 +49,7 @@ public class BudgetService {
     List<LineItemEntity> copied = copyLineItemEntitiesToNewBudgetMonth(budgetMonth, exiting);
     copied.forEach(item -> log.info("Creating new Line Item -> %s".formatted(item)));
     List<LineItemEntity> savedItems = lineItemRepository.saveAll(copied);
-    List<LineItem> lineItems = mapper.mapEntitiesToDomains(savedItems);
+    List<LineItem> lineItems = mapper.mapToDomains(savedItems);
     return new Budget(budgetMonth, lineItems);
   }
 

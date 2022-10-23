@@ -40,7 +40,7 @@ public class LineItemController {
             startingBudgetDate.orElse(YearMonth.now().minusYears(100)),
             endingBudgetDate.orElse(YearMonth.now().plusYears(100)))
         .stream()
-        .map(mapper::mapDomainToResponse)
+        .map(mapper::mapToResponse)
         .toList();
   }
 
@@ -48,7 +48,7 @@ public class LineItemController {
   public ResponseEntity<LineItemResponse> getLineItemById(@PathVariable @Min(0) Long id) {
     URI location = UriComponentsBuilder.fromPath("/line-items/{id}").buildAndExpand(id).toUri();
     LineItem lineItem = service.findById(id);
-    LineItemResponse response = mapper.mapDomainToResponse(lineItem);
+    LineItemResponse response = mapper.mapToResponse(lineItem);
     return ResponseEntity
         .ok()
         .location(location)
@@ -59,9 +59,9 @@ public class LineItemController {
   @PostMapping("/line-items")
   public ResponseEntity<LineItemResponse> createLineItem(
       @RequestBody @Valid LineItemRequest request) {
-    LineItem requestLineItem = mapper.mapRequestToDomain(request);
+    LineItem requestLineItem = mapper.mapToDomain(request);
     LineItem lineItem = service.create(requestLineItem);
-    LineItemResponse response = mapper.mapDomainToResponse(lineItem);
+    LineItemResponse response = mapper.mapToResponse(lineItem);
     URI location = UriComponentsBuilder.fromPath("/line-items/{id}").buildAndExpand(lineItem.id()).toUri();
     return ResponseEntity
         .created(location)
@@ -74,10 +74,10 @@ public class LineItemController {
       @RequestBody @Valid LineItemRequest request,
       @PathVariable @Min(0) Long id,
       @RequestHeader("If-Unmodified-Since") Instant ifUnmodifiedSince) {
-    LineItem requestLineItem = mapper.mapRequestToDomain(request);
+    LineItem requestLineItem = mapper.mapToDomain(request);
     URI location = UriComponentsBuilder.fromPath("/line-items/{id}").buildAndExpand(id).toUri();
     LineItem lineItem = service.update(id, ifUnmodifiedSince, requestLineItem);
-    LineItemResponse response = mapper.mapDomainToResponse(lineItem);
+    LineItemResponse response = mapper.mapToResponse(lineItem);
     return ResponseEntity
         .ok()
         .location(location)

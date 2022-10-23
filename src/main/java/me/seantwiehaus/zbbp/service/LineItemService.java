@@ -29,21 +29,21 @@ public class LineItemService {
   public List<LineItem> getAllBetween(YearMonth startBudgetDate, YearMonth endBudgetDate) {
     return repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAsc(startBudgetDate, endBudgetDate)
         .stream()
-        .map(mapper::mapEntityToDomain)
+        .map(mapper::mapToDomain)
         .toList();
   }
 
   public LineItem findById(Long id) {
     LineItemEntity entity = repository.findLineItemEntityById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Line Item", id));
-    return mapper.mapEntityToDomain(entity);
+    return mapper.mapToDomain(entity);
   }
 
   public LineItem create(LineItem lineItem) {
-    LineItemEntity entity = mapper.mapDomainToEntity(lineItem);
+    LineItemEntity entity = mapper.mapToEntity(lineItem);
     log.info("Creating new Line Item -> " + entity);
     LineItemEntity saved = repository.save(entity);
-    return mapper.mapEntityToDomain(saved);
+    return mapper.mapToDomain(saved);
   }
 
   public LineItem update(Long id, Instant ifUnmodifiedSince, LineItem lineItem) {
@@ -57,7 +57,7 @@ public class LineItemService {
     entity.setDescription(lineItem.description());
     log.info("Updating Line Item with ID=%d -> %s".formatted(id, entity));
     LineItemEntity saved = repository.save(entity);
-    return mapper.mapEntityToDomain(saved);
+    return mapper.mapToDomain(saved);
   }
 
   public void delete(Long id) {

@@ -29,21 +29,21 @@ public class TransactionService {
   public List<Transaction> getAllBetween(LocalDate startDate, LocalDate endDate) {
     return repository.findAllByDateBetweenOrderByDateDescAmountDesc(startDate, endDate)
         .stream()
-        .map(mapper::mapEntityToDomain)
+        .map(mapper::mapToDomain)
         .toList();
   }
 
   public Transaction findById(Long id) {
     TransactionEntity entity = repository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
-    return mapper.mapEntityToDomain(entity);
+    return mapper.mapToDomain(entity);
   }
 
   public Transaction create(Transaction transaction) {
-    TransactionEntity entity = mapper.mapDomainToEntity(transaction);
+    TransactionEntity entity = mapper.mapToEntity(transaction);
     log.info("Creating new TransactionEntity -> %s ".formatted(entity));
     TransactionEntity saved = repository.save(entity);
-    return mapper.mapEntityToDomain(saved);
+    return mapper.mapToDomain(saved);
   }
 
   public Transaction update(Long id, Instant ifUnmodifiedSince, Transaction transaction) {
@@ -57,7 +57,7 @@ public class TransactionService {
     entity.setDescription(transaction.description());
     log.info("Updating TransactionEntity with ID=%d -> %s".formatted(id, entity));
     TransactionEntity saved = repository.save(entity);
-    return mapper.mapEntityToDomain(saved);
+    return mapper.mapToDomain(saved);
   }
 
   public void delete(Long id) {

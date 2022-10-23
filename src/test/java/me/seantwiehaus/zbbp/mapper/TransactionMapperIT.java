@@ -43,7 +43,7 @@ class TransactionMapperIT {
         .build();
 
     // When the request is mapped to a domain object
-    Transaction returned = mapper.mapRequestToDomain(request);
+    Transaction returned = mapper.mapToDomain(request);
 
     // Then the returned domain should equal the expected domain object
     assertEquals(expectedDomain, returned);
@@ -77,7 +77,7 @@ class TransactionMapperIT {
         .build();
 
     // When the domain is mapped to an entity
-    TransactionEntity returned = mapper.mapDomainToEntity(domain);
+    TransactionEntity returned = mapper.mapToEntity(domain);
 
     // Then the returned domain should equal the expected domain object
     assertEquals(expectedEntity, returned);
@@ -111,7 +111,7 @@ class TransactionMapperIT {
         .build();
 
     // When the request is mapped to a domain object
-    Transaction returned = mapper.mapEntityToDomain(entity);
+    Transaction returned = mapper.mapToDomain(entity);
 
     // Then the returned domain should equal the expected domain object
     assertEquals(expectedDomain, returned);
@@ -144,7 +144,7 @@ class TransactionMapperIT {
         lastModifiedAt);
 
     // When the domain is mapped to a response object
-    TransactionResponse returned = mapper.mapDomainToResponse(domain);
+    TransactionResponse returned = mapper.mapToResponse(domain);
 
     // Then the returned domain should equal the expected domain object
     assertEquals(expectedResponse, returned);

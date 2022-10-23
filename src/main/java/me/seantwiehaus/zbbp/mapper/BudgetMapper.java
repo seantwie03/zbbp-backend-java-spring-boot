@@ -6,5 +6,5 @@ import org.mapstruct.Mapper;
 
 @Mapper(uses = LineItemMapper.class, componentModel = "spring")
 public interface BudgetMapper {
-  BudgetResponse mapDomainToResponse(Budget domain);
+  BudgetResponse mapToResponse(Budget domain);
 }
