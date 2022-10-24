@@ -9,6 +9,7 @@ import me.seantwiehaus.zbbp.service.TransactionService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
+@Validated
 public class TransactionController {
   private final TransactionService service;
   private final TransactionMapper mapper;
@@ -48,12 +50,12 @@ public class TransactionController {
   @GetMapping("/transactions/{id}")
   public ResponseEntity<TransactionResponse> getTransactionById(@PathVariable @Min(0) Long id) {
     URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(id).toUri();
-    Transaction transaction = service.findById(id);
+    Transaction transaction = service.getById(id);
     TransactionResponse response = mapper.mapToResponse(transaction);
     return ResponseEntity
         .ok()
         .location(location)
-        .lastModified(transaction.lastModifiedAt())
+        .lastModified(response.lastModifiedAt())
         .body(response);
   }
 
@@ -63,10 +65,10 @@ public class TransactionController {
     Transaction requestTransaction = mapper.mapToDomain(request);
     Transaction transaction = service.create(requestTransaction);
     TransactionResponse response = mapper.mapToResponse(transaction);
-    URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(transaction.id()).toUri();
+    URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(response.id()).toUri();
     return ResponseEntity
         .created(location)
-        .lastModified(transaction.lastModifiedAt())
+        .lastModified(response.lastModifiedAt())
         .body(response);
   }
 
@@ -82,7 +84,7 @@ public class TransactionController {
     return ResponseEntity
         .ok()
         .location(location)
-        .lastModified(transaction.lastModifiedAt())
+        .lastModified(response.lastModifiedAt())
         .body(response);
   }
 

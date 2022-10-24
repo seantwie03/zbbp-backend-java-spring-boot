@@ -33,7 +33,7 @@ public class TransactionService {
         .toList();
   }
 
-  public Transaction findById(Long id) {
+  public Transaction getById(Long id) {
     TransactionEntity entity = repository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
     return mapper.mapToDomain(entity);

@@ -102,7 +102,7 @@ class TransactionServiceTest {
 
       // When the method under test is called
       // Then a ResourceNotFoundException should be thrown
-      assertThrows(ResourceNotFoundException.class, () -> service.findById(id));
+      assertThrows(ResourceNotFoundException.class, () -> service.getById(id));
     }
 
     @Test
@@ -113,7 +113,7 @@ class TransactionServiceTest {
           .thenReturn(Optional.of(entityFromRepo));
 
       // When the method under test is called
-      service.findById(id);
+      service.getById(id);
 
       // Then the mapper should be called one time
       verify(mapper, times(1)).mapToDomain(entityCaptor.capture());
