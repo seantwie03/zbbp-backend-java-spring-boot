@@ -10,7 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.jdbc.Sql;
 
-import javax.persistence.PersistenceException;
+import jakarta.persistence.PersistenceException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
