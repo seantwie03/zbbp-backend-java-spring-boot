@@ -7,17 +7,16 @@
 --
 INSERT INTO line_items (id, budget_date, name, planned_amount_cents, category, description, last_modified_at)
 VALUES (100,
-        make_timestamp(
-            extract(year FROM current_date)::int, -- Year
-            extract(month FROM current_date)::int - 1, -- Month
-            1, -- Day
-            0, 0, 0.0), -- Hour, Minute, Second
+        make_date(
+                extract(year FROM current_date)::int, -- Year
+                extract(month FROM date_trunc('month', current_date - interval '1 month'))::int, -- Month
+                1), -- Day,
         'Spouse 1 Income',
         300000,
         'INCOME',
         'Paid on 1st and 15th of every month',
         make_timestamptz(extract(year FROM current_date)::int, -- Year
-                         extract(month FROM current_date)::int - 1, -- Month
+                         extract(month FROM date_trunc('month', current_date - interval '1 month'))::int, -- Month
                          1, -- Day
                          1, -- Hour
                          0, -- Minute
@@ -27,17 +26,16 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO line_items (id, budget_date, name, planned_amount_cents, category, description, last_modified_at)
 VALUES (101,
-        make_timestamp(
-            extract(year FROM current_date)::int, -- Year
-            extract(month FROM current_date)::int - 1, -- Month
-            1, -- Day
-            0, 0, 0.0), -- Hour, Minute, Second
+        make_date(
+                extract(year FROM current_date)::int, -- Year
+                extract(month FROM date_trunc('month', current_date - interval '1 month'))::int, -- Month
+                1), -- Day
         'Spouse 2 Income',
         250000,
         'INCOME',
         'Paid every 2 weeks',
         make_timestamptz(extract(year FROM current_date)::int, -- Year
-                         extract(month FROM current_date)::int - 1, -- Month
+                         extract(month FROM date_trunc('month', current_date - interval '1 month'))::int, -- Month
                          1, -- Day
                          1, -- Hour
                          0, -- Minute
@@ -47,17 +45,16 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO line_items (id, budget_date, name, planned_amount_cents, category, description, last_modified_at)
 VALUES (102,
-        make_timestamp(
-            extract(year FROM current_date)::int, -- Year
-            extract(month FROM current_date)::int - 1, -- Month
-            1, -- Day
-            0, 0, 0.0), -- Hour, Minute, Second
+        make_date(
+                extract(year FROM current_date)::int, -- Year
+                extract(month FROM date_trunc('month', current_date - interval '1 month'))::int, -- Month
+                1), -- Day
         'Side Hustle - Photography',
         50000,
         'INCOME',
         'Weasley Wedding',
         make_timestamptz(extract(year FROM current_date)::int, -- Year
-                         extract(month FROM current_date)::int - 1, -- Month
+                         extract(month FROM date_trunc('month', current_date - interval '1 month'))::int, -- Month
                          1, -- Day
                          1, -- Hour
                          0, -- Minute
@@ -71,17 +68,16 @@ ON CONFLICT DO NOTHING;
 --
 INSERT INTO line_items (id, budget_date, name, planned_amount_cents, category, description, last_modified_at)
 VALUES (201,
-        make_timestamp(
-            extract(year FROM current_date)::int, -- Year
-            extract(month FROM current_date)::int - 1, -- Month
-            1, -- Day
-            0, 0, 0.0), -- Hour, Minute, Second
+        make_date(
+                extract(year FROM current_date)::int, -- Year
+                extract(month FROM date_trunc('month', current_date - interval '1 month'))::int, -- Month
+                1), -- Day
         'Emergency Fund / Family Savings',
         10000,
         'SAVINGS',
         'Keep at least $2,000 for emergencies, use the rest as a Family Savings account',
         make_timestamptz(extract(year FROM current_date)::int, -- Year
-                         extract(month FROM current_date)::int - 1, -- Month
+                         extract(month FROM date_trunc('month', current_date - interval '1 month'))::int, -- Month
                          1, -- Day
                          1, -- Hour
                          0, -- Minute
@@ -91,17 +87,16 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO line_items (id, budget_date, name, planned_amount_cents, category, description, last_modified_at)
 VALUES (202,
-        make_timestamp(
-            extract(year FROM current_date)::int, -- Year
-            extract(month FROM current_date)::int - 1, -- Month
-            1, -- Day
-            0, 0, 0.0), -- Hour, Minute, Second
+        make_date(
+                extract(year FROM current_date)::int, -- Year
+                extract(month FROM date_trunc('month', current_date - interval '1 month'))::int, -- Month
+                1), -- Day
         'Spouse 1 Savings',
         10000,
         'SAVINGS',
         '100% chance that this will be used to buy gadgets.',
         make_timestamptz(extract(year FROM current_date)::int, -- Year
-                         extract(month FROM current_date)::int - 1, -- Month
+                         extract(month FROM date_trunc('month', current_date - interval '1 month'))::int, -- Month
                          1, -- Day
                          1, -- Hour
                          0, -- Minute
@@ -111,17 +106,16 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO line_items (id, budget_date, name, planned_amount_cents, category, description, last_modified_at)
 VALUES (203,
-        make_timestamp(
-            extract(year FROM current_date)::int, -- Year
-            extract(month FROM current_date)::int - 1, -- Month
-            1, -- Day
-            0, 0, 0.0), -- Hour, Minute, Second
+        make_date(
+                extract(year FROM current_date)::int, -- Year
+                extract(month FROM date_trunc('month', current_date - interval '1 month'))::int, -- Month
+                1), -- Day
         'Spouse 2 Savings',
         10000,
         'SAVINGS',
         'AKA crafts and cosmetics fund',
         make_timestamptz(extract(year FROM current_date)::int, -- Year
-                         extract(month FROM current_date)::int - 1, -- Month
+                         extract(month FROM date_trunc('month', current_date - interval '1 month'))::int, -- Month
                          1, -- Day
                          1, -- Hour
                          0, -- Minute
@@ -131,17 +125,16 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO line_items (id, budget_date, name, planned_amount_cents, category, description, last_modified_at)
 VALUES (204,
-        make_timestamp(
-            extract(year FROM current_date)::int, -- Year
-            extract(month FROM current_date)::int - 1, -- Month
-            1, -- Day
-            0, 0, 0.0), -- Hour, Minute, Second
+        make_date(
+                extract(year FROM current_date)::int, -- Year
+                extract(month FROM date_trunc('month', current_date - interval '1 month'))::int, -- Month
+                1), -- Day
         '529 College Savings Plan',
         50000,
         'INVESTMENTS',
         'College America',
         make_timestamptz(extract(year FROM current_date)::int, -- Year
-                         extract(month FROM current_date)::int - 1, -- Month
+                         extract(month FROM date_trunc('month', current_date - interval '1 month'))::int, -- Month
                          1, -- Day
                          1, -- Hour
                          0, -- Minute
