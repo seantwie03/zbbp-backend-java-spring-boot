@@ -1,5 +1,7 @@
 package me.seantwiehaus.zbbp.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import me.seantwiehaus.zbbp.domain.Transaction;
 import me.seantwiehaus.zbbp.dto.request.TransactionRequest;
@@ -13,8 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -37,14 +37,14 @@ public class TransactionController {
    */
   @GetMapping("/transactions")
   public List<TransactionResponse> getAllTransactionsBetween(
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> startingDate,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> endingDate) {
+          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> startingDate,
+          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> endingDate) {
     return service.getAllBetween(
-            startingDate.orElse(LocalDate.now().minusYears(100)),
-            endingDate.orElse(LocalDate.now().plusYears(100)))
-        .stream()
-        .map(mapper::mapToResponse)
-        .toList();
+                    startingDate.orElse(LocalDate.now().minusYears(100)),
+                    endingDate.orElse(LocalDate.now().plusYears(100)))
+            .stream()
+            .map(mapper::mapToResponse)
+            .toList();
   }
 
   @GetMapping("/transactions/{id}")
@@ -53,39 +53,39 @@ public class TransactionController {
     Transaction transaction = service.getById(id);
     TransactionResponse response = mapper.mapToResponse(transaction);
     return ResponseEntity
-        .ok()
-        .location(location)
-        .lastModified(response.lastModifiedAt())
-        .body(response);
+            .ok()
+            .location(location)
+            .lastModified(response.lastModifiedAt())
+            .body(response);
   }
 
   @PostMapping("/transactions")
   public ResponseEntity<TransactionResponse> createTransaction(
-      @RequestBody @Valid TransactionRequest request) {
+          @RequestBody @Valid TransactionRequest request) {
     Transaction requestTransaction = mapper.mapToDomain(request);
     Transaction transaction = service.create(requestTransaction);
     TransactionResponse response = mapper.mapToResponse(transaction);
     URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(response.id()).toUri();
     return ResponseEntity
-        .created(location)
-        .lastModified(response.lastModifiedAt())
-        .body(response);
+            .created(location)
+            .lastModified(response.lastModifiedAt())
+            .body(response);
   }
 
   @PutMapping("/transactions/{id}")
   public ResponseEntity<TransactionResponse> updateTransaction(
-      @RequestBody @Valid TransactionRequest request,
-      @PathVariable @Min(0) Long id,
-      @RequestHeader("If-Unmodified-Since") Instant ifUnmodifiedSince) {
+          @RequestBody @Valid TransactionRequest request,
+          @PathVariable @Min(0) Long id,
+          @RequestHeader("If-Unmodified-Since") Instant ifUnmodifiedSince) {
     URI location = UriComponentsBuilder.fromPath("/transactions/{id}").buildAndExpand(id).toUri();
     Transaction requestTransaction = mapper.mapToDomain(request);
     Transaction transaction = service.update(id, ifUnmodifiedSince, requestTransaction);
     TransactionResponse response = mapper.mapToResponse(transaction);
     return ResponseEntity
-        .ok()
-        .location(location)
-        .lastModified(response.lastModifiedAt())
-        .body(response);
+            .ok()
+            .location(location)
+            .lastModified(response.lastModifiedAt())
+            .body(response);
   }
 
   @DeleteMapping("/transactions/{id}")

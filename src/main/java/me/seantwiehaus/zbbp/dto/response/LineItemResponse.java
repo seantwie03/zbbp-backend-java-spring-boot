@@ -12,17 +12,17 @@ import java.util.List;
  * @param transactions Unmodifiable List
  */
 public record LineItemResponse(
-    Long id,
-    YearMonth budgetDate,
-    String name,
-    @JsonSerialize(using = CentsToDollarsSerializer.class) Integer plannedAmount,
-    Category category,
-    String description,
-    Instant lastModifiedAt,
-    @JsonSerialize(using = CentsToDollarsSerializer.class) Integer totalTransactions,
-    Double percentageOfPlanned,
-    @JsonSerialize(using = CentsToDollarsSerializer.class) Integer totalRemaining,
-    List<TransactionResponse> transactions) {
+        Long id,
+        YearMonth budgetDate,
+        String name,
+        @JsonSerialize(using = CentsToDollarsSerializer.class) Integer plannedAmount,
+        Category category,
+        String description,
+        Instant lastModifiedAt,
+        @JsonSerialize(using = CentsToDollarsSerializer.class) Integer totalTransactions,
+        Double percentageOfPlanned,
+        @JsonSerialize(using = CentsToDollarsSerializer.class) Integer totalRemaining,
+        List<TransactionResponse> transactions) {
   public LineItemResponse {
     transactions = transactions != null ? List.copyOf(transactions) : List.of();
   }

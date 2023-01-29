@@ -11,14 +11,14 @@ import java.util.List;
  */
 @Builder
 public record LineItem(
-    Long id,
-    YearMonth budgetDate,
-    String name,
-    int plannedAmount,
-    Category category,
-    String description,
-    Instant lastModifiedAt,
-    List<Transaction> transactions) {
+        Long id,
+        YearMonth budgetDate,
+        String name,
+        int plannedAmount,
+        Category category,
+        String description,
+        Instant lastModifiedAt,
+        List<Transaction> transactions) {
   public LineItem {
     transactions = transactions != null ? List.copyOf(transactions) : List.of();
   }
@@ -29,9 +29,9 @@ public record LineItem(
 
   public int calculateTotalTransactions() {
     return transactions
-        .stream()
-        .mapToInt(Transaction::amount)
-        .sum();
+            .stream()
+            .mapToInt(Transaction::amount)
+            .sum();
   }
 
   public double calculatePercentageOfPlanned() {

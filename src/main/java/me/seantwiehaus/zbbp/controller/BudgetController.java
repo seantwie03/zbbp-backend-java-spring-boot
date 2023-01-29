@@ -30,7 +30,7 @@ public class BudgetController {
    */
   @GetMapping("/budgets")
   public BudgetResponse getBudgetFor(
-      @RequestParam Optional<YearMonth> budgetDate) {
+          @RequestParam Optional<YearMonth> budgetDate) {
     Budget budget = budgetService.getForBudgetMonth(budgetDate.orElse(YearMonth.now()));
     return mapper.mapToResponse(budget);
   }
@@ -43,7 +43,7 @@ public class BudgetController {
    */
   @PostMapping("/budgets/{budgetDate}")
   public BudgetResponse createBudgetFor(
-      @PathVariable @MustBeCurrentOrFutureBudgetDate @MustNotBeMoreThanSixMonthsInFuture YearMonth budgetDate) {
+          @PathVariable @MustBeCurrentOrFutureBudgetDate @MustNotBeMoreThanSixMonthsInFuture YearMonth budgetDate) {
     Budget budget = budgetService.create(budgetDate);
     return mapper.mapToResponse(budget);
   }

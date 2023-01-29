@@ -45,7 +45,7 @@ public class BudgetService {
       return new Budget(budgetMonth, List.of());
     }
     List<LineItemEntity> exiting =
-        lineItemRepository.findAllByBudgetDateOrderByCategoryAscPlannedAmountDesc(mostRecentBudgetDate.get());
+            lineItemRepository.findAllByBudgetDateOrderByCategoryAscPlannedAmountDesc(mostRecentBudgetDate.get());
     List<LineItemEntity> copied = copyLineItemEntitiesToNewBudgetMonth(budgetMonth, exiting);
     copied.forEach(item -> log.info("Creating new Line Item -> %s".formatted(item)));
     List<LineItemEntity> savedItems = lineItemRepository.saveAll(copied);
@@ -55,7 +55,7 @@ public class BudgetService {
 
   private void throwIfLineItemsAlreadyExistForThisBudgetMonth(YearMonth budgetMonth) {
     List<LineItemEntity> allByBudgetDate =
-        lineItemRepository.findAllByBudgetDateOrderByCategoryAscPlannedAmountDesc(budgetMonth);
+            lineItemRepository.findAllByBudgetDateOrderByCategoryAscPlannedAmountDesc(budgetMonth);
     if (!allByBudgetDate.isEmpty()) {
       throw new BadRequestException("Line Items for: %s already exists.".formatted(budgetMonth));
     }
@@ -63,10 +63,7 @@ public class BudgetService {
 
   private Optional<YearMonth> findMostRecentBudgetDateWithAtLeastOneLineItem() {
     Optional<LineItemEntity> topLineItemOptional = lineItemRepository.findTopByOrderByBudgetDateDesc();
-    if (topLineItemOptional.isEmpty()) {
-      return Optional.empty();
-    }
-    return Optional.of(topLineItemOptional.get().getBudgetDate());
+    return topLineItemOptional.map(LineItemEntity::getBudgetDate);
   }
 
   private List<LineItemEntity> copyLineItemEntitiesToNewBudgetMonth(YearMonth budgetDate,
