@@ -1,5 +1,6 @@
 package me.seantwiehaus.zbbp.dao.entity;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.*;
 import java.time.Instant;
 
 @Getter
@@ -26,4 +26,12 @@ public class BaseEntity {
   @Column(name = "last_modified_at", nullable = false)
   @LastModifiedDate
   protected Instant lastModifiedAt;
+
+  /**
+   * @param instant the instant to compare against
+   * @return true if the entity has been modified after the given instant
+   */
+  public boolean modifiedAfter(Instant instant) {
+    return lastModifiedAt != null && lastModifiedAt.isAfter(instant);
+  }
 }

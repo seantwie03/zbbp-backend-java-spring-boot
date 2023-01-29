@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dao.entity.TransactionEntity;
 import me.seantwiehaus.zbbp.dao.repository.TransactionRepository;
 import me.seantwiehaus.zbbp.domain.Transaction;
+import me.seantwiehaus.zbbp.exception.ResourceConflictException;
 import me.seantwiehaus.zbbp.exception.ResourceNotFoundException;
 import me.seantwiehaus.zbbp.mapper.TransactionMapper;
-import me.seantwiehaus.zbbp.validation.IfUnmodifiedSinceValidation;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -28,14 +28,14 @@ public class TransactionService {
    */
   public List<Transaction> getAllBetween(LocalDate startDate, LocalDate endDate) {
     return repository.findAllByDateBetweenOrderByDateDescAmountDesc(startDate, endDate)
-        .stream()
-        .map(mapper::mapToDomain)
-        .toList();
+            .stream()
+            .map(mapper::mapToDomain)
+            .toList();
   }
 
   public Transaction getById(Long id) {
     TransactionEntity entity = repository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
+            .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
     return mapper.mapToDomain(entity);
   }
 
@@ -48,8 +48,12 @@ public class TransactionService {
 
   public Transaction update(Long id, Instant ifUnmodifiedSince, Transaction transaction) {
     TransactionEntity entity = repository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
-    IfUnmodifiedSinceValidation.throwWhenEntityLastModifiedAtIsAfterIfUnmodifiedSince(entity, ifUnmodifiedSince);
+            .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
+    if (entity.modifiedAfter(ifUnmodifiedSince)) {
+      throw new ResourceConflictException(
+              "%s with ID %d was modified after the provided If-Unmodified-Since header value of %s"
+                      .formatted(entity.getClass().getSimpleName(), entity.getId(), ifUnmodifiedSince));
+    }
     entity.setDate(transaction.date());
     entity.setMerchant(transaction.merchant());
     entity.setAmount(transaction.amount());
@@ -62,7 +66,7 @@ public class TransactionService {
 
   public void delete(Long id) {
     TransactionEntity entity = repository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
+            .orElseThrow(() -> new ResourceNotFoundException("Transaction", id));
     log.info("Deleting TransactionEntity with ID=%d -> %s".formatted(id, entity));
     repository.delete(entity);
   }
