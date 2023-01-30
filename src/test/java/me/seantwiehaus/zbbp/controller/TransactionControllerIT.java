@@ -42,15 +42,15 @@ class TransactionControllerIT {
   @Autowired
   MockMvc mockMvc;
 
-  @Captor
-  ArgumentCaptor<Transaction> domainCaptor = ArgumentCaptor.forClass(Transaction.class);
-
   private final Long id = 1L;
   private final Instant lastModifiedAt = Instant.parse("2022-09-21T23:31:04.206157Z");
   private final DateTimeFormatter rfc1123Formatter = DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneOffset.UTC);
 
   @Nested
   class GetAllTransactionsBetween {
+    @Captor
+    ArgumentCaptor<Transaction> domainCaptor = ArgumentCaptor.forClass(Transaction.class);
+
     private final LocalDate defaultStartingDate = LocalDate.now().withDayOfMonth(1);
     private final LocalDate defaultEndingDate = LocalDate.now();
 
