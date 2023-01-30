@@ -14,8 +14,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LineItemEntityValidatorTest {
-  private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+  private static Validator validator;
   private LineItemEntity entity;
+
+  @BeforeAll
+  static void setupAll() {
+    // buildDefaultValidatorFactory is auto-closable. I don't it really matters for a short-lived test class like this,
+    // but it doesn't hurt to wrap it in a try-with-resources.
+    try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+      validator = validatorFactory.getValidator();
+    }
+  }
 
   @BeforeEach
   void setup() {
