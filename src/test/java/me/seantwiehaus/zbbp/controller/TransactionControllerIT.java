@@ -21,6 +21,8 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -128,11 +130,11 @@ class TransactionControllerIT {
       // Then the mapper should be called two times
       verify(mapper, times(2)).mapToResponse(domainCaptor.capture());
       // And the mapper should be called with the correct domain objects
-      assert domainCaptor.getAllValues().contains(transaction1);
-      assert domainCaptor.getAllValues().contains(transaction2);
+      assertTrue(domainCaptor.getAllValues().contains(transaction1));
+      assertTrue(domainCaptor.getAllValues().contains(transaction2));
       // In the correct order
-      assert domainCaptor.getAllValues().get(0).equals(transaction1);
-      assert domainCaptor.getAllValues().get(1).equals(transaction2);
+      assertEquals(domainCaptor.getAllValues().get(0), transaction1);
+      assertEquals(domainCaptor.getAllValues().get(1), transaction2);
     }
   }
 
