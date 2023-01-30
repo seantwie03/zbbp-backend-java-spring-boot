@@ -118,7 +118,7 @@ public class LineItemControllerIT {
     void callsMapperWithCorrectDomainObjectsInCorrectOrder() throws Exception {
       // Given two LineItems returned from the service
       LineItem lineItem1 = createDomain().id(1L).budgetDate(YearMonth.of(2021, 9)).build();
-      LineItem lineItem2 = createDomain().id(1L).budgetDate(YearMonth.of(2021, 8)).build();
+      LineItem lineItem2 = createDomain().id(2L).budgetDate(YearMonth.of(2021, 8)).build();
       when(service.getAllBetween(defaultStartingDate, defaultEndingDate))
               .thenReturn(List.of(lineItem1, lineItem2));
 
