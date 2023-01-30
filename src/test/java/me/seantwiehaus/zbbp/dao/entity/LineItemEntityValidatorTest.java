@@ -1,12 +1,14 @@
 package me.seantwiehaus.zbbp.dao.entity;
 
-import me.seantwiehaus.zbbp.domain.Category;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import me.seantwiehaus.zbbp.domain.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.time.YearMonth;
 import java.util.Set;
 
@@ -67,7 +69,7 @@ class LineItemEntityValidatorTest {
 
   @Test
   void plannedAmountMustNotBeNegative() {
-    entity.setPlannedAmount(- 1);
+    entity.setPlannedAmount(-1);
 
     Set<ConstraintViolation<LineItemEntity>> violations = validator.validate(entity);
 

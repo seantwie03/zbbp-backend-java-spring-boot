@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(
-    type = ASSIGNABLE_TYPE,
-    classes = { JpaAuditingConfiguration.class }
+        type = ASSIGNABLE_TYPE,
+        classes = {JpaAuditingConfiguration.class}
 ))
 class LineItemRepositoryIT {
   @Autowired
@@ -50,7 +50,8 @@ class LineItemRepositoryIT {
       persistAndFlushList(List.of(shouldNotBeIncluded2, shouldBeIncluded2, shouldBeIncluded1, shouldNotBeIncluded1));
 
       // When the method under test is called
-      List<LineItemEntity> returned = repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAsc(startDate, endDate);
+      List<LineItemEntity> returned =
+              repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAsc(startDate, endDate);
 
       // Then two entities should be returned
       assertEquals(2, returned.size());
@@ -66,26 +67,26 @@ class LineItemRepositoryIT {
     void returnEntitiesInCorrectOrder() {
       // Given two entities with different dates
       LineItemEntity highestDateFirstHighestCategoryFirst = createLineItemEntity()
-          .budgetDate(endDate)
-          .category(Category.FOOD)
-          .build();
+              .budgetDate(endDate)
+              .category(Category.FOOD)
+              .build();
       LineItemEntity highestDateLowestCategorySecond = createLineItemEntity()
-          .budgetDate(endDate)
-          .category(Category.HEALTH)
-          .build();
+              .budgetDate(endDate)
+              .category(Category.HEALTH)
+              .build();
       LineItemEntity lowestDateLast = createLineItemEntity()
-          .budgetDate(startDate)
-          .category(Category.FOOD)
-          .build();
+              .budgetDate(startDate)
+              .category(Category.FOOD)
+              .build();
       // That are persisted out of order
       persistAndFlushList(List.of(
-          lowestDateLast,
-          highestDateLowestCategorySecond,
-          highestDateFirstHighestCategoryFirst));
+              lowestDateLast,
+              highestDateLowestCategorySecond,
+              highestDateFirstHighestCategoryFirst));
 
       // When the method under test is called
       List<LineItemEntity> returned =
-          repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAsc(startDate, endDate);
+              repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAsc(startDate, endDate);
 
       // Then the LineItems should be returned in the correct order
       assertEquals(highestDateFirstHighestCategoryFirst, returned.get(0));
@@ -99,19 +100,21 @@ class LineItemRepositoryIT {
     @Test
     void returnEntitiesInCorrectOrder() {
       // Given two entities in Food category
-      LineItemEntity highestCategoryHighestAmountFirst = createLineItemEntity().plannedAmount(12000).category(Category.FOOD).build();
-      LineItemEntity highestCategoryLowestAmountSecond = createLineItemEntity().plannedAmount(11000).category(Category.FOOD).build();
+      LineItemEntity highestCategoryHighestAmountFirst =
+              createLineItemEntity().plannedAmount(12000).category(Category.FOOD).build();
+      LineItemEntity highestCategoryLowestAmountSecond =
+              createLineItemEntity().plannedAmount(11000).category(Category.FOOD).build();
       // And one entity in Health category
       LineItemEntity lowestCategoryThird = createLineItemEntity().category(Category.HEALTH).build();
       // That are persisted out of order
       persistAndFlushList(List.of(
-          highestCategoryLowestAmountSecond,
-          highestCategoryHighestAmountFirst,
-          lowestCategoryThird));
+              highestCategoryLowestAmountSecond,
+              highestCategoryHighestAmountFirst,
+              lowestCategoryThird));
 
       // When the method under test is called
       List<LineItemEntity> returned =
-          repository.findAllByBudgetDateOrderByCategoryAscPlannedAmountDesc(YearMonth.now());
+              repository.findAllByBudgetDateOrderByCategoryAscPlannedAmountDesc(YearMonth.now());
 
       // Then the LineItems should be returned in the correct order
       assertEquals(highestCategoryHighestAmountFirst, returned.get(0));
@@ -191,20 +194,20 @@ class LineItemRepositoryIT {
 
   private LineItemEntity.LineItemEntityBuilder<?, ?> createLineItemEntity() {
     return LineItemEntity.builder()
-        .id(null)
-        .budgetDate(YearMonth.now())
-        .name("Groceries " + UUID.randomUUID()) // UUID for uniqueness
-        .plannedAmount(10000)
-        .category(Category.FOOD)
-        .description("Description");
+            .id(null)
+            .budgetDate(YearMonth.now())
+            .name("Groceries " + UUID.randomUUID()) // UUID for uniqueness
+            .plannedAmount(10000)
+            .category(Category.FOOD)
+            .description("Description");
   }
 
   private TransactionEntity.TransactionEntityBuilder<?, ?> createTransactionEntity() {
     return TransactionEntity.builder()
-        .id(null)
-        .date(LocalDate.now())
-        .merchant("Merchant " + UUID.randomUUID()) // UUID for uniqueness
-        .amount(2500)
-        .lastModifiedAt(Instant.now());
+            .id(null)
+            .date(LocalDate.now())
+            .merchant("Merchant " + UUID.randomUUID()) // UUID for uniqueness
+            .amount(2500)
+            .lastModifiedAt(Instant.now());
   }
 }

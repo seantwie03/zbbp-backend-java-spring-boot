@@ -18,40 +18,40 @@ class LineItemTest {
     @BeforeAll
     static void setup() {
       List<Transaction> transactions = List.of(
-          new Transaction(
-              1L,
-              LocalDate.now(),
-              "Merchant 1",
-              1050,
-              null,
-              "Transaction 1",
-              null),
-          new Transaction(
-              1L,
-              LocalDate.now(),
-              "Merchant 2",
-              1100,
-              null,
-              "Transaction 2",
-              null),
-          new Transaction(
-              1L,
-              LocalDate.now(),
-              "Merchant 3",
-              400,
-              null,
-              "Transaction 3",
-              null)
+              new Transaction(
+                      1L,
+                      LocalDate.now(),
+                      "Merchant 1",
+                      1050,
+                      null,
+                      "Transaction 1",
+                      null),
+              new Transaction(
+                      1L,
+                      LocalDate.now(),
+                      "Merchant 2",
+                      1100,
+                      null,
+                      "Transaction 2",
+                      null),
+              new Transaction(
+                      1L,
+                      LocalDate.now(),
+                      "Merchant 3",
+                      400,
+                      null,
+                      "Transaction 3",
+                      null)
       );
       lineItem = new LineItem(
-          1L,
-          YearMonth.now(),
-          "Groceries",
-          5000,
-          Category.FOOD,
-          "Description",
-          null,
-          transactions);
+              1L,
+              YearMonth.now(),
+              "Groceries",
+              5000,
+              Category.FOOD,
+              "Description",
+              null,
+              transactions);
     }
 
     @Test
@@ -77,14 +77,14 @@ class LineItemTest {
     @BeforeAll
     static void setup() {
       lineItem = new LineItem(
-          null,
-          YearMonth.now(),
-          "Restaurants",
-          5000,
-          Category.FOOD,
-          "Description",
-          null,
-          null
+              null,
+              YearMonth.now(),
+              "Restaurants",
+              5000,
+              Category.FOOD,
+              "Description",
+              null,
+              null
       );
     }
 

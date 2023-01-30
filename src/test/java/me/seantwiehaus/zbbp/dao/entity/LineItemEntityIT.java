@@ -1,5 +1,6 @@
 package me.seantwiehaus.zbbp.dao.entity;
 
+import jakarta.persistence.PersistenceException;
 import me.seantwiehaus.zbbp.dao.config.JpaAuditingConfiguration;
 import me.seantwiehaus.zbbp.domain.Category;
 import org.junit.jupiter.api.Nested;
@@ -10,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.jdbc.Sql;
 
-import jakarta.persistence.PersistenceException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(
-    type = ASSIGNABLE_TYPE,
-    classes = { JpaAuditingConfiguration.class }
+        type = ASSIGNABLE_TYPE,
+        classes = {JpaAuditingConfiguration.class}
 ))
 class LineItemEntityIT {
   @Autowired
@@ -98,10 +98,10 @@ class LineItemEntityIT {
 
       // Then, when the second entity is saved, an exception should be thrown
       PersistenceException exception =
-          assertThrows(PersistenceException.class, () -> entityManager.persistAndFlush(lineItem2));
+              assertThrows(PersistenceException.class, () -> entityManager.persistAndFlush(lineItem2));
       // And the exception should contain the following
       assertTrue(exception.getCause().getCause().getMessage()
-          .contains("duplicate key value violates unique constraint \"unique_insensitive_name_category_date_idx\""));
+              .contains("duplicate key value violates unique constraint \"unique_insensitive_name_category_date_idx\""));
     }
 
     @Test

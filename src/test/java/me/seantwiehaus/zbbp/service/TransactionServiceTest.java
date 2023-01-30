@@ -50,7 +50,7 @@ class TransactionServiceTest {
       // Given one entity returned from the repository
       TransactionEntity entityFromRepo = createEntity().date(startDate).build();
       when(repository.findAllByDateBetweenOrderByDateDescAmountDesc(startDate, endDate))
-          .thenReturn(List.of(entityFromRepo));
+              .thenReturn(List.of(entityFromRepo));
 
       // When the method under test is called
       service.getAllBetween(startDate, endDate);
@@ -61,8 +61,8 @@ class TransactionServiceTest {
       assertEquals(entityFromRepo, entityCaptor.getValue());
       // And all the properties should be the same
       assertThat(entityFromRepo)
-          .usingRecursiveComparison()
-          .isEqualTo(entityCaptor.getValue());
+              .usingRecursiveComparison()
+              .isEqualTo(entityCaptor.getValue());
     }
 
     @Test
@@ -72,7 +72,7 @@ class TransactionServiceTest {
       TransactionEntity entity2 = createEntity().id(2L).date(endDate).build();
       List<TransactionEntity> orderedByDate = List.of(entity1, entity2);
       when(repository.findAllByDateBetweenOrderByDateDescAmountDesc(startDate, endDate))
-          .thenReturn(orderedByDate);
+              .thenReturn(orderedByDate);
 
       // When the method under test is called
       service.getAllBetween(startDate, endDate);
@@ -84,11 +84,11 @@ class TransactionServiceTest {
       assertEquals(orderedByDate.get(1), entityCaptor.getAllValues().get(1));
       // And all the properties should be the same
       assertThat(entity1)
-          .usingRecursiveComparison()
-          .isEqualTo(entityCaptor.getAllValues().get(0));
+              .usingRecursiveComparison()
+              .isEqualTo(entityCaptor.getAllValues().get(0));
       assertThat(entity2)
-          .usingRecursiveComparison()
-          .isEqualTo(entityCaptor.getAllValues().get(1));
+              .usingRecursiveComparison()
+              .isEqualTo(entityCaptor.getAllValues().get(1));
     }
   }
 
@@ -98,7 +98,7 @@ class TransactionServiceTest {
     void throwsResourceNotFoundExceptionWhenNotFoundById() {
       // Given an empty Optional returned from the repository (entity not found by ID)
       when(repository.findById(id))
-          .thenReturn(Optional.empty());
+              .thenReturn(Optional.empty());
 
       // When the method under test is called
       // Then a ResourceNotFoundException should be thrown
@@ -110,7 +110,7 @@ class TransactionServiceTest {
       // Given one entity returned from the repository
       TransactionEntity entityFromRepo = createEntity().id(id).build();
       when(repository.findById(id))
-          .thenReturn(Optional.of(entityFromRepo));
+              .thenReturn(Optional.of(entityFromRepo));
 
       // When the method under test is called
       service.getById(id);
@@ -121,8 +121,8 @@ class TransactionServiceTest {
       assertEquals(entityFromRepo, entityCaptor.getValue());
       // And all the properties should be the same
       assertThat(entityFromRepo)
-          .usingRecursiveComparison()
-          .isEqualTo(entityCaptor.getValue());
+              .usingRecursiveComparison()
+              .isEqualTo(entityCaptor.getValue());
     }
   }
 
@@ -135,7 +135,7 @@ class TransactionServiceTest {
       // And that parameter mapper to an entity
       TransactionEntity entityFromParameter = createEntity().id(null).lastModifiedAt(null).build();
       when(mapper.mapToEntity(parameter))
-          .thenReturn(entityFromParameter);
+              .thenReturn(entityFromParameter);
 
       // When the method under test is called
       service.create(parameter);
@@ -146,8 +146,8 @@ class TransactionServiceTest {
       assertEquals(entityFromParameter, entityCaptor.getValue());
       // And all the properties should be the same
       assertThat(entityFromParameter)
-          .usingRecursiveComparison()
-          .isEqualTo(entityCaptor.getValue());
+              .usingRecursiveComparison()
+              .isEqualTo(entityCaptor.getValue());
     }
 
     @Test
@@ -157,7 +157,7 @@ class TransactionServiceTest {
       // And an entity returned from the repository.save() with ID and LastModifiedAt values
       TransactionEntity entityFromSave = createEntity().id(1L).lastModifiedAt(Instant.now()).build();
       when(repository.save(any()))
-          .thenReturn(entityFromSave);
+              .thenReturn(entityFromSave);
 
       // When the method under test is called
       service.create(parameter);
@@ -168,8 +168,8 @@ class TransactionServiceTest {
       assertEquals(entityFromSave, entityCaptor.getValue());
       // And all the properties should be the same
       assertThat(entityFromSave)
-          .usingRecursiveComparison()
-          .isEqualTo(entityCaptor.getValue());
+              .usingRecursiveComparison()
+              .isEqualTo(entityCaptor.getValue());
     }
   }
 
@@ -181,7 +181,7 @@ class TransactionServiceTest {
       Transaction parameter = createDomain().id(-1L).build();
       // And an empty Optional returned from the repository (entity not found by ID)
       when(repository.findById(-1L))
-          .thenReturn(Optional.empty());
+              .thenReturn(Optional.empty());
 
       // When the method under test is called
       // Then a ResourceNotFoundException should be thrown
@@ -196,7 +196,7 @@ class TransactionServiceTest {
       // And an entity from the repository with a lastModifiedAt value that is after the ifUnmodifiedSince value
       TransactionEntity entityFromRepo = createEntity().lastModifiedAt(ifUnmodifiedSince.plusSeconds(1)).build();
       when(repository.findById(id))
-          .thenReturn(Optional.of(entityFromRepo));
+              .thenReturn(Optional.of(entityFromRepo));
 
       // When the method under test is called
       // Then a ResourceConflictException should be thrown
@@ -207,25 +207,25 @@ class TransactionServiceTest {
     void callsRepositorySaveWithCorrectPropertyValues() {
       // Given an existing entity from the repository with all values set
       TransactionEntity entityFromDb = createEntity()
-          .id(id)
-          .date(LocalDate.now().minusDays(1))
-          .merchant("Merchant")
-          .amount(2500)
-          .lineItemId(1L)
-          .lastModifiedAt(ifUnmodifiedSince)
-          .build();
+              .id(id)
+              .date(LocalDate.now().minusDays(1))
+              .merchant("Merchant")
+              .amount(2500)
+              .lineItemId(1L)
+              .lastModifiedAt(ifUnmodifiedSince)
+              .build();
       when(repository.findById(id))
-          .thenReturn(Optional.of(entityFromDb));
+              .thenReturn(Optional.of(entityFromDb));
       // And a valid ifUnmodifiedSince (in top-level class)
       // And a Transaction parameter with updated values
       Transaction parameter = Transaction.builder(
-              LocalDate.now(),
-              "Updated Merchant",
-              2600)
-          .id(id)
-          .lineItemId(2L)
-          .description("Updated Description")
-          .build();
+                      LocalDate.now(),
+                      "Updated Merchant",
+                      2600)
+              .id(id)
+              .lineItemId(2L)
+              .description("Updated Description")
+              .build();
 
       // When the method under test is called
       service.update(id, ifUnmodifiedSince, parameter);
@@ -245,12 +245,12 @@ class TransactionServiceTest {
     void callsMapperWithCorrectEntity() {
       // Given an entity from the repository
       when(repository.findById(id))
-          .thenReturn(Optional.of(createEntity().build()));
+              .thenReturn(Optional.of(createEntity().build()));
       // And an ifUnmodifiedSince value that matches (in top-level class)
       // And an entity returned from the repository save method
       TransactionEntity entityFromSave = createEntity().build();
       when(repository.save(any(TransactionEntity.class)))
-          .thenReturn(entityFromSave);
+              .thenReturn(entityFromSave);
 
       // When the method under test is called
       service.update(id, ifUnmodifiedSince, createDomain().id(id).build());
@@ -261,8 +261,8 @@ class TransactionServiceTest {
       assertEquals(entityFromSave, entityCaptor.getValue());
       // And all the properties should be the same
       assertThat(entityFromSave)
-          .usingRecursiveComparison()
-          .isEqualTo(entityCaptor.getValue());
+              .usingRecursiveComparison()
+              .isEqualTo(entityCaptor.getValue());
     }
   }
 
@@ -272,7 +272,7 @@ class TransactionServiceTest {
     void throwsResourceNotFoundExceptionWhenNotFoundById() {
       // Given an empty Optional returned from the repository (entity not found by ID)
       when(repository.findById(-1L))
-          .thenReturn(Optional.empty());
+              .thenReturn(Optional.empty());
 
       // When the method under test is called
       // Then a ResourceNotFoundException should be thrown
@@ -284,7 +284,7 @@ class TransactionServiceTest {
       // Given an existing entity in the repository
       TransactionEntity entityFromRepo = createEntity().build();
       when(repository.findById(id))
-          .thenReturn(Optional.of(entityFromRepo));
+              .thenReturn(Optional.of(entityFromRepo));
 
       // When the method under test is called
       service.delete(id);
@@ -295,28 +295,28 @@ class TransactionServiceTest {
       assertEquals(entityFromRepo, entityCaptor.getValue());
       // And all the properties should be the same
       assertThat(entityFromRepo)
-          .usingRecursiveComparison()
-          .isEqualTo(entityCaptor.getValue());
+              .usingRecursiveComparison()
+              .isEqualTo(entityCaptor.getValue());
     }
   }
 
   private TransactionEntity.TransactionEntityBuilder<?, ?> createEntity() {
     return TransactionEntity
-        .builder()
-        .id(1L)
-        .date(LocalDate.now())
-        .merchant("Merchant")
-        .amount(2500)
-        .description("Description")
-        .lineItemId(1L)
-        .lastModifiedAt(ifUnmodifiedSince);
+            .builder()
+            .id(1L)
+            .date(LocalDate.now())
+            .merchant("Merchant")
+            .amount(2500)
+            .description("Description")
+            .lineItemId(1L)
+            .lastModifiedAt(ifUnmodifiedSince);
   }
 
   private Transaction.TransactionBuilder createDomain() {
     return Transaction.builder(LocalDate.now(), "Merchant", 2500)
-        .id(1L)
-        .description("Description")
-        .lineItemId(1L)
-        .lastModifiedAt(ifUnmodifiedSince);
+            .id(1L)
+            .description("Description")
+            .lineItemId(1L)
+            .lastModifiedAt(ifUnmodifiedSince);
   }
 }

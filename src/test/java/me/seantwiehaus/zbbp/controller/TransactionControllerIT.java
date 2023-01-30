@@ -51,8 +51,8 @@ class TransactionControllerIT {
 
   @Nested
   class GetAllTransactionsBetween {
-    private final LocalDate defaultStartingDate = LocalDate.now().minusYears(100);
-    private final LocalDate defaultEndingDate = LocalDate.now().plusYears(100);
+    private final LocalDate defaultStartingDate = LocalDate.now().withDayOfMonth(1);
+    private final LocalDate defaultEndingDate = LocalDate.now();
 
     @Test
     void callsServiceWithDefaultStartingAndEndingDateWhenNoneProvided() throws Exception {
@@ -71,8 +71,8 @@ class TransactionControllerIT {
 
       // When the request is made
       mockMvc.perform(get("/transactions?startingDate=%s".formatted(badStartingDate)))
-          // Then the response should be a 400
-          .andExpect(status().isBadRequest());
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
       // And the service should not be called
       verify(service, never()).getAllBetween(any(), any());
     }
@@ -84,8 +84,8 @@ class TransactionControllerIT {
 
       // When the request is made
       mockMvc.perform(get("/transactions?endingDate=%s".formatted(badEndingDate)))
-          // Then the response should be a 400
-          .andExpect(status().isBadRequest());
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
       // And the service should not be called
       verify(service, never()).getAllBetween(any(), any());
     }
@@ -120,7 +120,7 @@ class TransactionControllerIT {
       Transaction transaction1 = createDomain().id(1L).date(LocalDate.now()).build();
       Transaction transaction2 = createDomain().id(2L).date(LocalDate.now().minusDays(1)).build();
       when(service.getAllBetween(defaultStartingDate, defaultEndingDate))
-          .thenReturn(List.of(transaction1, transaction2));
+              .thenReturn(List.of(transaction1, transaction2));
 
       // When the request is made
       mockMvc.perform(get("/transactions"));
@@ -143,8 +143,8 @@ class TransactionControllerIT {
       // Given a request with a negative transaction id
       // When the request is made
       mockMvc.perform(get("/transactions/-1"))
-          // Then the response should be a 400
-          .andExpect(status().isBadRequest());
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
       // And the service should not be called
       verify(service, never()).getById(any());
     }
@@ -153,23 +153,23 @@ class TransactionControllerIT {
     void returnsCorrectLocationAndLastModifiedHeaders() throws Exception {
       // Given a response dto returned from the mapper
       TransactionResponse responseDto = new TransactionResponse(
-          id,
-          LocalDate.now(),
-          "Merchant",
-          2500,
-          id,
-          "Description",
-          lastModifiedAt);
+              id,
+              LocalDate.now(),
+              "Merchant",
+              2500,
+              id,
+              "Description",
+              lastModifiedAt);
       when(mapper.mapToResponse(any())).thenReturn(responseDto);
 
       // When the request is made
       mockMvc.perform(get("/transactions/%d".formatted(id)))
-          // Then the response should be a 200
-          .andExpect(status().isOk())
-          // And the response should contain the correct Location header
-          .andExpect(header().string("Location", "/transactions/%d".formatted(id)))
-          // And the response should contain the correct Last-Modified header
-          .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
+              // Then the response should be a 200
+              .andExpect(status().isOk())
+              // And the response should contain the correct Location header
+              .andExpect(header().string("Location", "/transactions/%d".formatted(id)))
+              // And the response should contain the correct Last-Modified header
+              .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
     }
   }
 
@@ -179,32 +179,32 @@ class TransactionControllerIT {
     void returnsCorrectStatusAndHeaders() throws Exception {
       // Given a response dto returned from the mapper
       TransactionResponse responseDto = new TransactionResponse(
-          id,
-          LocalDate.now(),
-          "Merchant",
-          2500,
-          id,
-          "Description",
-          lastModifiedAt);
+              id,
+              LocalDate.now(),
+              "Merchant",
+              2500,
+              id,
+              "Description",
+              lastModifiedAt);
       when(mapper.mapToResponse(any())).thenReturn(responseDto);
 
       // When the request is made
       mockMvc.perform(post("/transactions")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content("""
-                  {
-                    "date": "%s",
-                    "merchant": "Merchant",
-                    "amount": 2500,
-                    "description": "Description"
-                  }
-                  """.formatted(LocalDate.now())))
-          // Then the response should be a 201
-          .andExpect(status().isCreated())
-          // And the response should contain the correct Location header
-          .andExpect(header().string("Location", "/transactions/%d".formatted(id)))
-          // And the response should contain the correct Last-Modified header
-          .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content("""
+                              {
+                                "date": "%s",
+                                "merchant": "Merchant",
+                                "amount": 2500,
+                                "description": "Description"
+                              }
+                              """.formatted(LocalDate.now())))
+              // Then the response should be a 201
+              .andExpect(status().isCreated())
+              // And the response should contain the correct Location header
+              .andExpect(header().string("Location", "/transactions/%d".formatted(id)))
+              // And the response should contain the correct Last-Modified header
+              .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
     }
   }
 
@@ -215,17 +215,17 @@ class TransactionControllerIT {
       // Given a request without an If-Unmodified-Since header
       // When the request is made
       mockMvc.perform(put("/transactions/%d".formatted(id))
-              .contentType(MediaType.APPLICATION_JSON)
-              .content("""
-                  {
-                    "date": "%s",
-                    "merchant": "Merchant",
-                    "amount": 2500,
-                    "description": "Description"
-                  }
-                  """.formatted(LocalDate.now())))
-          // Then the response should be a 400
-          .andExpect(status().isBadRequest());
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content("""
+                              {
+                                "date": "%s",
+                                "merchant": "Merchant",
+                                "amount": 2500,
+                                "description": "Description"
+                              }
+                              """.formatted(LocalDate.now())))
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
       // And the service should not be called
       verify(service, never()).update(any(), any(), any());
     }
@@ -234,30 +234,30 @@ class TransactionControllerIT {
     void returns400WhenTransactionIdParameterIsNegative() throws Exception {
       // Given a response dto returned from the mapper
       TransactionResponse responseDto = new TransactionResponse(
-          id,
-          LocalDate.now(),
-          "Merchant",
-          2500,
-          id,
-          "Description",
-          lastModifiedAt);
+              id,
+              LocalDate.now(),
+              "Merchant",
+              2500,
+              id,
+              "Description",
+              lastModifiedAt);
       when(mapper.mapToResponse(any())).thenReturn(responseDto);
       // And a negative transaction ID
 
       // When the request is made
       mockMvc.perform(put("/transactions/-1")
-              .contentType(MediaType.APPLICATION_JSON)
-              .header("If-Unmodified-Since", rfc1123Formatter.format(lastModifiedAt))
-              .content("""
-                  {
-                    "date": "%s",
-                    "merchant": "Merchant",
-                    "amount": 2500,
-                    "description": "Description"
-                  }
-                  """.formatted(LocalDate.now())))
-          // Then the response should be a 400
-          .andExpect(status().isBadRequest());
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .header("If-Unmodified-Since", rfc1123Formatter.format(lastModifiedAt))
+                      .content("""
+                              {
+                                "date": "%s",
+                                "merchant": "Merchant",
+                                "amount": 2500,
+                                "description": "Description"
+                              }
+                              """.formatted(LocalDate.now())))
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
       // And the service should not be called
       verify(service, never()).update(any(), any(), any());
     }
@@ -266,33 +266,33 @@ class TransactionControllerIT {
     void returnsCorrectStatusAndHeaders() throws Exception {
       // Given a response dto returned from the mapper
       TransactionResponse responseDto = new TransactionResponse(
-          id,
-          LocalDate.now(),
-          "Merchant",
-          2500,
-          id,
-          "Description",
-          lastModifiedAt);
+              id,
+              LocalDate.now(),
+              "Merchant",
+              2500,
+              id,
+              "Description",
+              lastModifiedAt);
       when(mapper.mapToResponse(any())).thenReturn(responseDto);
 
       // When the request is made
       mockMvc.perform(put("/transactions/1")
-              .contentType(MediaType.APPLICATION_JSON)
-              .header("If-Unmodified-Since", rfc1123Formatter.format(lastModifiedAt))
-              .content("""
-                  {
-                    "date": "%s",
-                    "merchant": "Merchant",
-                    "amount": 2500,
-                    "description": "Description"
-                  }
-                  """.formatted(LocalDate.now())))
-          // Then the response should be a 201
-          .andExpect(status().isOk())
-          // And the response should contain the correct Location header
-          .andExpect(header().string("Location", "/transactions/%d".formatted(id)))
-          // And the response should contain the correct Last-Modified header
-          .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .header("If-Unmodified-Since", rfc1123Formatter.format(lastModifiedAt))
+                      .content("""
+                              {
+                                "date": "%s",
+                                "merchant": "Merchant",
+                                "amount": 2500,
+                                "description": "Description"
+                              }
+                              """.formatted(LocalDate.now())))
+              // Then the response should be a 201
+              .andExpect(status().isOk())
+              // And the response should contain the correct Location header
+              .andExpect(header().string("Location", "/transactions/%d".formatted(id)))
+              // And the response should contain the correct Last-Modified header
+              .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
     }
   }
 
@@ -303,8 +303,8 @@ class TransactionControllerIT {
       // Given a negative transaction ID
       // When the request is made
       mockMvc.perform(delete("/transactions/-1"))
-          // Then the response should be a 400
-          .andExpect(status().isBadRequest());
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
       // And the service should not be called
       verify(service, never()).delete(any());
     }
@@ -314,8 +314,8 @@ class TransactionControllerIT {
       // Given a negative transaction ID
       // When the request is made
       mockMvc.perform(delete("/transactions/1"))
-          // Then the response should be a 204
-          .andExpect(status().isNoContent());
+              // Then the response should be a 204
+              .andExpect(status().isNoContent());
       // And the service should be called one time
       verify(service, times(1)).delete(id);
     }
@@ -323,9 +323,9 @@ class TransactionControllerIT {
 
   private Transaction.TransactionBuilder createDomain() {
     return Transaction.builder(LocalDate.now(), "Merchant", 2500)
-        .id(1L)
-        .description("Description")
-        .lineItemId(1L)
-        .lastModifiedAt(lastModifiedAt);
+            .id(1L)
+            .description("Description")
+            .lineItemId(1L)
+            .lastModifiedAt(lastModifiedAt);
   }
 }

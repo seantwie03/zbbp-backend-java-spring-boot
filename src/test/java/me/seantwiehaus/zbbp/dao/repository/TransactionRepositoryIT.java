@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(
-    type = ASSIGNABLE_TYPE,
-    classes = { JpaAuditingConfiguration.class }
+        type = ASSIGNABLE_TYPE,
+        classes = {JpaAuditingConfiguration.class}
 ))
 class TransactionRepositoryIT {
   @Autowired
@@ -60,17 +60,17 @@ class TransactionRepositoryIT {
     void returnEntitiesInCorrectOrder() {
       // Given three entities
       TransactionEntity highestAmountOnSameDateFirst = createEntity()
-          .date(startDate.plusDays(1))
-          .amount(2600)
-          .build();
+              .date(startDate.plusDays(1))
+              .amount(2600)
+              .build();
       TransactionEntity lowestAmountOnSameDateSecond = createEntity()
-          .date(startDate.plusDays(1))
-          .amount(2500)
-          .build();
+              .date(startDate.plusDays(1))
+              .amount(2500)
+              .build();
       TransactionEntity lowestDateThird = createEntity()
-          .date(startDate)
-          .amount(100)
-          .build();
+              .date(startDate)
+              .amount(100)
+              .build();
       // That are persisted out of order
       persistAndFlushList(List.of(lowestDateThird, lowestAmountOnSameDateSecond, highestAmountOnSameDateFirst));
 
@@ -92,10 +92,10 @@ class TransactionRepositoryIT {
 
   private TransactionEntity.TransactionEntityBuilder<?, ?> createEntity() {
     return TransactionEntity.builder()
-        .id(null)
-        .date(LocalDate.now())
-        .merchant("Merchant")
-        .amount(2500)
-        .lastModifiedAt(Instant.now());
+            .id(null)
+            .date(LocalDate.now())
+            .merchant("Merchant")
+            .amount(2500)
+            .lastModifiedAt(Instant.now());
   }
 }

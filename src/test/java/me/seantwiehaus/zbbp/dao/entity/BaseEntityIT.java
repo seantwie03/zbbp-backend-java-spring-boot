@@ -21,8 +21,8 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
  * There isn't a BaseEntity table so the BaseEntity must be tested indirectly.
  */
 @DataJpaTest(includeFilters = @ComponentScan.Filter(
-    type = ASSIGNABLE_TYPE,
-    classes = { JpaAuditingConfiguration.class }
+        type = ASSIGNABLE_TYPE,
+        classes = {JpaAuditingConfiguration.class}
 ))
 class BaseEntityIT {
   @Autowired
@@ -57,11 +57,11 @@ class BaseEntityIT {
 
   private LineItemEntity.LineItemEntityBuilder<?, ?> createEntity() {
     return LineItemEntity
-        .builder()
-        .budgetDate(YearMonth.now())
-        .name("Groceries " + UUID.randomUUID()) // UUID to ensure uniqueness
-        .plannedAmount(120000)
-        .category(Category.FOOD)
-        .description("Description");
+            .builder()
+            .budgetDate(YearMonth.now())
+            .name("Groceries " + UUID.randomUUID()) // UUID to ensure uniqueness
+            .plannedAmount(120000)
+            .category(Category.FOOD)
+            .description("Description");
   }
 }

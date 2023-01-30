@@ -1,11 +1,13 @@
 package me.seantwiehaus.zbbp.dao.entity;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -65,7 +67,7 @@ class TransactionEntityValidatorTest {
 
   @Test
   void amountMustNotBeNegative() {
-    entity.setAmount(- 1);
+    entity.setAmount(-1);
 
     Set<ConstraintViolation<TransactionEntity>> violations = validator.validate(entity);
 
@@ -75,7 +77,7 @@ class TransactionEntityValidatorTest {
 
   @Test
   void lineItemIdMustNotBeNegative() {
-    entity.setLineItemId(- 1L);
+    entity.setLineItemId(-1L);
 
     Set<ConstraintViolation<TransactionEntity>> violations = validator.validate(entity);
 
