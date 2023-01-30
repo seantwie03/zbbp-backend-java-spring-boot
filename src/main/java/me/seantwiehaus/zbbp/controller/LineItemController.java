@@ -27,9 +27,9 @@ public class LineItemController {
 
   /**
    * @param startingBudgetDate The first budgetDate to include in the list of results.
-   *                           The default value is the current month 100 years in the past.
+   *                           The default value is the current year-month.
    * @param endingBudgetDate   The last budgetDate to include in the list of results.
-   *                           The default value is the current month 100 years in the future.
+   *                           The default value is the current year-month.
    * @return All Line Items between the starting and ending budgetDates (inclusive).
    */
   @GetMapping("/line-items")
@@ -37,8 +37,8 @@ public class LineItemController {
           @RequestParam Optional<YearMonth> startingBudgetDate,
           @RequestParam Optional<YearMonth> endingBudgetDate) {
     return service.getAllBetween(
-                    startingBudgetDate.orElse(YearMonth.now().minusYears(100)),
-                    endingBudgetDate.orElse(YearMonth.now().plusYears(100)))
+                    startingBudgetDate.orElse(YearMonth.now()),
+                    endingBudgetDate.orElse(YearMonth.now()))
             .stream()
             .map(mapper::mapToResponse)
             .toList();
