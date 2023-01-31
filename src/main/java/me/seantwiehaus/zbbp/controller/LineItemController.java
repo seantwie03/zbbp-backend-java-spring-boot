@@ -10,6 +10,7 @@ import me.seantwiehaus.zbbp.mapper.LineItemMapper;
 import me.seantwiehaus.zbbp.service.LineItemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
+@Validated
 public class LineItemController {
   private final LineItemService service;
   private final LineItemMapper mapper;
@@ -47,12 +49,12 @@ public class LineItemController {
   @GetMapping("/line-items/{id}")
   public ResponseEntity<LineItemResponse> getLineItemById(@PathVariable @Min(0) Long id) {
     URI location = UriComponentsBuilder.fromPath("/line-items/{id}").buildAndExpand(id).toUri();
-    LineItem lineItem = service.findById(id);
+    LineItem lineItem = service.getById(id);
     LineItemResponse response = mapper.mapToResponse(lineItem);
     return ResponseEntity
             .ok()
             .location(location)
-            .lastModified(lineItem.lastModifiedAt())
+            .lastModified(response.lastModifiedAt())
             .body(response);
   }
 
