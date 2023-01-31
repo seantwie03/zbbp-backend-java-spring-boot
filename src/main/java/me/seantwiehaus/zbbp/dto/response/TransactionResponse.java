@@ -1,7 +1,7 @@
 package me.seantwiehaus.zbbp.dto.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import me.seantwiehaus.zbbp.dto.serialize.CentsToDollarsSerializer;
+import me.seantwiehaus.zbbp.dto.serializer.CentsToDollarsSerializer;
 
 import java.time.Instant;
 import java.time.LocalDate;

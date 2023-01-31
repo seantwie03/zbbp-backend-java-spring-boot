@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import me.seantwiehaus.zbbp.domain.Category;
-import me.seantwiehaus.zbbp.dto.serialize.DollarsToCentsDeserializer;
+import me.seantwiehaus.zbbp.dto.serializer.DollarsToCentsDeserializer;
 
 import java.time.YearMonth;
 

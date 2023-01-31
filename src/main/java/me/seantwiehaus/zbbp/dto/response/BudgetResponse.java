@@ -3,7 +3,7 @@ package me.seantwiehaus.zbbp.dto.response;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.seantwiehaus.zbbp.dto.serialize.CentsToDollarsSerializer;
+import me.seantwiehaus.zbbp.dto.serializer.CentsToDollarsSerializer;
 
 import java.time.YearMonth;
 import java.util.List;

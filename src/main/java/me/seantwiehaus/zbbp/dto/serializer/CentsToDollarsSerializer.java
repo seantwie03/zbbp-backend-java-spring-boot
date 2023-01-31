@@ -1,4 +1,4 @@
-package me.seantwiehaus.zbbp.dto.serialize;
+package me.seantwiehaus.zbbp.dto.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
