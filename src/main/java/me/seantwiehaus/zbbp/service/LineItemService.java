@@ -33,7 +33,7 @@ public class LineItemService {
             .toList();
   }
 
-  public LineItem findById(Long id) {
+  public LineItem getById(Long id) {
     LineItemEntity entity = repository.findLineItemEntityById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Line Item", id));
     return mapper.mapToDomain(entity);
