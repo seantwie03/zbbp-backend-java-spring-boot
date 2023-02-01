@@ -1,7 +1,11 @@
 package me.seantwiehaus.zbbp.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import me.seantwiehaus.zbbp.domain.Category;
 import me.seantwiehaus.zbbp.domain.LineItem;
+import me.seantwiehaus.zbbp.dto.response.LineItemResponse;
 import me.seantwiehaus.zbbp.mapper.LineItemMapper;
 import me.seantwiehaus.zbbp.service.LineItemService;
 import org.junit.jupiter.api.Nested;
@@ -26,7 +30,7 @@ import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 // Cannot run in parallel with other tests due to @MockBean
 // https://docs.spring.io/spring-framework/docs/current/reference/html/testing.html#testcontext-parallel-test-execution
@@ -96,7 +100,7 @@ public class LineItemControllerIT {
       String startingDate = "2021-09";
 
       // When the request is made
-      mockMvc.perform(get("/line-items?startingBudgetDate=%s".formatted(startingDate)));
+      mockMvc.perform(get("/line-items").param("startingBudgetDate", startingDate));
 
       // Then the service should be called with the correct parameters
       verify(service, times(1)).getAllBetween(YearMonth.of(2021, 9), defaultEndingDate);
@@ -108,7 +112,7 @@ public class LineItemControllerIT {
       String endingDate = "2021-09";
 
       // When the request is made
-      mockMvc.perform(get("/line-items?endingBudgetDate=%s".formatted(endingDate)));
+      mockMvc.perform(get("/line-items").param("endingBudgetDate", endingDate));
 
       // Then the service should be called with the correct parameters
       verify(service, times(1)).getAllBetween(defaultStartingDate, YearMonth.of(2021, 9));
@@ -133,6 +137,77 @@ public class LineItemControllerIT {
       // In the correct order
       assertEquals(domainCaptor.getAllValues().get(0), lineItem1);
       assertEquals(domainCaptor.getAllValues().get(1), lineItem2);
+    }
+  }
+
+  @Nested
+  class GetLineItemById {
+    private final LineItemResponse responseDto = new LineItemResponse(
+            1L,
+            YearMonth.of(2021, 9),
+            "Name",
+            120000,
+            Category.FOOD,
+            "description",
+            lastModifiedAt,
+            0,
+            0.0,
+            120000,
+            List.of());
+
+    @Test
+    void lineItemIdParameterMustNotBeANegativeNumber() throws Exception {
+      // Given a request with a negative lineItem id
+      // When the request is made
+      mockMvc.perform(get("/line-items/-1"))
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
+      // And the service should not be called
+      verify(service, never()).getById(any());
+    }
+
+    @Test
+    void returnsCorrectHeaders() throws Exception {
+      // Given a response dto returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      mockMvc.perform(get("/line-items/%d".formatted(id)))
+              // Then the response should be a 200
+              .andExpect(status().isOk())
+              // And the response should contain the correct Location header
+              .andExpect(header().string("Location", "/line-items/%d".formatted(id)))
+              // And the response should contain the correct Last-Modified header
+              .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
+    }
+
+    @Test
+    void returnsCorrectBody() throws Exception {
+      // Given a response dto returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      String jsonBody = mockMvc.perform(get("/line-items/%d".formatted(id)))
+              // The response body should contain the correct data
+              .andExpect(jsonPath("$.id").value(1L))
+              .andExpect(jsonPath("$.budgetDate").value("2021-09"))
+              .andExpect(jsonPath("$.name").value("Name"))
+              .andExpect(jsonPath("$.plannedAmount").value(1200.00)) // should've been converted to dollars
+              .andExpect(jsonPath("$.category").value("FOOD"))
+              .andExpect(jsonPath("$.description").value("description"))
+              .andExpect(jsonPath("$.lastModifiedAt").value(lastModifiedAt.toString()))
+              .andExpect(jsonPath("$.totalTransactions").value(0.00))
+              .andExpect(jsonPath("$.percentageOfPlanned").value(0.0))
+              .andExpect(jsonPath("$.totalRemaining").value(1200.00)) // should've been converted to dollars
+              .andExpect(jsonPath("$.transactions").isEmpty())
+              .andReturn()
+              .getResponse()
+              .getContentAsString();
+      // And the response should also match the responseDto deserialized by ObjectMapper
+      ObjectMapper objectMapper = new ObjectMapper()
+              // With the JavaTimeModule registered to handle the budgetDate
+              .registerModule(new JavaTimeModule()).configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+      assertEquals(objectMapper.writeValueAsString(responseDto), jsonBody);
     }
   }
 
