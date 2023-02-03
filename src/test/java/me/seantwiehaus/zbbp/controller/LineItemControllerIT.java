@@ -49,6 +49,9 @@ public class LineItemControllerIT {
   private final Long id = 1L;
   private final Instant lastModifiedAt = Instant.parse("2022-09-21T23:31:04.206157Z");
   private final DateTimeFormatter rfc1123Formatter = DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneOffset.UTC);
+  private final ObjectMapper objectMapper = new ObjectMapper()
+          // With the JavaTimeModule registered to handle the budgetDate
+          .registerModule(new JavaTimeModule()).configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
   @Nested
   class GetAllLineItemsBetween {
@@ -138,6 +141,74 @@ public class LineItemControllerIT {
       assertEquals(domainCaptor.getAllValues().get(0), lineItem1);
       assertEquals(domainCaptor.getAllValues().get(1), lineItem2);
     }
+
+    @Test
+    void returnsCorrectBody() throws Exception {
+      // Given two LineItems returned from the service
+      LineItem lineItem1 = createDomain().id(1L).budgetDate(YearMonth.of(2021, 9)).build();
+      LineItem lineItem2 = createDomain().id(2L).budgetDate(YearMonth.of(2021, 8)).build();
+      when(service.getAllBetween(defaultStartingDate, defaultEndingDate))
+              .thenReturn(List.of(lineItem1, lineItem2));
+      // And two LineItemResponses returned from the mapper
+      LineItemResponse lineItemResponse1 = new LineItemResponse(
+              1L,
+              YearMonth.of(2021, 9),
+              "Name 1",
+              120000,
+              Category.FOOD,
+              "description 1",
+              lastModifiedAt,
+              0,
+              0.0,
+              120000,
+              List.of());
+      LineItemResponse lineItemResponse2 = new LineItemResponse(
+              2L,
+              YearMonth.of(2021, 8),
+              "Name 2",
+              110000,
+              Category.FOOD,
+              "description 2",
+              lastModifiedAt,
+              0,
+              0.0,
+              110000,
+              List.of());
+      when(mapper.mapToResponse(any())).thenReturn(lineItemResponse1).thenReturn(lineItemResponse2);
+
+      // When the request is made
+      String jsonBody = mockMvc.perform(get("/line-items"))
+              // Then the response should be a 200
+              .andExpect(status().isOk())
+              // And the response body should contain the correct data in the correct order
+              .andExpect(jsonPath("$[0].id").value(1L))
+              .andExpect(jsonPath("$[0].budgetDate").value("2021-09"))
+              .andExpect(jsonPath("$[0].name").value("Name 1"))
+              .andExpect(jsonPath("$[0].plannedAmount").value(1200.00))
+              .andExpect(jsonPath("$[0].category").value("FOOD"))
+              .andExpect(jsonPath("$[0].description").value("description 1"))
+              .andExpect(jsonPath("$[0].lastModifiedAt").value(lastModifiedAt.toString()))
+              .andExpect(jsonPath("$[0].totalTransactions").value(0.00))
+              .andExpect(jsonPath("$[0].percentageOfPlanned").value(0.0))
+              .andExpect(jsonPath("$[0].totalRemaining").value(1200.00))
+              .andExpect(jsonPath("$[0].transactions").isEmpty())
+              .andExpect(jsonPath("$[1].id").value(2L))
+              .andExpect(jsonPath("$[1].budgetDate").value("2021-08"))
+              .andExpect(jsonPath("$[1].name").value("Name 2"))
+              .andExpect(jsonPath("$[1].plannedAmount").value(1100.00))
+              .andExpect(jsonPath("$[1].category").value("FOOD"))
+              .andExpect(jsonPath("$[1].description").value("description 2"))
+              .andExpect(jsonPath("$[1].lastModifiedAt").value(lastModifiedAt.toString()))
+              .andExpect(jsonPath("$[1].totalTransactions").value(0.00))
+              .andExpect(jsonPath("$[1].percentageOfPlanned").value(0.0))
+              .andExpect(jsonPath("$[1].totalRemaining").value(1100.00))
+              .andExpect(jsonPath("$[1].transactions").isEmpty())
+              .andReturn()
+              .getResponse()
+              .getContentAsString();
+      // And the response should also match the list of LineItemResponses deserialized by ObjectMapper
+      assertEquals(objectMapper.writeValueAsString(List.of(lineItemResponse1, lineItemResponse2)), jsonBody);
+    }
   }
 
   @Nested
@@ -204,9 +275,6 @@ public class LineItemControllerIT {
               .getResponse()
               .getContentAsString();
       // And the response should also match the responseDto deserialized by ObjectMapper
-      ObjectMapper objectMapper = new ObjectMapper()
-              // With the JavaTimeModule registered to handle the budgetDate
-              .registerModule(new JavaTimeModule()).configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
       assertEquals(objectMapper.writeValueAsString(responseDto), jsonBody);
     }
   }
