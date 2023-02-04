@@ -60,6 +60,30 @@ public class LineItemControllerIT {
 
     private final YearMonth defaultStartingDate = YearMonth.now();
     private final YearMonth defaultEndingDate = YearMonth.now();
+    private final LineItemResponse response1 = new LineItemResponse(
+            1L,
+            YearMonth.of(2021, 9),
+            "Name 1",
+            120000,
+            Category.FOOD,
+            "description 1",
+            lastModifiedAt,
+            0,
+            0.0,
+            120000,
+            List.of());
+    private final LineItemResponse response2 = new LineItemResponse(
+            2L,
+            YearMonth.of(2021, 8),
+            "Name 2",
+            110000,
+            Category.FOOD,
+            "description 2",
+            lastModifiedAt,
+            0,
+            0.0,
+            110000,
+            List.of());
 
     @Test
     void callsServiceWithDefaultStartingAndEndingDateWhenNoneProvided() throws Exception {
@@ -142,72 +166,92 @@ public class LineItemControllerIT {
       assertEquals(domainCaptor.getAllValues().get(1), lineItem2);
     }
 
+    // The next three tests are redundant. They all cover the deserialization of the response body.
+    // Each one has some pros and cons. I am keeping all three because over time I would like to see if one
+    // stands out by catching more bugs with the fewest false positives.
     @Test
-    void returnsCorrectBody() throws Exception {
+    void returnsCorrectBodyJsonPath() throws Exception {
       // Given two LineItems returned from the service
       LineItem lineItem1 = createDomain().id(1L).budgetDate(YearMonth.of(2021, 9)).build();
       LineItem lineItem2 = createDomain().id(2L).budgetDate(YearMonth.of(2021, 8)).build();
       when(service.getAllBetween(defaultStartingDate, defaultEndingDate))
               .thenReturn(List.of(lineItem1, lineItem2));
-      // And two LineItemResponses returned from the mapper
-      LineItemResponse lineItemResponse1 = new LineItemResponse(
-              1L,
-              YearMonth.of(2021, 9),
-              "Name 1",
-              120000,
-              Category.FOOD,
-              "description 1",
-              lastModifiedAt,
-              0,
-              0.0,
-              120000,
-              List.of());
-      LineItemResponse lineItemResponse2 = new LineItemResponse(
-              2L,
-              YearMonth.of(2021, 8),
-              "Name 2",
-              110000,
-              Category.FOOD,
-              "description 2",
-              lastModifiedAt,
-              0,
-              0.0,
-              110000,
-              List.of());
-      when(mapper.mapToResponse(any())).thenReturn(lineItemResponse1).thenReturn(lineItemResponse2);
+      // And two LineItemResponses returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(response1, response2);
 
       // When the request is made
-      String jsonBody = mockMvc.perform(get("/line-items"))
+      mockMvc.perform(get("/line-items"))
               // Then the response should be a 200
               .andExpect(status().isOk())
               // And the response body should contain the correct data in the correct order
               .andExpect(jsonPath("$[0].id").value(1L))
               .andExpect(jsonPath("$[0].budgetDate").value("2021-09"))
               .andExpect(jsonPath("$[0].name").value("Name 1"))
-              .andExpect(jsonPath("$[0].plannedAmount").value(1200.00))
+              .andExpect(jsonPath("$[0].plannedAmount").value(1200.00)) // converted to dollars
               .andExpect(jsonPath("$[0].category").value("FOOD"))
               .andExpect(jsonPath("$[0].description").value("description 1"))
               .andExpect(jsonPath("$[0].lastModifiedAt").value(lastModifiedAt.toString()))
-              .andExpect(jsonPath("$[0].totalTransactions").value(0.00))
+              .andExpect(jsonPath("$[0].totalTransactions").value(0.00)) // converted to dollars
               .andExpect(jsonPath("$[0].percentageOfPlanned").value(0.0))
-              .andExpect(jsonPath("$[0].totalRemaining").value(1200.00))
+              .andExpect(jsonPath("$[0].totalRemaining").value(1200.00)) // converted to dollars
               .andExpect(jsonPath("$[0].transactions").isEmpty())
               .andExpect(jsonPath("$[1].id").value(2L))
               .andExpect(jsonPath("$[1].budgetDate").value("2021-08"))
               .andExpect(jsonPath("$[1].name").value("Name 2"))
-              .andExpect(jsonPath("$[1].plannedAmount").value(1100.00))
+              .andExpect(jsonPath("$[1].plannedAmount").value(1100.00)) // converted to dollars
               .andExpect(jsonPath("$[1].category").value("FOOD"))
               .andExpect(jsonPath("$[1].description").value("description 2"))
               .andExpect(jsonPath("$[1].lastModifiedAt").value(lastModifiedAt.toString()))
-              .andExpect(jsonPath("$[1].totalTransactions").value(0.00))
+              .andExpect(jsonPath("$[1].totalTransactions").value(0.00)) // converted to dollars
               .andExpect(jsonPath("$[1].percentageOfPlanned").value(0.0))
-              .andExpect(jsonPath("$[1].totalRemaining").value(1100.00))
-              .andExpect(jsonPath("$[1].transactions").isEmpty())
+              .andExpect(jsonPath("$[1].totalRemaining").value(1100.00)) // converted to dollars
+              .andExpect(jsonPath("$[1].transactions").isEmpty());
+    }
+
+    @Test
+    void returnsCorrectBodyObjectMapper() throws Exception {
+      // Given two LineItems returned from the service
+      LineItem lineItem1 = createDomain().id(1L).budgetDate(YearMonth.of(2021, 9)).build();
+      LineItem lineItem2 = createDomain().id(2L).budgetDate(YearMonth.of(2021, 8)).build();
+      when(service.getAllBetween(defaultStartingDate, defaultEndingDate))
+              .thenReturn(List.of(lineItem1, lineItem2));
+      // And two LineItemResponses returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(response1, response2);
+
+      // When the request is made
+      mockMvc.perform(get("/line-items"))
+              // Then the response should be a 200
+              .andExpect(status().isOk())
+              // And the response body should match the list of responses deserialized by ObjectMapper
+              .andExpect(content().string(objectMapper.writeValueAsString(List.of(response1, response2))));
+    }
+
+    @Test
+    void returnsCorrectBodyStringComparison() throws Exception {
+      // Given two LineItems returned from the service
+      LineItem lineItem1 = createDomain().id(1L).budgetDate(YearMonth.of(2021, 9)).build();
+      LineItem lineItem2 = createDomain().id(2L).budgetDate(YearMonth.of(2021, 8)).build();
+      when(service.getAllBetween(defaultStartingDate, defaultEndingDate))
+              .thenReturn(List.of(lineItem1, lineItem2));
+      // And two LineItemResponses returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(response1, response2);
+
+      // When the request is made
+      String jsonBody = mockMvc.perform(get("/line-items"))
+              // Then the response should be a 200
+              .andExpect(status().isOk())
               .andReturn()
               .getResponse()
               .getContentAsString();
-      // And the response should also match the list of LineItemResponses deserialized by ObjectMapper
-      assertEquals(objectMapper.writeValueAsString(List.of(lineItemResponse1, lineItemResponse2)), jsonBody);
+      // And the response body should contain the correct json
+      assertEquals("[{\"id\":1,\"budgetDate\":\"2021-09\",\"name\":\"Name 1\",\"plannedAmount\":1200.00," +
+              "\"category\":\"FOOD\",\"description\":\"description 1\"," +
+              "\"lastModifiedAt\":\"2022-09-21T23:31:04.206157Z\",\"totalTransactions\":0.00," +
+              "\"percentageOfPlanned\":0.0,\"totalRemaining\":1200.00,\"transactions\":[]}," +
+              "{\"id\":2,\"budgetDate\":\"2021-08\",\"name\":\"Name 2\",\"plannedAmount\":1100.00," +
+              "\"category\":\"FOOD\",\"description\":\"description 2\"," +
+              "\"lastModifiedAt\":\"2022-09-21T23:31:04.206157Z\",\"totalTransactions\":0.00," +
+              "\"percentageOfPlanned\":0.0,\"totalRemaining\":1100.00,\"transactions\":[]}]", jsonBody);
     }
   }
 
@@ -252,14 +296,19 @@ public class LineItemControllerIT {
               .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
     }
 
+    // The next three tests are redundant. They all cover the deserialization of the response body.
+    // Each one has some pros and cons. I am keeping all three because over time I would like to see if one
+    // stands out by catching more bugs with the fewest false positives.
     @Test
-    void returnsCorrectBody() throws Exception {
+    void returnsCorrectBodyJsonPath() throws Exception {
       // Given a response dto returned from the mapper (declared at class-level)
       when(mapper.mapToResponse(any())).thenReturn(responseDto);
 
       // When the request is made
-      String jsonBody = mockMvc.perform(get("/line-items/%d".formatted(id)))
-              // The response body should contain the correct data
+      mockMvc.perform(get("/line-items/%d".formatted(id)))
+              // Then the response should be a 200
+              .andExpect(status().isOk())
+              // And the response body should contain the correct data
               .andExpect(jsonPath("$.id").value(1L))
               .andExpect(jsonPath("$.budgetDate").value("2021-09"))
               .andExpect(jsonPath("$.name").value("Name"))
@@ -270,12 +319,39 @@ public class LineItemControllerIT {
               .andExpect(jsonPath("$.totalTransactions").value(0.00))
               .andExpect(jsonPath("$.percentageOfPlanned").value(0.0))
               .andExpect(jsonPath("$.totalRemaining").value(1200.00)) // should've been converted to dollars
-              .andExpect(jsonPath("$.transactions").isEmpty())
+              .andExpect(jsonPath("$.transactions").isEmpty());
+    }
+
+    @Test
+    void returnsCorrectBodyObjectMapper() throws Exception {
+      // Given a response dto returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      mockMvc.perform(get("/line-items/%d".formatted(id)))
+              // Then the response should be a 200
+              .andExpect(status().isOk())
+              // And the response should match the responseDto deserialized by ObjectMapper
+              .andExpect(content().string(objectMapper.writeValueAsString(responseDto)));
+    }
+
+    @Test
+    void returnsCorrectBodyStringComparison() throws Exception {
+      // Given a response dto returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      String jsonBody = mockMvc.perform(get("/line-items/%d".formatted(id)))
+              // Then the response should be a 200
+              .andExpect(status().isOk())
               .andReturn()
               .getResponse()
               .getContentAsString();
-      // And the response should also match the responseDto deserialized by ObjectMapper
-      assertEquals(objectMapper.writeValueAsString(responseDto), jsonBody);
+      // And the response body should contain the correct json
+      assertEquals("{\"id\":1,\"budgetDate\":\"2021-09\",\"name\":\"Name\",\"plannedAmount\":1200.00," +
+              "\"category\":\"FOOD\",\"description\":\"description\"," +
+              "\"lastModifiedAt\":\"2022-09-21T23:31:04.206157Z\",\"totalTransactions\":0.00," +
+              "\"percentageOfPlanned\":0.0,\"totalRemaining\":1200.00,\"transactions\":[]}", jsonBody);
     }
   }
 
