@@ -16,6 +16,7 @@ import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 // Cannot run in parallel with other tests due to @MockBean
@@ -352,6 +354,65 @@ public class LineItemControllerIT {
               "\"category\":\"FOOD\",\"description\":\"description\"," +
               "\"lastModifiedAt\":\"2022-09-21T23:31:04.206157Z\",\"totalTransactions\":0.00," +
               "\"percentageOfPlanned\":0.0,\"totalRemaining\":1200.00,\"transactions\":[]}", jsonBody);
+    }
+  }
+
+  @Nested
+  class CreateLineItem {
+    private final LineItemResponse responseDto = new LineItemResponse(
+            1L,
+            YearMonth.of(2021, 9),
+            "Name",
+            120000,
+            Category.FOOD,
+            "description",
+            lastModifiedAt,
+            0,
+            0.0,
+            120000,
+            List.of());
+
+    // Serialization tests
+    // What if someone submits 0 decimal places?
+    // What if someone submits 1 decimal place?
+    // What if someone submits 2 decimal places?
+    // What if someone submits 3 decimal places?
+    // What if someone submits 13 decimal places?
+    // Why is deserializer not on TransactionRequest?
+    // Why is one int and the other Integer?
+    // TODO: Test serialization from dollars to cents
+    // TODO: Test things should not be able to post. Null this or negative that.
+
+    @Test
+    void returnsCorrectStatusAndHeaders() throws Exception {
+      // Given a response dto returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      mockMvc.perform(post("/line-items")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content("""
+                              {
+                                "budgetDate": "%s",
+                                "name": "Name",
+                                "plannedAmount": 2500.00,
+                                "category": "FOOD",
+                                "description": "description"
+                              }
+                              """.formatted(YearMonth.now())))
+              // Then the response should be a 201
+              .andExpect(status().isCreated())
+              // And the response should contain the correct Location header
+              .andExpect(header().string("Location", "/line-items/%d".formatted(id)))
+              // And the response should contain the correct Last-Modified header
+              .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
+    }
+
+    @Test
+    void returnsCorrectBodyJsonPath() {
+      // Given a response dto returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
     }
   }
 

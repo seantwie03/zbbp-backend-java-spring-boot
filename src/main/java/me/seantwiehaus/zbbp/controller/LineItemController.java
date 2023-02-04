@@ -64,10 +64,10 @@ public class LineItemController {
     LineItem requestLineItem = mapper.mapToDomain(request);
     LineItem lineItem = service.create(requestLineItem);
     LineItemResponse response = mapper.mapToResponse(lineItem);
-    URI location = UriComponentsBuilder.fromPath("/line-items/{id}").buildAndExpand(lineItem.id()).toUri();
+    URI location = UriComponentsBuilder.fromPath("/line-items/{id}").buildAndExpand(response.id()).toUri();
     return ResponseEntity
             .created(location)
-            .lastModified(lineItem.lastModifiedAt())
+            .lastModified(response.lastModifiedAt())
             .body(response);
   }
 

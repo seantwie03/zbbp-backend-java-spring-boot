@@ -329,17 +329,18 @@ class TransactionControllerIT {
 
   @Nested
   class CreateTransaction {
+    private final TransactionResponse responseDto = new TransactionResponse(
+            id,
+            LocalDate.now(),
+            "Merchant",
+            2500,
+            id,
+            "Description",
+            lastModifiedAt);
+
     @Test
     void returnsCorrectStatusAndHeaders() throws Exception {
-      // Given a response dto returned from the mapper
-      TransactionResponse responseDto = new TransactionResponse(
-              id,
-              LocalDate.now(),
-              "Merchant",
-              2500,
-              id,
-              "Description",
-              lastModifiedAt);
+      // Given a response dto returned from the mapper (declared at class-level)
       when(mapper.mapToResponse(any())).thenReturn(responseDto);
 
       // When the request is made
