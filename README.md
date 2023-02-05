@@ -30,3 +30,20 @@ If I do add builders I should revisit the use of constructors in the Controller 
 Reading *Refactoring* by Martin Fowler, it mentions the 'Speculative Generality' code smell. It specifically says
 "Speculative generality can be spotted when the only users of a function or class are test cases." I want to avoid
 this code smell, so I will not add builders to the DTO layer until it is needed by production code.
+
+### Will OpenAPI document generators be smart enough to understand the types the custom serializers return?
+
+The API endpoints receive monetary amounts as doubles. Then the custom DollarsToCentsDeserializer is ran to convert
+those doubles into integers. This means the field on the request DTO is an integer. This works great in the code. Doing
+the conversion on the boundary means all the application code can work with cents in integers rather than BigDecimal
+dollar values. The concern is that the OpenAPI documentation generators will see Integer on the request type, then
+assume the API accepts integers when in fact it wants a double.
+
+The same is true the other way. The response objects all have an integer type for monetary amounts because they are in
+cents. Then as they are serialized to Json, the custom CentsToDollarsSerializer will convert them from ints to doubles.
+
+**Decision**
+
+I will leave it this way for now, but if the OpenAPI documentation generators get confused, I could add the conversion
+to MapStruct. I could have doubles in the request/response DTOs and integers in the domain classes. Then I could have
+MapStruct perform the conversions. This is almost as good as doing it at the boundary.
