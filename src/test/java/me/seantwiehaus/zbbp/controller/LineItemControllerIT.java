@@ -372,15 +372,6 @@ public class LineItemControllerIT {
             120000,
             List.of());
 
-    // Serialization tests
-    // What if someone submits 0 decimal places?
-    // What if someone submits 1 decimal place?
-    // What if someone submits 2 decimal places?
-    // What if someone submits 3 decimal places?
-    // What if someone submits 13 decimal places?
-    // Why is deserializer not on TransactionRequest?
-    // Why is one int and the other Integer?
-    // TODO: Test serialization from dollars to cents
     // TODO: Test things should not be able to post. Null this or negative that.
 
     @Test
@@ -399,7 +390,7 @@ public class LineItemControllerIT {
                                 "category": "FOOD",
                                 "description": "description"
                               }
-                              """.formatted(YearMonth.now())))
+                              """.formatted(YearMonth.of(2021, 9))))
               // Then the response should be a 201
               .andExpect(status().isCreated())
               // And the response should contain the correct Location header

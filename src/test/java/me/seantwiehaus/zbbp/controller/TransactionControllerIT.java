@@ -331,7 +331,7 @@ class TransactionControllerIT {
   class CreateTransaction {
     private final TransactionResponse responseDto = new TransactionResponse(
             id,
-            LocalDate.now(),
+            LocalDate.of(2023, 9, 4),
             "Merchant",
             2500,
             id,
@@ -353,7 +353,7 @@ class TransactionControllerIT {
                                 "amount": 2500,
                                 "description": "Description"
                               }
-                              """.formatted(LocalDate.now())))
+                              """.formatted(LocalDate.of(2023, 9, 4))))
               // Then the response should be a 201
               .andExpect(status().isCreated())
               // And the response should contain the correct Location header
