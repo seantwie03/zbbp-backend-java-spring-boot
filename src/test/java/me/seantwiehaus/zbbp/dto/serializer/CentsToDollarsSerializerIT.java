@@ -29,16 +29,16 @@ class CentsToDollarsSerializerIT {
     JsonContent<RecordResponse> json = jacksonTester.write(recordResponse);
 
     assertThat(json)
-        .extractingJsonPathNumberValue("$.amount")
-        .isEqualTo(dollars);
+            .extractingJsonPathNumberValue("$.amount")
+            .isEqualTo(dollars);
   }
 
   private static Stream<Arguments> serializeCentsToDollars() {
     return Stream.of(
-        Arguments.of(0, 0.00),
-        Arguments.of(1, 0.01),
-        Arguments.of(10, 0.10),
-        Arguments.of(100, 1.00)
+            Arguments.of(0, 0.00),
+            Arguments.of(1, 0.01),
+            Arguments.of(10, 0.10),
+            Arguments.of(100, 1.00)
     );
   }
 }

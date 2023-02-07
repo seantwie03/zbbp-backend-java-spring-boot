@@ -17,7 +17,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {TransactionMapperImpl.class})
+@ContextConfiguration(classes = { TransactionMapperImpl.class })
 class TransactionMapperIT {
   @Autowired
   private TransactionMapper mapper;

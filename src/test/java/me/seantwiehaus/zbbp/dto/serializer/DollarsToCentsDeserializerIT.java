@@ -35,15 +35,15 @@ class DollarsToCentsDeserializerIT {
 
   private static Stream<Arguments> serializeDollarsToCents() {
     return Stream.of(
-        Arguments.of(0.000001, 0),
-        Arguments.of(0.001, 0),
-        Arguments.of(0.00, 0),
-        Arguments.of(0.01, 1),
-        Arguments.of(0.1, 10),
-        Arguments.of(0.10, 10),
-        Arguments.of(1, 100),
-        Arguments.of(1.00, 100),
-        Arguments.of(1.0000000, 100)
+            Arguments.of(0.000001, 0),
+            Arguments.of(0.001, 0),
+            Arguments.of(0.00, 0),
+            Arguments.of(0.01, 1),
+            Arguments.of(0.1, 10),
+            Arguments.of(0.10, 10),
+            Arguments.of(1, 100),
+            Arguments.of(1.00, 100),
+            Arguments.of(1.0000000, 100)
     );
   }
 }

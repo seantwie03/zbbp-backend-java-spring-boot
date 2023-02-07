@@ -412,7 +412,6 @@ public class LineItemControllerIT {
     void returnsCorrectBodyJsonPath() {
       // Given a response dto returned from the mapper (declared at class-level)
       when(mapper.mapToResponse(any())).thenReturn(responseDto);
-
     }
   }
 

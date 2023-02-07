@@ -24,7 +24,7 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(
         type = ASSIGNABLE_TYPE,
-        classes = {JpaAuditingConfiguration.class}
+        classes = { JpaAuditingConfiguration.class }
 ))
 class LineItemRepositoryIT {
   @Autowired
