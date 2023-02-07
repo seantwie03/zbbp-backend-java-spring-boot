@@ -27,7 +27,7 @@ import java.util.Objects;
 })
 @Table(
         name = "line_items",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "budget_date", "category"})})
+        uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "budget_date", "category" }) })
 public class LineItemEntity extends BaseEntity {
   @NotNull
   @Column(name = "budget_date", nullable = false)

@@ -22,7 +22,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {LineItemMapperImpl.class, TransactionMapperImpl.class})
+@ContextConfiguration(classes = { LineItemMapperImpl.class, TransactionMapperImpl.class })
 class LineItemMapperIT {
   @Autowired
   private LineItemMapper mapper;

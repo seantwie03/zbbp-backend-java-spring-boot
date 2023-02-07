@@ -62,7 +62,7 @@ class TransactionControllerIT {
     private final LocalDate defaultEndingDate = LocalDate.now();
     private final TransactionResponse response1 = new TransactionResponse(
             1L,
-            LocalDate.now(),
+            LocalDate.of(2023, 2, 4),
             "Merchant 1",
             2500,
             1L,
@@ -70,7 +70,7 @@ class TransactionControllerIT {
             lastModifiedAt);
     private final TransactionResponse response2 = new TransactionResponse(
             2L,
-            LocalDate.now().minusDays(1),
+            LocalDate.of(2023, 2, 3),
             "Merchant 2",
             2400,
             2L,
@@ -164,8 +164,8 @@ class TransactionControllerIT {
     @Test
     void returnsCorrectBodyJsonPath() throws Exception {
       // Given two transactions returned from the service
-      Transaction transaction1 = createDomain().id(1L).date(LocalDate.now()).build();
-      Transaction transaction2 = createDomain().id(2L).date(LocalDate.now().minusDays(1)).build();
+      Transaction transaction1 = createDomain().id(1L).date(LocalDate.of(2023, 2, 4)).build();
+      Transaction transaction2 = createDomain().id(2L).date(LocalDate.of(2023, 2, 3)).build();
       when(service.getAllBetween(defaultStartingDate, defaultEndingDate))
               .thenReturn(List.of(transaction1, transaction2));
       // And two TransactionResponses returned from the mapper (declared at class-level)
@@ -177,14 +177,14 @@ class TransactionControllerIT {
               .andExpect(status().isOk())
               // And the response body should contain the correct json in the correct order
               .andExpect(jsonPath("$[0].id").value(1L))
-              .andExpect(jsonPath("$[0].date").value(LocalDate.now().toString()))
+              .andExpect(jsonPath("$[0].date").value(LocalDate.of(2023, 2, 4).toString()))
               .andExpect(jsonPath("$[0].merchant").value("Merchant 1"))
               .andExpect(jsonPath("$[0].amount").value(25.00)) // converted to dollars
               .andExpect(jsonPath("$[0].lineItemId").value(1L))
               .andExpect(jsonPath("$[0].description").value("Description 1"))
               .andExpect(jsonPath("$[0].lastModifiedAt").value(lastModifiedAt.toString()))
               .andExpect(jsonPath("$[1].id").value(2L))
-              .andExpect(jsonPath("$[1].date").value(LocalDate.now().minusDays(1).toString()))
+              .andExpect(jsonPath("$[1].date").value(LocalDate.of(2023, 2, 3).toString()))
               .andExpect(jsonPath("$[1].merchant").value("Merchant 2"))
               .andExpect(jsonPath("$[1].amount").value(24.00)) // converted to dollars
               .andExpect(jsonPath("$[1].lineItemId").value(2L))
@@ -213,8 +213,8 @@ class TransactionControllerIT {
     @Test
     void returnsCorrectBodyStringComparison() throws Exception {
       // Given two transactions returned from the service
-      Transaction transaction1 = createDomain().id(1L).date(LocalDate.now()).build();
-      Transaction transaction2 = createDomain().id(2L).date(LocalDate.now().minusDays(1)).build();
+      Transaction transaction1 = createDomain().id(1L).date(LocalDate.of(2023, 2, 4)).build();
+      Transaction transaction2 = createDomain().id(2L).date(LocalDate.of(2023, 2, 3)).build();
       when(service.getAllBetween(defaultStartingDate, defaultEndingDate))
               .thenReturn(List.of(transaction1, transaction2));
       // And two TransactionResponses returned from the mapper (declared at class-level)
@@ -240,7 +240,7 @@ class TransactionControllerIT {
   class GetTransactionById {
     TransactionResponse responseDto = new TransactionResponse(
             id,
-            LocalDate.now(),
+            LocalDate.of(2023, 2, 4),
             "Merchant",
             2500,
             id,
@@ -287,7 +287,7 @@ class TransactionControllerIT {
               .andExpect(status().isOk())
               // And the response body should contain the correct json
               .andExpect(jsonPath("$.id").value(id))
-              .andExpect(jsonPath("$.date").value(LocalDate.now().toString()))
+              .andExpect(jsonPath("$.date").value(LocalDate.of(2023, 2, 4).toString()))
               .andExpect(jsonPath("$.merchant").value("Merchant"))
               .andExpect(jsonPath("$.amount").value(25.00)) // converted to dollars
               .andExpect(jsonPath("$.lineItemId").value(id))
@@ -331,7 +331,7 @@ class TransactionControllerIT {
   class CreateTransaction {
     private final TransactionResponse responseDto = new TransactionResponse(
             id,
-            LocalDate.now(),
+            LocalDate.of(2023, 9, 4),
             "Merchant",
             2500,
             id,
@@ -353,7 +353,7 @@ class TransactionControllerIT {
                                 "amount": 2500,
                                 "description": "Description"
                               }
-                              """.formatted(LocalDate.now())))
+                              """.formatted(LocalDate.of(2023, 9, 4))))
               // Then the response should be a 201
               .andExpect(status().isCreated())
               // And the response should contain the correct Location header
