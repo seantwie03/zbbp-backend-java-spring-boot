@@ -2,7 +2,7 @@
   <configuration default="false" name="Dev - ZbbpApplication" type="SpringBootApplicationConfigurationType"
                  factoryName="Spring Boot">
     <option name="ACTIVE_PROFILES" value="dev"/>
-    <module name="zbbp"/>
+    <module name="zbbp-backend-java-spring-boot"/>
     <option name="SPRING_BOOT_MAIN_CLASS" value="me.seantwiehaus.zbbp.ZbbpApplication"/>
     <extension name="coverage">
       <pattern>

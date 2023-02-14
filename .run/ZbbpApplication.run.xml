@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ZbbpApplication" type="SpringBootApplicationConfigurationType"
                  factoryName="Spring Boot" nameIsGenerated="true">
-    <module name="zbbp"/>
+    <module name="zbbp-backend-java-spring-boot"/>
     <option name="SPRING_BOOT_MAIN_CLASS" value="me.seantwiehaus.zbbp.ZbbpApplication"/>
     <extension name="coverage">
       <pattern>

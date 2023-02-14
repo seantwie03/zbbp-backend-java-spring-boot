@@ -9,9 +9,9 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>me.seantwiehaus</groupId>
-  <artifactId>zbbp</artifactId>
+  <artifactId>zbbp-backend-java-spring-boot</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>zbbp</name>
+  <name>zbbp-backend-java-spring-boot</name>
   <description>Zero-Based Budget Planner</description>
   <properties>
     <java.version>17</java.version>

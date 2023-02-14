@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Unit Tests" type="JUnit" factoryName="JUnit">
-    <module name="zbbp"/>
+    <module name="zbbp-backend-java-spring-boot"/>
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="me.seantwiehaus.zbbp.*"/>
