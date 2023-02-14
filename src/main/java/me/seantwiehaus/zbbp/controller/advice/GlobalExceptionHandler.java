@@ -11,6 +11,7 @@ import me.seantwiehaus.zbbp.exception.ResourceConflictException;
 import me.seantwiehaus.zbbp.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -30,7 +31,7 @@ public class GlobalExceptionHandler {
             + ". Message: " + exception.getMessage();
     return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(new ExceptionResponse(500, message, formatFullPath(request)));
+            .body(new ExceptionResponse(500, message, request));
   }
 
   @ExceptionHandler(InternalServerException.class)
@@ -38,7 +39,7 @@ public class GlobalExceptionHandler {
                                                                             HttpServletRequest request) {
     return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(new ExceptionResponse(500, exception.getMessage(), formatFullPath(request)));
+            .body(new ExceptionResponse(500, exception.getMessage(), request));
   }
 
   @ExceptionHandler(ResourceNotFoundException.class)
@@ -46,7 +47,7 @@ public class GlobalExceptionHandler {
                                                                       HttpServletRequest request) {
     return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
-            .body(new ExceptionResponse(404, exception.getMessage(), formatFullPath(request)));
+            .body(new ExceptionResponse(404, exception.getMessage(), request));
   }
 
   @ExceptionHandler(ResourceConflictException.class)
@@ -54,7 +55,7 @@ public class GlobalExceptionHandler {
                                                                               HttpServletRequest request) {
     return ResponseEntity
             .status(HttpStatus.CONFLICT)
-            .body(new ExceptionResponse(409, exception.getMessage(), formatFullPath(request)));
+            .body(new ExceptionResponse(409, exception.getMessage(), request));
   }
 
   @ExceptionHandler(BadRequestException.class)
@@ -62,7 +63,7 @@ public class GlobalExceptionHandler {
                                                                               HttpServletRequest request) {
     return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(new ExceptionResponse(400, exception.getMessage(), formatFullPath(request)));
+            .body(new ExceptionResponse(400, exception.getMessage(), request));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -74,25 +75,26 @@ public class GlobalExceptionHandler {
             .collect(Collectors.joining(", "));
     return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(new ExceptionResponse(400, message, formatFullPath(request)));
+            .body(new ExceptionResponse(400, message, request));
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
-  protected ResponseEntity<ExceptionResponse> handleConstraintViolationException(
-          ConstraintViolationException exception, HttpServletRequest request) {
+  protected ResponseEntity<ExceptionResponse> handleConstraintViolationException(ConstraintViolationException exception,
+                                                                                 HttpServletRequest request) {
     String message = exception.getConstraintViolations()
             .stream()
             .map(ConstraintViolation::getMessage)
             .collect(Collectors.joining(", "));
     return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(new ExceptionResponse(400, message, formatFullPath(request)));
+            .body(new ExceptionResponse(400, message, request));
   }
 
-  private String formatFullPath(HttpServletRequest request) {
-    if (request.getQueryString() == null) {
-      return request.getContextPath() + request.getServletPath();
-    }
-    return request.getContextPath() + request.getServletPath() + "?" + request.getQueryString();
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  protected ResponseEntity<ExceptionResponse> handleHttpMessageNotReadableException(
+          HttpMessageNotReadableException exception, HttpServletRequest request) {
+    return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(new ExceptionResponse(400, exception.getMessage(), request));
   }
 }
