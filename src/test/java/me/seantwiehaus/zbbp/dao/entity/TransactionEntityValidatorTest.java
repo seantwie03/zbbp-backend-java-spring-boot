@@ -20,8 +20,8 @@ class TransactionEntityValidatorTest {
 
   @BeforeAll
   static void setupAll() {
-    // buildDefaultValidatorFactory is auto-closable. I don't it really matters for a short-lived test class like this,
-    // but it doesn't hurt to wrap it in a try-with-resources.
+    // buildDefaultValidatorFactory is auto-closable. I don't think it really matters for a short-lived test class
+    // like this, but it doesn't hurt to wrap it in a try-with-resources.
     try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
       validator = validatorFactory.getValidator();
     }
