@@ -11,6 +11,9 @@ import me.seantwiehaus.zbbp.service.LineItemService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -372,7 +375,51 @@ public class LineItemControllerIT {
             120000,
             List.of());
 
-    // TODO: Test things should not be able to post. Null this or negative that.
+    // Testing the DateTimeFormat here. These annotation deal with deserialization, not validation. So
+    // it is appropriate to test them here.
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = { "01-2023", "1, 2023", "01/2023", "2023/01", "2023-1" })
+    void returnsBadRequestWhenInvalidDateString(String date) throws Exception {
+      String requestContent = """
+              {
+                "budgetDate": "%s",
+                "name": "Name",
+                "plannedAmount": 2500.00,
+                "category": "FOOD",
+                "description": "description"
+              }
+              """.formatted(date);
+      // When the request is made
+      mockMvc.perform(post("/line-items")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(requestContent))
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
+    }
+
+    // One test to ensure the request object is validated.
+    // The validation tests are in another file. If I were to check each validation annotation at this level, I would
+    // have to duplicate the checks for each endpoint that accepts a Request object.
+    // More Info in 'Verify Field Validation' section of https://www.arhohuttunen.com/spring-boot-webmvctest/
+    @Test
+    void returnsBadRequestWhenNotValid() throws Exception {
+      // Given a request with a null merchant
+      // When the request is made
+      mockMvc.perform(post("/line-items")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content("""
+                              {
+                                "budgetDate": null,
+                                "name": "Name",
+                                "plannedAmount": 2500.00,
+                                "category": "FOOD",
+                                "description": "description"
+                              }
+                              """))
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
+    }
 
     @Test
     void returnsCorrectStatusAndHeaders() throws Exception {
@@ -399,10 +446,92 @@ public class LineItemControllerIT {
               .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
     }
 
+    // The next three tests are redundant. They all cover the deserialization of the response body.
+    // Each one has some pros and cons. I am keeping all three because over time I would like to see if one
+    // stands out by catching more bugs with the fewest false positives.
     @Test
-    void returnsCorrectBodyJsonPath() {
+    void returnsCorrectBodyJsonPath() throws Exception {
       // Given a response dto returned from the mapper (declared at class-level)
       when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      mockMvc.perform(post("/line-items")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content("""
+                              {
+                                "budgetDate": "2021-09",
+                                "name": "Name",
+                                "plannedAmount": 2500.00,
+                                "category": "FOOD",
+                                "description": "description"
+                              }
+                              """))
+              // Then the response should be a 201
+              .andExpect(status().isCreated())
+              // And the response body should contain the correct data
+              .andExpect(jsonPath("$.id").value(1L))
+              .andExpect(jsonPath("$.budgetDate").value("2021-09"))
+              .andExpect(jsonPath("$.name").value("Name"))
+              .andExpect(jsonPath("$.plannedAmount").value(1200.00)) // should've been converted to dollars
+              .andExpect(jsonPath("$.category").value("FOOD"))
+              .andExpect(jsonPath("$.description").value("description"))
+              .andExpect(jsonPath("$.lastModifiedAt").value(lastModifiedAt.toString()))
+              .andExpect(jsonPath("$.totalTransactions").value(0.00))
+              .andExpect(jsonPath("$.percentageOfPlanned").value(0.0))
+              .andExpect(jsonPath("$.totalRemaining").value(1200.00)) // should've been converted to dollars
+              .andExpect(jsonPath("$.transactions").isEmpty());
+    }
+
+    @Test
+    void returnsCorrectBodyObjectMapper() throws Exception {
+      // Given a response dto returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      mockMvc.perform(post("/line-items")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content("""
+                              {
+                                "budgetDate": "2021-09",
+                                "name": "Name",
+                                "plannedAmount": 2500.00,
+                                "category": "FOOD",
+                                "description": "description"
+                              }
+                              """))
+              // Then the response should be a 201
+              .andExpect(status().isCreated())
+              // And the response should match the responseDto deserialized by ObjectMapper
+              .andExpect(content().string(objectMapper.writeValueAsString(responseDto)));
+    }
+
+    @Test
+    void returnsCorrectBodyStringComparison() throws Exception {
+      // Given a response dto returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      String jsonBody = mockMvc.perform(post("/line-items")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content("""
+                              {
+                                "budgetDate": "2021-09",
+                                "name": "Name",
+                                "plannedAmount": 2500.00,
+                                "category": "FOOD",
+                                "description": "description"
+                              }
+                              """))
+              // Then the response should be a 201
+              .andExpect(status().isCreated())
+              .andReturn()
+              .getResponse()
+              .getContentAsString();
+      // And the response body should contain the correct json
+      assertEquals("{\"id\":1,\"budgetDate\":\"2021-09\",\"name\":\"Name\",\"plannedAmount\":1200.00," +
+              "\"category\":\"FOOD\",\"description\":\"description\"," +
+              "\"lastModifiedAt\":\"2022-09-21T23:31:04.206157Z\",\"totalTransactions\":0.00," +
+              "\"percentageOfPlanned\":0.0,\"totalRemaining\":1200.00,\"transactions\":[]}", jsonBody);
     }
   }
 

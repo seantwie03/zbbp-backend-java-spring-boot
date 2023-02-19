@@ -10,6 +10,9 @@ import me.seantwiehaus.zbbp.service.TransactionService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -259,7 +262,7 @@ class TransactionControllerIT {
     }
 
     @Test
-    void returnsCorrectLocationAndLastModifiedHeaders() throws Exception {
+    void returnsCorrectHeaders() throws Exception {
       // Given a response dto returned from the mapper (declared at class-level)
       when(mapper.mapToResponse(any())).thenReturn(responseDto);
 
@@ -331,12 +334,56 @@ class TransactionControllerIT {
   class CreateTransaction {
     private final TransactionResponse responseDto = new TransactionResponse(
             id,
-            LocalDate.of(2023, 9, 4),
+            LocalDate.of(2023, 2, 4),
             "Merchant",
             2500,
             id,
             "Description",
             lastModifiedAt);
+
+    // Testing the DateTimeFormat and JsonFormat here. These annotation deal with deserialization, not validation. So
+    // it is appropriate to test them here.
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = { "01-02-2023", "1, 2, 2023", "01/02/2023", "2023/01/02", "2023-1-2" })
+    void returnsBadRequestWhenInvalidDateString(String date) throws Exception {
+      String requestContent = """
+                 {
+                 "date": "%s",
+                 "merchant": "Merchant",
+                 "amount": 2500,
+                 "description": "Description"
+               }
+              """.formatted(date);
+      // When the request is made
+      mockMvc.perform(post("/transactions")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(requestContent))
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
+    }
+
+    // One test to ensure the request object is validated.
+    // The validation tests are in another file. If I were to check each validation annotation at this level, I would
+    // have to duplicate the checks for each endpoint that accepts a Request object.
+    // More Info in 'Verify Field Validation' section of https://www.arhohuttunen.com/spring-boot-webmvctest/
+    @Test
+    void returnsBadRequestWhenNotValid() throws Exception {
+      // Given a request with a null merchant
+      // When the request is made
+      mockMvc.perform(post("/transactions")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content("""
+                              {
+                                "date": "2023-02-04",
+                                "merchant": "Merchant",
+                                "amount": null,
+                                "description": "Description"
+                              }
+                              """))
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
+    }
 
     @Test
     void returnsCorrectStatusAndHeaders() throws Exception {
@@ -348,18 +395,98 @@ class TransactionControllerIT {
                       .contentType(MediaType.APPLICATION_JSON)
                       .content("""
                               {
-                                "date": "%s",
+                                "date": "2023-02-04",
                                 "merchant": "Merchant",
                                 "amount": 2500,
                                 "description": "Description"
                               }
-                              """.formatted(LocalDate.of(2023, 9, 4))))
+                              """))
               // Then the response should be a 201
               .andExpect(status().isCreated())
               // And the response should contain the correct Location header
               .andExpect(header().string("Location", "/transactions/%d".formatted(id)))
               // And the response should contain the correct Last-Modified header
               .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
+    }
+
+    // The next three tests are redundant. They all cover the deserialization of the response body.
+    // Each one has some pros and cons. I am keeping all three because over time I would like to see if one
+    // stands out by catching more bugs with the fewest false positives.
+    @Test
+    void returnsCorrectBodyJsonPath() throws Exception {
+      // Given a TransactionResponse returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      mockMvc.perform(post("/transactions")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content("""
+                              {
+                                "date": "2023-02-04",
+                                "merchant": "Merchant",
+                                "amount": 2500,
+                                "description": "Description"
+                              }
+                              """))
+              // Then the response should be a 201
+              .andExpect(status().isCreated())
+              // And the response body should contain the correct json
+              .andExpect(jsonPath("$.id").value(id))
+              .andExpect(jsonPath("$.date").value(LocalDate.of(2023, 2, 4).toString()))
+              .andExpect(jsonPath("$.merchant").value("Merchant"))
+              .andExpect(jsonPath("$.amount").value(25.00)) // converted to dollars
+              .andExpect(jsonPath("$.lineItemId").value(id))
+              .andExpect(jsonPath("$.description").value("Description"))
+              .andExpect(jsonPath("$.lastModifiedAt").value(lastModifiedAt.toString()));
+    }
+
+    @Test
+    void returnsCorrectBodyObjectMapper() throws Exception {
+      // Given a TransactionResponse returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      mockMvc.perform(post("/transactions")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content("""
+                              {
+                                "date": "2023-02-04",
+                                "merchant": "Merchant",
+                                "amount": 2500,
+                                "description": "Description"
+                              }
+                              """))
+              // Then the response should be a 201
+              .andExpect(status().isCreated())
+              // And the response should match the responseDto deserialized by ObjectMapper
+              .andExpect(content().string(objectMapper.writeValueAsString(responseDto)));
+    }
+
+    @Test
+    void returnsCorrectBodyStringComparison() throws Exception {
+      // Given a TransactionResponse returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      String jsonBody = mockMvc.perform(post("/transactions")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content("""
+                              {
+                                "date": "2023-02-04",
+                                "merchant": "Merchant",
+                                "amount": 2500,
+                                "description": "Description"
+                              }
+                              """))
+              // Then the response should be a 201
+              .andExpect(status().isCreated())
+              .andReturn()
+              .getResponse()
+              .getContentAsString();
+      // And the response body should contain the correct json
+      assertEquals("{\"id\":1,\"date\":\"2023-02-04\",\"merchant\":\"Merchant\",\"amount\":25.00," +
+              "\"lineItemId\":1,\"description\":\"Description\"," +
+              "\"lastModifiedAt\":\"2022-09-21T23:31:04.206157Z\"}", jsonBody);
     }
   }
 
