@@ -50,8 +50,14 @@ class TransactionControllerIT {
   MockMvc mockMvc;
 
   private final Long id = 1L;
-  private final Instant lastModifiedAt = Instant.parse("2022-09-21T23:31:04.206157Z");
-  private final DateTimeFormatter rfc1123Formatter = DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneOffset.UTC);
+  private final Instant lastModifiedAt = Instant.parse("2023-02-04T23:31:04.206157Z");
+  // The ResponseEntity lastModified(Instant) always has two digits for the day-of-month. If the day-of-month is
+  // less than 10, it will add a leading zero. This is correct according to the MDN docs:
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Last-Modified.
+  // The DateTimeFormatter.RFC_1123_DATE_TIME does not add the leading zero so I have to specify the pattern myself.
+  // https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#RFC_1123_DATE_TIME
+  private final DateTimeFormatter rfc1123Formatter =
+          DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss O").withZone(ZoneOffset.UTC);
   private final ObjectMapper objectMapper = new ObjectMapper()
           // With the JavaTimeModule registered to handle the budgetDate
           .registerModule(new JavaTimeModule()).configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -93,7 +99,7 @@ class TransactionControllerIT {
     @Test
     void returns400WhenStartingDateIsNotCorrectlyFormatted() throws Exception {
       // Given a request with an invalid starting date
-      String badStartingDate = "20210921";
+      String badStartingDate = "20230204";
 
       // When the request is made
       mockMvc.perform(get("/transactions?startingDate=%s".formatted(badStartingDate)))
@@ -106,7 +112,7 @@ class TransactionControllerIT {
     @Test
     void returns400WhenEndingDateIsNotCorrectlyFormatted() throws Exception {
       // Given a request with an invalid starting date
-      String badEndingDate = "20210921";
+      String badEndingDate = "20230204";
 
       // When the request is made
       mockMvc.perform(get("/transactions?endingDate=%s".formatted(badEndingDate)))
@@ -119,25 +125,25 @@ class TransactionControllerIT {
     @Test
     void callsServiceMethodWithStartingDateFromParameter() throws Exception {
       // Given a correctly formatted startingDate
-      String startingDate = "2021-09-21";
+      String startingDate = "2023-02-04";
 
       // When the request is made
       mockMvc.perform(get("/transactions?startingDate=%s".formatted(startingDate)));
 
       // Then the service should be called with the correct parameters
-      verify(service, times(1)).getAllBetween(LocalDate.of(2021, 9, 21), defaultEndingDate);
+      verify(service, times(1)).getAllBetween(LocalDate.of(2023, 2, 4), defaultEndingDate);
     }
 
     @Test
     void callsServiceMethodWithEndingDateFromParameter() throws Exception {
       // Given a correctly formatted endingDate
-      String endingDate = "2021-09-21";
+      String endingDate = "2023-02-04";
 
       // When the request is made
       mockMvc.perform(get("/transactions?endingDate=%s".formatted(endingDate)));
 
       // Then the service should be called with the correct parameters
-      verify(service, times(1)).getAllBetween(defaultStartingDate, LocalDate.of(2021, 9, 21));
+      verify(service, times(1)).getAllBetween(defaultStartingDate, LocalDate.of(2023, 2, 4));
     }
 
     @Test
@@ -233,9 +239,9 @@ class TransactionControllerIT {
       // And the response body should contain the correct json
       assertEquals("[{\"id\":1,\"date\":\"2023-02-04\",\"merchant\":\"Merchant 1\",\"amount\":25.00," +
               "\"lineItemId\":1,\"description\":\"Description 1\"," +
-              "\"lastModifiedAt\":\"2022-09-21T23:31:04.206157Z\"},{\"id\":2,\"date\":\"2023-02-03\"," +
+              "\"lastModifiedAt\":\"2023-02-04T23:31:04.206157Z\"},{\"id\":2,\"date\":\"2023-02-03\"," +
               "\"merchant\":\"Merchant 2\",\"amount\":24.00,\"lineItemId\":2,\"description\":\"Description 2\"," +
-              "\"lastModifiedAt\":\"2022-09-21T23:31:04.206157Z\"}]", jsonBody);
+              "\"lastModifiedAt\":\"2023-02-04T23:31:04.206157Z\"}]", jsonBody);
     }
   }
 
@@ -326,7 +332,7 @@ class TransactionControllerIT {
       // And the response body should contain the correct json
       assertEquals("{\"id\":1,\"date\":\"2023-02-04\",\"merchant\":\"Merchant\",\"amount\":25.00," +
               "\"lineItemId\":1,\"description\":\"Description\"," +
-              "\"lastModifiedAt\":\"2022-09-21T23:31:04.206157Z\"}", jsonBody);
+              "\"lastModifiedAt\":\"2023-02-04T23:31:04.206157Z\"}", jsonBody);
     }
   }
 
@@ -486,12 +492,21 @@ class TransactionControllerIT {
       // And the response body should contain the correct json
       assertEquals("{\"id\":1,\"date\":\"2023-02-04\",\"merchant\":\"Merchant\",\"amount\":25.00," +
               "\"lineItemId\":1,\"description\":\"Description\"," +
-              "\"lastModifiedAt\":\"2022-09-21T23:31:04.206157Z\"}", jsonBody);
+              "\"lastModifiedAt\":\"2023-02-04T23:31:04.206157Z\"}", jsonBody);
     }
   }
 
   @Nested
   class UpdateTransaction {
+    private final TransactionResponse responseDto = new TransactionResponse(
+            id,
+            LocalDate.now(),
+            "Merchant",
+            25_00,
+            id,
+            "Description",
+            lastModifiedAt);
+
     @Test
     void returns400WhenIfUnmodifiedSinceHeaderIsNotPresent() throws Exception {
       // Given a request without an If-Unmodified-Since header
@@ -500,12 +515,12 @@ class TransactionControllerIT {
                       .contentType(MediaType.APPLICATION_JSON)
                       .content("""
                               {
-                                "date": "%s",
+                                "date": "2023-02-04",
                                 "merchant": "Merchant",
                                 "amount": 2500,
                                 "description": "Description"
                               }
-                              """.formatted(LocalDate.now())))
+                              """))
               // Then the response should be a 400
               .andExpect(status().isBadRequest());
       // And the service should not be called
@@ -532,12 +547,12 @@ class TransactionControllerIT {
                       .header("If-Unmodified-Since", rfc1123Formatter.format(lastModifiedAt))
                       .content("""
                               {
-                                "date": "%s",
+                                "date": "2023-02-04",
                                 "merchant": "Merchant",
                                 "amount": 2500,
                                 "description": "Description"
                               }
-                              """.formatted(LocalDate.now())))
+                              """))
               // Then the response should be a 400
               .andExpect(status().isBadRequest());
       // And the service should not be called
@@ -546,29 +561,21 @@ class TransactionControllerIT {
 
     @Test
     void returnsCorrectStatusAndHeaders() throws Exception {
-      // Given a response dto returned from the mapper
-      TransactionResponse responseDto = new TransactionResponse(
-              id,
-              LocalDate.now(),
-              "Merchant",
-              2500,
-              id,
-              "Description",
-              lastModifiedAt);
+      // Given a response dto returned from the mapper (declared at class-level)
       when(mapper.mapToResponse(any())).thenReturn(responseDto);
 
       // When the request is made
-      mockMvc.perform(put("/transactions/1")
+      mockMvc.perform(put("/transactions/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
                       .header("If-Unmodified-Since", rfc1123Formatter.format(lastModifiedAt))
                       .content("""
                               {
-                                "date": "%s",
+                                "date": "2023-02-04",
                                 "merchant": "Merchant",
                                 "amount": 2500,
                                 "description": "Description"
                               }
-                              """.formatted(LocalDate.now())))
+                              """))
               // Then the response should be a 201
               .andExpect(status().isOk())
               // And the response should contain the correct Location header
