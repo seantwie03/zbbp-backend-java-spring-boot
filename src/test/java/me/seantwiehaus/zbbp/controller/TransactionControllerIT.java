@@ -500,7 +500,7 @@ class TransactionControllerIT {
   class UpdateTransaction {
     private final TransactionResponse responseDto = new TransactionResponse(
             id,
-            LocalDate.now(),
+            LocalDate.of(2023, 2, 4),
             "Merchant",
             25_00,
             id,
@@ -529,18 +529,7 @@ class TransactionControllerIT {
 
     @Test
     void returns400WhenTransactionIdParameterIsNegative() throws Exception {
-      // Given a response dto returned from the mapper
-      TransactionResponse responseDto = new TransactionResponse(
-              id,
-              LocalDate.now(),
-              "Merchant",
-              2500,
-              id,
-              "Description",
-              lastModifiedAt);
-      when(mapper.mapToResponse(any())).thenReturn(responseDto);
-      // And a negative transaction ID
-
+      // Given a request with a negative id parameter
       // When the request is made
       mockMvc.perform(put("/transactions/-1")
                       .contentType(MediaType.APPLICATION_JSON)
@@ -582,6 +571,89 @@ class TransactionControllerIT {
               .andExpect(header().string("Location", "/transactions/%d".formatted(id)))
               // And the response should contain the correct Last-Modified header
               .andExpect(header().string("Last-Modified", lastModifiedFormatter.format(lastModifiedAt)));
+    }
+
+    // The next three tests are redundant. They all cover the deserialization of the response body.
+    // Each one has some pros and cons. I am keeping all three because over time I would like to see if one
+    // stands out by catching more bugs with the fewest false positives.
+    @Test
+    void returnsCorrectBodyJsonPath() throws Exception {
+      // Given a TransactionResponse returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      mockMvc.perform(put("/transactions/%d".formatted(id))
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
+                      .content("""
+                              {
+                                "date": "2023-02-04",
+                                "merchant": "Merchant",
+                                "amount": 2500,
+                                "description": "Description"
+                              }
+                              """))
+              // Then the response should be a 200
+              .andExpect(status().isOk())
+              // And the response body should contain the correct json
+              .andExpect(jsonPath("$.id").value(id))
+              .andExpect(jsonPath("$.date").value(LocalDate.of(2023, 2, 4).toString()))
+              .andExpect(jsonPath("$.merchant").value("Merchant"))
+              .andExpect(jsonPath("$.amount").value(25.00)) // converted to dollars
+              .andExpect(jsonPath("$.lineItemId").value(id))
+              .andExpect(jsonPath("$.description").value("Description"))
+              .andExpect(jsonPath("$.lastModifiedAt").value(lastModifiedAt.toString()));
+    }
+
+    @Test
+    void returnsCorrectBodyObjectMapper() throws Exception {
+      // Given a TransactionResponse returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      mockMvc.perform(put("/transactions/%d".formatted(id))
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
+                      .content("""
+                              {
+                                "date": "2023-02-04",
+                                "merchant": "Merchant",
+                                "amount": 2500,
+                                "description": "Description"
+                              }
+                              """))
+              // Then the response should be a 200
+              .andExpect(status().isOk())
+              // And the response should match the responseDto deserialized by ObjectMapper
+              .andExpect(content().string(objectMapper.writeValueAsString(responseDto)));
+    }
+
+    @Test
+    void returnsCorrectBodyStringComparison() throws Exception {
+      // Given a TransactionResponse returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      String jsonBody = mockMvc.perform(put("/transactions/%d".formatted(id))
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
+                      .content("""
+                              {
+                                "date": "2023-02-04",
+                                "merchant": "Merchant",
+                                "amount": 2500,
+                                "description": "Description"
+                              }
+                              """))
+              // Then the response should be a 200
+              .andExpect(status().isOk())
+              .andReturn()
+              .getResponse()
+              .getContentAsString();
+      // And the response body should contain the correct json
+      assertEquals("{\"id\":1,\"date\":\"2023-02-04\",\"merchant\":\"Merchant\",\"amount\":25.00," +
+              "\"lineItemId\":1,\"description\":\"Description\"," +
+              "\"lastModifiedAt\":\"2023-02-04T23:31:04.206157Z\"}", jsonBody);
     }
   }
 

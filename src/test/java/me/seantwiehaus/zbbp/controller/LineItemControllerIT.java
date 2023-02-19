@@ -556,6 +556,49 @@ public class LineItemControllerIT {
             List.of());
 
     @Test
+    void returns400WhenIfUnmodifiedSinceHeaderIsNotPresent() throws Exception {
+      // Given a request without an If-Unmodified-Since header
+      // When the request is made
+      mockMvc.perform(put("/line-items/%d".formatted(id))
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content("""
+                              {
+                                "budgetDate": "2021-09",
+                                "name": "Name",
+                                "plannedAmount": 1200.00,
+                                "category": "FOOD",
+                                "description": "description"
+                              }
+                              """))
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
+      // And the service should not be called
+      verify(service, never()).update(any(), any(), any());
+    }
+
+    @Test
+    void returns400WhenLineItemIdParameterIsNegative() throws Exception {
+      // Given a request with a negative id parameter
+      // When the request is made
+      mockMvc.perform(put("/line-items/-1")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
+                      .content("""
+                              {
+                                "budgetDate": "2021-09",
+                                "name": "Name",
+                                "plannedAmount": 1200.00,
+                                "category": "FOOD",
+                                "description": "description"
+                              }
+                              """))
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
+      // And the service should not be called
+      verify(service, never()).update(any(), any(), any());
+    }
+
+    @Test
     void returnsCorrectStatusAndHeaders() throws Exception {
       // Given a response dto returned from the mapper (declared at class-level)
       when(mapper.mapToResponse(any())).thenReturn(responseDto);
@@ -579,6 +622,97 @@ public class LineItemControllerIT {
               .andExpect(header().string("Location", "/line-items/%d".formatted(id)))
               // And the response should contain the correct Last-Modified header
               .andExpect(header().string("Last-Modified", lastModifiedFormatter.format(lastModifiedAt)));
+    }
+
+    // The next three tests are redundant. They all cover the deserialization of the response body.
+    // Each one has some pros and cons. I am keeping all three because over time I would like to see if one
+    // stands out by catching more bugs with the fewest false positives.
+    @Test
+    void returnsCorrectBodyJsonPath() throws Exception {
+      // Given a response dto returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      mockMvc.perform(put("/line-items/%d".formatted(id))
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
+                      .content("""
+                              {
+                                "budgetDate": "2021-09",
+                                "name": "Name",
+                                "plannedAmount": 1200.00,
+                                "category": "FOOD",
+                                "description": "description"
+                              }
+                              """))
+              // Then the response should be a 200
+              .andExpect(status().isOk())
+              // And the response body should contain the correct data
+              .andExpect(jsonPath("$.id").value(1L))
+              .andExpect(jsonPath("$.budgetDate").value("2021-09"))
+              .andExpect(jsonPath("$.name").value("Name"))
+              .andExpect(jsonPath("$.plannedAmount").value(1200.00)) // should've been converted to dollars
+              .andExpect(jsonPath("$.category").value("FOOD"))
+              .andExpect(jsonPath("$.description").value("description"))
+              .andExpect(jsonPath("$.lastModifiedAt").value(lastModifiedAt.toString()))
+              .andExpect(jsonPath("$.totalTransactions").value(0.00))
+              .andExpect(jsonPath("$.percentageOfPlanned").value(0.0))
+              .andExpect(jsonPath("$.totalRemaining").value(1200.00)) // should've been converted to dollars
+              .andExpect(jsonPath("$.transactions").isEmpty());
+    }
+
+    @Test
+    void returnsCorrectBodyObjectMapper() throws Exception {
+      // Given a response dto returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      mockMvc.perform(put("/line-items/%d".formatted(id))
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
+                      .content("""
+                              {
+                                "budgetDate": "2021-09",
+                                "name": "Name",
+                                "plannedAmount": 2500.00,
+                                "category": "FOOD",
+                                "description": "description"
+                              }
+                              """))
+              // Then the response should be a 200
+              .andExpect(status().isOk())
+              // And the response should match the responseDto deserialized by ObjectMapper
+              .andExpect(content().string(objectMapper.writeValueAsString(responseDto)));
+    }
+
+    @Test
+    void returnsCorrectBodyStringComparison() throws Exception {
+      // Given a response dto returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      String jsonBody = mockMvc.perform(put("/line-items/%d".formatted(id))
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
+                      .content("""
+                              {
+                                "budgetDate": "2021-09",
+                                "name": "Name",
+                                "plannedAmount": 2500.00,
+                                "category": "FOOD",
+                                "description": "description"
+                              }
+                              """))
+              // Then the response should be a 200
+              .andExpect(status().isOk())
+              .andReturn()
+              .getResponse()
+              .getContentAsString();
+      // And the response body should contain the correct json
+      assertEquals("{\"id\":1,\"budgetDate\":\"2021-09\",\"name\":\"Name\",\"plannedAmount\":1200.00," +
+              "\"category\":\"FOOD\",\"description\":\"description\"," +
+              "\"lastModifiedAt\":\"2022-09-21T23:31:04.206157Z\",\"totalTransactions\":0.00," +
+              "\"percentageOfPlanned\":0.0,\"totalRemaining\":1200.00,\"transactions\":[]}", jsonBody);
     }
   }
 
