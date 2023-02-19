@@ -716,8 +716,33 @@ public class LineItemControllerIT {
     }
   }
 
+  @Nested
+  class DeleteLineItem {
+    @Test
+    void returns400WhenLineItemIdParameterIsNegative() throws Exception {
+      // Given a negative transaction ID
+      // When the request is made
+      mockMvc.perform(delete("/line-items/-1"))
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
+      // And the service should not be called
+      verify(service, never()).delete(any());
+    }
+
+    @Test
+    void returns204WhenLineItemIdParameterIsValid() throws Exception {
+      // Given a negative transaction ID
+      // When the request is made
+      mockMvc.perform(delete("/line-items/1"))
+              // Then the response should be a 204
+              .andExpect(status().isNoContent());
+      // And the service should be called one time
+      verify(service, times(1)).delete(id);
+    }
+  }
+
   private LineItem.LineItemBuilder createDomain() {
-    return LineItem.builder(YearMonth.of(2021, 9), "Name", 140000, Category.FOOD)
+    return LineItem.builder(YearMonth.of(2021, 9), "Name", 1400_00, Category.FOOD)
             .id(1L)
             .description("Description")
             .lastModifiedAt(lastModifiedAt);

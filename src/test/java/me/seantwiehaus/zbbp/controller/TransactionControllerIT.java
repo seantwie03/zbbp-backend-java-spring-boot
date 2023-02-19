@@ -683,7 +683,7 @@ class TransactionControllerIT {
   }
 
   private Transaction.TransactionBuilder createDomain() {
-    return Transaction.builder(LocalDate.now(), "Merchant", 2500)
+    return Transaction.builder(LocalDate.now(), "Merchant", 25_00)
             .id(1L)
             .description("Description")
             .lineItemId(1L)
