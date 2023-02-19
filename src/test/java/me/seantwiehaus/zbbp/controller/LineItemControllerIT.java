@@ -33,8 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 // Cannot run in parallel with other tests due to @MockBean
@@ -53,7 +52,13 @@ public class LineItemControllerIT {
 
   private final Long id = 1L;
   private final Instant lastModifiedAt = Instant.parse("2022-09-21T23:31:04.206157Z");
-  private final DateTimeFormatter rfc1123Formatter = DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneOffset.UTC);
+  // The ResponseEntity lastModified(Instant) always has two digits for the day-of-month. If the day-of-month is
+  // less than 10, it will add a leading zero. This is correct according to the MDN docs:
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Last-Modified.
+  // The DateTimeFormatter.RFC_1123_DATE_TIME does not add the leading zero, so I have to specify the pattern myself.
+  // https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#RFC_1123_DATE_TIME
+  private final DateTimeFormatter lastModifiedFormatter =
+          DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss O").withZone(ZoneOffset.UTC);
   private final ObjectMapper objectMapper = new ObjectMapper()
           // With the JavaTimeModule registered to handle the budgetDate
           .registerModule(new JavaTimeModule()).configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -298,7 +303,7 @@ public class LineItemControllerIT {
               // And the response should contain the correct Location header
               .andExpect(header().string("Location", "/line-items/%d".formatted(id)))
               // And the response should contain the correct Last-Modified header
-              .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
+              .andExpect(header().string("Last-Modified", lastModifiedFormatter.format(lastModifiedAt)));
     }
 
     // The next three tests are redundant. They all cover the deserialization of the response body.
@@ -443,7 +448,7 @@ public class LineItemControllerIT {
               // And the response should contain the correct Location header
               .andExpect(header().string("Location", "/line-items/%d".formatted(id)))
               // And the response should contain the correct Last-Modified header
-              .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
+              .andExpect(header().string("Last-Modified", lastModifiedFormatter.format(lastModifiedAt)));
     }
 
     // The next three tests are redundant. They all cover the deserialization of the response body.
@@ -532,6 +537,48 @@ public class LineItemControllerIT {
               "\"category\":\"FOOD\",\"description\":\"description\"," +
               "\"lastModifiedAt\":\"2022-09-21T23:31:04.206157Z\",\"totalTransactions\":0.00," +
               "\"percentageOfPlanned\":0.0,\"totalRemaining\":1200.00,\"transactions\":[]}", jsonBody);
+    }
+  }
+
+  @Nested
+  class UpdateLineItem {
+    private final LineItemResponse responseDto = new LineItemResponse(
+            1L,
+            YearMonth.of(2021, 9),
+            "Name",
+            1200_00,
+            Category.FOOD,
+            "description",
+            lastModifiedAt,
+            0,
+            0.0,
+            1200_00,
+            List.of());
+
+    @Test
+    void returnsCorrectStatusAndHeaders() throws Exception {
+      // Given a response dto returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      mockMvc.perform(put("/line-items/%d".formatted(id))
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
+                      .content("""
+                              {
+                                "budgetDate": "2021-09",
+                                "name": "Name",
+                                "plannedAmount": 1200.00,
+                                "category": "FOOD",
+                                "description": "description"
+                              }
+                              """))
+              // Then the response should be a 200
+              .andExpect(status().isOk())
+              // And the response should contain the correct Location header
+              .andExpect(header().string("Location", "/line-items/%d".formatted(id)))
+              // And the response should contain the correct Last-Modified header
+              .andExpect(header().string("Last-Modified", lastModifiedFormatter.format(lastModifiedAt)));
     }
   }
 

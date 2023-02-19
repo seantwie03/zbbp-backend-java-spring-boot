@@ -83,6 +83,7 @@ public class LineItemController {
     return ResponseEntity
             .ok()
             .location(location)
+            .lastModified(response.lastModifiedAt())
             .body(response);
   }
 

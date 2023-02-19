@@ -54,9 +54,9 @@ class TransactionControllerIT {
   // The ResponseEntity lastModified(Instant) always has two digits for the day-of-month. If the day-of-month is
   // less than 10, it will add a leading zero. This is correct according to the MDN docs:
   // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Last-Modified.
-  // The DateTimeFormatter.RFC_1123_DATE_TIME does not add the leading zero so I have to specify the pattern myself.
+  // The DateTimeFormatter.RFC_1123_DATE_TIME does not add the leading zero, so I have to specify the pattern myself.
   // https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#RFC_1123_DATE_TIME
-  private final DateTimeFormatter rfc1123Formatter =
+  private final DateTimeFormatter lastModifiedFormatter =
           DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss O").withZone(ZoneOffset.UTC);
   private final ObjectMapper objectMapper = new ObjectMapper()
           // With the JavaTimeModule registered to handle the budgetDate
@@ -279,7 +279,7 @@ class TransactionControllerIT {
               // And the response should contain the correct Location header
               .andExpect(header().string("Location", "/transactions/%d".formatted(id)))
               // And the response should contain the correct Last-Modified header
-              .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
+              .andExpect(header().string("Last-Modified", lastModifiedFormatter.format(lastModifiedAt)));
     }
 
     // The next three tests are redundant. They all cover the deserialization of the response body.
@@ -412,7 +412,7 @@ class TransactionControllerIT {
               // And the response should contain the correct Location header
               .andExpect(header().string("Location", "/transactions/%d".formatted(id)))
               // And the response should contain the correct Last-Modified header
-              .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
+              .andExpect(header().string("Last-Modified", lastModifiedFormatter.format(lastModifiedAt)));
     }
 
     // The next three tests are redundant. They all cover the deserialization of the response body.
@@ -544,7 +544,7 @@ class TransactionControllerIT {
       // When the request is made
       mockMvc.perform(put("/transactions/-1")
                       .contentType(MediaType.APPLICATION_JSON)
-                      .header("If-Unmodified-Since", rfc1123Formatter.format(lastModifiedAt))
+                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
                       .content("""
                               {
                                 "date": "2023-02-04",
@@ -567,7 +567,7 @@ class TransactionControllerIT {
       // When the request is made
       mockMvc.perform(put("/transactions/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
-                      .header("If-Unmodified-Since", rfc1123Formatter.format(lastModifiedAt))
+                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
                       .content("""
                               {
                                 "date": "2023-02-04",
@@ -581,7 +581,7 @@ class TransactionControllerIT {
               // And the response should contain the correct Location header
               .andExpect(header().string("Location", "/transactions/%d".formatted(id)))
               // And the response should contain the correct Last-Modified header
-              .andExpect(header().string("Last-Modified", rfc1123Formatter.format(lastModifiedAt)));
+              .andExpect(header().string("Last-Modified", lastModifiedFormatter.format(lastModifiedAt)));
     }
   }
 
