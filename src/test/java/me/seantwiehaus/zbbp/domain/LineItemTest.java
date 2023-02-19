@@ -22,7 +22,7 @@ class LineItemTest {
                       1L,
                       LocalDate.now(),
                       "Merchant 1",
-                      1050,
+                      10_50,
                       null,
                       "Transaction 1",
                       null),
@@ -30,7 +30,7 @@ class LineItemTest {
                       1L,
                       LocalDate.now(),
                       "Merchant 2",
-                      1100,
+                      11_00,
                       null,
                       "Transaction 2",
                       null),
@@ -38,7 +38,7 @@ class LineItemTest {
                       1L,
                       LocalDate.now(),
                       "Merchant 3",
-                      400,
+                      4_00,
                       null,
                       "Transaction 3",
                       null)
@@ -47,7 +47,7 @@ class LineItemTest {
               1L,
               YearMonth.now(),
               "Groceries",
-              5000,
+              50_00,
               Category.FOOD,
               "Description",
               null,
@@ -55,18 +55,18 @@ class LineItemTest {
     }
 
     @Test
-    void calculateTotalTransactions() {
-      assertEquals(2550, lineItem.calculateTotalTransactions());
+    void calculateCorrectTotalTransactions() {
+      assertEquals(25_50, lineItem.calculateTotalTransactions());
     }
 
     @Test
-    void calculatePercentageOfPlanned() {
+    void calculateCorrectPercentageOfPlanned() {
       assertEquals(51.0, lineItem.calculatePercentageOfPlanned());
     }
 
     @Test
-    void calculateTotalRemaining() {
-      assertEquals(2450, lineItem.calculateTotalRemaining());
+    void calculateCorrectTotalRemaining() {
+      assertEquals(24_50, lineItem.calculateTotalRemaining());
     }
   }
 
@@ -80,7 +80,7 @@ class LineItemTest {
               null,
               YearMonth.now(),
               "Restaurants",
-              5000,
+              50_00,
               Category.FOOD,
               "Description",
               null,
@@ -89,18 +89,18 @@ class LineItemTest {
     }
 
     @Test
-    void calculateTotalTransactions() {
+    void calculateCorrectTotalTransactions() {
       assertEquals(0, lineItem.calculateTotalTransactions());
     }
 
     @Test
-    void calculatePercentageOfPlanned() {
+    void calculateCorrectPercentageOfPlanned() {
       assertEquals(0, lineItem.calculatePercentageOfPlanned());
     }
 
     @Test
-    void calculateTotalRemaining() {
-      assertEquals(5000, lineItem.calculateTotalRemaining());
+    void calculateCorrectTotalRemaining() {
+      assertEquals(50_00, lineItem.calculateTotalRemaining());
     }
   }
 }
