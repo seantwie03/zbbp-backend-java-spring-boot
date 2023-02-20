@@ -380,6 +380,16 @@ public class LineItemControllerIT {
             120000,
             List.of());
 
+    private final String validContent = """
+            {
+              "budgetDate": "2021-09",
+              "name": "Name",
+              "plannedAmount": 1200.00,
+              "category": "FOOD",
+              "description": "description"
+            }
+            """;
+
     // Testing the DateTimeFormat here. These annotation deal with deserialization, not validation. So
     // it is appropriate to test them here.
     @ParameterizedTest
@@ -395,6 +405,7 @@ public class LineItemControllerIT {
                 "description": "description"
               }
               """.formatted(date);
+
       // When the request is made
       mockMvc.perform(post("/line-items")
                       .contentType(MediaType.APPLICATION_JSON)
@@ -409,19 +420,21 @@ public class LineItemControllerIT {
     // More Info in 'Verify Field Validation' section of https://www.arhohuttunen.com/spring-boot-webmvctest/
     @Test
     void returnsBadRequestWhenNotValid() throws Exception {
-      // Given a request with a null merchant
+      // Given a request with invalid content
+      String invalidContent = """
+              {
+                "budgetDate": null,
+                "name": "Name",
+                "plannedAmount": 1200.00,
+                "category": "FOOD",
+                "description": "description"
+              }
+              """;
+
       // When the request is made
       mockMvc.perform(post("/line-items")
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("""
-                              {
-                                "budgetDate": null,
-                                "name": "Name",
-                                "plannedAmount": 2500.00,
-                                "category": "FOOD",
-                                "description": "description"
-                              }
-                              """))
+                      .content(invalidContent))
               // Then the response should be a 400
               .andExpect(status().isBadRequest());
     }
@@ -434,15 +447,7 @@ public class LineItemControllerIT {
       // When the request is made
       mockMvc.perform(post("/line-items")
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("""
-                              {
-                                "budgetDate": "%s",
-                                "name": "Name",
-                                "plannedAmount": 2500.00,
-                                "category": "FOOD",
-                                "description": "description"
-                              }
-                              """.formatted(YearMonth.of(2021, 9))))
+                      .content(validContent))
               // Then the response should be a 201
               .andExpect(status().isCreated())
               // And the response should contain the correct Location header
@@ -462,15 +467,7 @@ public class LineItemControllerIT {
       // When the request is made
       mockMvc.perform(post("/line-items")
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("""
-                              {
-                                "budgetDate": "2021-09",
-                                "name": "Name",
-                                "plannedAmount": 2500.00,
-                                "category": "FOOD",
-                                "description": "description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 201
               .andExpect(status().isCreated())
               // And the response body should contain the correct data
@@ -495,15 +492,7 @@ public class LineItemControllerIT {
       // When the request is made
       mockMvc.perform(post("/line-items")
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("""
-                              {
-                                "budgetDate": "2021-09",
-                                "name": "Name",
-                                "plannedAmount": 2500.00,
-                                "category": "FOOD",
-                                "description": "description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 201
               .andExpect(status().isCreated())
               // And the response should match the responseDto deserialized by ObjectMapper
@@ -518,15 +507,7 @@ public class LineItemControllerIT {
       // When the request is made
       String jsonBody = mockMvc.perform(post("/line-items")
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("""
-                              {
-                                "budgetDate": "2021-09",
-                                "name": "Name",
-                                "plannedAmount": 2500.00,
-                                "category": "FOOD",
-                                "description": "description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 201
               .andExpect(status().isCreated())
               .andReturn()
@@ -555,21 +536,23 @@ public class LineItemControllerIT {
             1200_00,
             List.of());
 
+    private final String validContent = """
+            {
+              "budgetDate": "2021-09",
+              "name": "Name",
+              "plannedAmount": 1200.00,
+              "category": "FOOD",
+              "description": "description"
+            }
+            """;
+
     @Test
     void returns400WhenIfUnmodifiedSinceHeaderIsNotPresent() throws Exception {
       // Given a request without an If-Unmodified-Since header
       // When the request is made
       mockMvc.perform(put("/line-items/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("""
-                              {
-                                "budgetDate": "2021-09",
-                                "name": "Name",
-                                "plannedAmount": 1200.00,
-                                "category": "FOOD",
-                                "description": "description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 400
               .andExpect(status().isBadRequest());
       // And the service should not be called
@@ -583,15 +566,7 @@ public class LineItemControllerIT {
       mockMvc.perform(put("/line-items/-1")
                       .contentType(MediaType.APPLICATION_JSON)
                       .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
-                      .content("""
-                              {
-                                "budgetDate": "2021-09",
-                                "name": "Name",
-                                "plannedAmount": 1200.00,
-                                "category": "FOOD",
-                                "description": "description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 400
               .andExpect(status().isBadRequest());
       // And the service should not be called
@@ -604,19 +579,21 @@ public class LineItemControllerIT {
     // More Info in 'Verify Field Validation' section of https://www.arhohuttunen.com/spring-boot-webmvctest/
     @Test
     void returnsBadRequestWhenNotValid() throws Exception {
-      // Given a request with a null merchant
+      // Given a request with invalid content
+      String invalidContent = """
+              {
+                "budgetDate": null,
+                "name": "Name",
+                "plannedAmount": 1200.00,
+                "category": "FOOD",
+                "description": "description"
+              }
+              """;
+
       // When the request is made
       mockMvc.perform(post("/line-items")
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("""
-                              {
-                                "budgetDate": null,
-                                "name": "Name",
-                                "plannedAmount": 2500.00,
-                                "category": "FOOD",
-                                "description": "description"
-                              }
-                              """))
+                      .content(invalidContent))
               // Then the response should be a 400
               .andExpect(status().isBadRequest());
     }
@@ -630,15 +607,7 @@ public class LineItemControllerIT {
       mockMvc.perform(put("/line-items/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
                       .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
-                      .content("""
-                              {
-                                "budgetDate": "2021-09",
-                                "name": "Name",
-                                "plannedAmount": 1200.00,
-                                "category": "FOOD",
-                                "description": "description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 200
               .andExpect(status().isOk())
               // And the response should contain the correct Location header
@@ -659,15 +628,7 @@ public class LineItemControllerIT {
       mockMvc.perform(put("/line-items/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
                       .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
-                      .content("""
-                              {
-                                "budgetDate": "2021-09",
-                                "name": "Name",
-                                "plannedAmount": 1200.00,
-                                "category": "FOOD",
-                                "description": "description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 200
               .andExpect(status().isOk())
               // And the response body should contain the correct data
@@ -693,15 +654,7 @@ public class LineItemControllerIT {
       mockMvc.perform(put("/line-items/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
                       .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
-                      .content("""
-                              {
-                                "budgetDate": "2021-09",
-                                "name": "Name",
-                                "plannedAmount": 2500.00,
-                                "category": "FOOD",
-                                "description": "description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 200
               .andExpect(status().isOk())
               // And the response should match the responseDto deserialized by ObjectMapper
@@ -717,15 +670,7 @@ public class LineItemControllerIT {
       String jsonBody = mockMvc.perform(put("/line-items/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
                       .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
-                      .content("""
-                              {
-                                "budgetDate": "2021-09",
-                                "name": "Name",
-                                "plannedAmount": 2500.00,
-                                "category": "FOOD",
-                                "description": "description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 200
               .andExpect(status().isOk())
               .andReturn()

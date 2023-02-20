@@ -347,6 +347,15 @@ class TransactionControllerIT {
             "Description",
             lastModifiedAt);
 
+    private final String validContent = """
+            {
+              "date": "2023-02-04",
+              "merchant": "Merchant",
+              "amount": 25.00,
+              "description": "Description"
+            }
+            """;
+
     // Testing the DateTimeFormat and JsonFormat here. These annotation deal with deserialization, not validation. So
     // it is appropriate to test them here.
     @ParameterizedTest
@@ -361,6 +370,7 @@ class TransactionControllerIT {
                  "description": "Description"
                }
               """.formatted(date);
+
       // When the request is made
       mockMvc.perform(post("/transactions")
                       .contentType(MediaType.APPLICATION_JSON)
@@ -375,18 +385,20 @@ class TransactionControllerIT {
     // More Info in 'Verify Field Validation' section of https://www.arhohuttunen.com/spring-boot-webmvctest/
     @Test
     void returnsBadRequestWhenNotValid() throws Exception {
-      // Given a request with a null merchant
+      // Given a request with invalid content
+      String invalidContent = """
+              {
+                "date": null,
+                "merchant": "Merchant",
+                "amount": 25.00,
+                "description": "Description"
+              }
+              """;
+
       // When the request is made
       mockMvc.perform(post("/transactions")
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("""
-                              {
-                                "date": "2023-02-04",
-                                "merchant": "Merchant",
-                                "amount": null,
-                                "description": "Description"
-                              }
-                              """))
+                      .content(invalidContent))
               // Then the response should be a 400
               .andExpect(status().isBadRequest());
     }
@@ -399,14 +411,7 @@ class TransactionControllerIT {
       // When the request is made
       mockMvc.perform(post("/transactions")
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("""
-                              {
-                                "date": "2023-02-04",
-                                "merchant": "Merchant",
-                                "amount": 2500,
-                                "description": "Description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 201
               .andExpect(status().isCreated())
               // And the response should contain the correct Location header
@@ -426,14 +431,7 @@ class TransactionControllerIT {
       // When the request is made
       mockMvc.perform(post("/transactions")
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("""
-                              {
-                                "date": "2023-02-04",
-                                "merchant": "Merchant",
-                                "amount": 2500,
-                                "description": "Description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 201
               .andExpect(status().isCreated())
               // And the response body should contain the correct json
@@ -454,14 +452,7 @@ class TransactionControllerIT {
       // When the request is made
       mockMvc.perform(post("/transactions")
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("""
-                              {
-                                "date": "2023-02-04",
-                                "merchant": "Merchant",
-                                "amount": 2500,
-                                "description": "Description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 201
               .andExpect(status().isCreated())
               // And the response should match the responseDto deserialized by ObjectMapper
@@ -476,14 +467,7 @@ class TransactionControllerIT {
       // When the request is made
       String jsonBody = mockMvc.perform(post("/transactions")
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("""
-                              {
-                                "date": "2023-02-04",
-                                "merchant": "Merchant",
-                                "amount": 2500,
-                                "description": "Description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 201
               .andExpect(status().isCreated())
               .andReturn()
@@ -507,20 +491,22 @@ class TransactionControllerIT {
             "Description",
             lastModifiedAt);
 
+    private final String validContent = """
+            {
+              "date": "2023-02-04",
+              "merchant": "Merchant",
+              "amount": 25.00,
+              "description": "Description"
+            }
+            """;
+
     @Test
     void returns400WhenIfUnmodifiedSinceHeaderIsNotPresent() throws Exception {
       // Given a request without an If-Unmodified-Since header
       // When the request is made
       mockMvc.perform(put("/transactions/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("""
-                              {
-                                "date": "2023-02-04",
-                                "merchant": "Merchant",
-                                "amount": 2500,
-                                "description": "Description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 400
               .andExpect(status().isBadRequest());
       // And the service should not be called
@@ -534,14 +520,7 @@ class TransactionControllerIT {
       mockMvc.perform(put("/transactions/-1")
                       .contentType(MediaType.APPLICATION_JSON)
                       .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
-                      .content("""
-                              {
-                                "date": "2023-02-04",
-                                "merchant": "Merchant",
-                                "amount": 2500,
-                                "description": "Description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 400
               .andExpect(status().isBadRequest());
       // And the service should not be called
@@ -554,18 +533,20 @@ class TransactionControllerIT {
     // More Info in 'Verify Field Validation' section of https://www.arhohuttunen.com/spring-boot-webmvctest/
     @Test
     void returnsBadRequestWhenNotValid() throws Exception {
-      // Given a request with a null merchant
+      // Given a request with invalid content
+      String invalidContent = """
+              {
+                "date": null,
+                "merchant": "Merchant",
+                "amount": 25.00,
+                "description": "Description"
+              }
+              """;
+
       // When the request is made
       mockMvc.perform(post("/transactions")
                       .contentType(MediaType.APPLICATION_JSON)
-                      .content("""
-                              {
-                                "date": "2023-02-04",
-                                "merchant": "Merchant",
-                                "amount": null,
-                                "description": "Description"
-                              }
-                              """))
+                      .content(invalidContent))
               // Then the response should be a 400
               .andExpect(status().isBadRequest());
     }
@@ -579,14 +560,7 @@ class TransactionControllerIT {
       mockMvc.perform(put("/transactions/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
                       .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
-                      .content("""
-                              {
-                                "date": "2023-02-04",
-                                "merchant": "Merchant",
-                                "amount": 2500,
-                                "description": "Description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 201
               .andExpect(status().isOk())
               // And the response should contain the correct Location header
@@ -607,14 +581,7 @@ class TransactionControllerIT {
       mockMvc.perform(put("/transactions/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
                       .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
-                      .content("""
-                              {
-                                "date": "2023-02-04",
-                                "merchant": "Merchant",
-                                "amount": 2500,
-                                "description": "Description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 200
               .andExpect(status().isOk())
               // And the response body should contain the correct json
@@ -636,14 +603,7 @@ class TransactionControllerIT {
       mockMvc.perform(put("/transactions/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
                       .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
-                      .content("""
-                              {
-                                "date": "2023-02-04",
-                                "merchant": "Merchant",
-                                "amount": 2500,
-                                "description": "Description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 200
               .andExpect(status().isOk())
               // And the response should match the responseDto deserialized by ObjectMapper
@@ -659,14 +619,7 @@ class TransactionControllerIT {
       String jsonBody = mockMvc.perform(put("/transactions/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
                       .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
-                      .content("""
-                              {
-                                "date": "2023-02-04",
-                                "merchant": "Merchant",
-                                "amount": 2500,
-                                "description": "Description"
-                              }
-                              """))
+                      .content(validContent))
               // Then the response should be a 200
               .andExpect(status().isOk())
               .andReturn()
