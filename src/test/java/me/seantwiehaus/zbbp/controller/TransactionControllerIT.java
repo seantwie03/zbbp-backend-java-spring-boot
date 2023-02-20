@@ -548,6 +548,28 @@ class TransactionControllerIT {
       verify(service, never()).update(any(), any(), any());
     }
 
+    // One test to ensure the request object is validated.
+    // The validation tests are in another file. If I were to check each validation annotation at this level, I would
+    // have to duplicate the checks for each endpoint that accepts a Request object.
+    // More Info in 'Verify Field Validation' section of https://www.arhohuttunen.com/spring-boot-webmvctest/
+    @Test
+    void returnsBadRequestWhenNotValid() throws Exception {
+      // Given a request with a null merchant
+      // When the request is made
+      mockMvc.perform(post("/transactions")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content("""
+                              {
+                                "date": "2023-02-04",
+                                "merchant": "Merchant",
+                                "amount": null,
+                                "description": "Description"
+                              }
+                              """))
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
+    }
+
     @Test
     void returnsCorrectStatusAndHeaders() throws Exception {
       // Given a response dto returned from the mapper (declared at class-level)
