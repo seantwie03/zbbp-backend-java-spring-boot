@@ -4,6 +4,7 @@ import me.seantwiehaus.zbbp.dao.entity.TransactionEntity;
 import me.seantwiehaus.zbbp.domain.Transaction;
 import me.seantwiehaus.zbbp.dto.request.TransactionRequest;
 import me.seantwiehaus.zbbp.dto.response.TransactionResponse;
+import me.seantwiehaus.zbbp.exception.BadRequestException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { TransactionMapperImpl.class })
@@ -30,14 +32,14 @@ class TransactionMapperIT {
     TransactionRequest request = new TransactionRequest(
             LocalDate.now(),
             "Merchant",
-            2500,
+            25.00,
             1L,
             "description");
     // And an expected domain object
     Transaction expectedDomain = Transaction.builder(
                     LocalDate.now(),
                     "Merchant",
-                    2500)
+                    2500) // converted to cents
             .lineItemId(1L)
             .description("description")
             .build();
@@ -51,6 +53,21 @@ class TransactionMapperIT {
     assertThat(expectedDomain)
             .usingRecursiveComparison()
             .isEqualTo(returned);
+  }
+
+  @Test
+  void mapRequestToDomainThrowsExceptionWhenAmountIsTooBig() {
+    // Given a request object with an amount that is too big
+    TransactionRequest request = new TransactionRequest(
+            LocalDate.now(),
+            "Merchant",
+            21_474_837.00,
+            1L,
+            "description");
+
+    // When the request is mapped to a domain object
+    // Then an exception should be thrown
+    assertThrows(BadRequestException.class, () -> mapper.mapToDomain(request));
   }
 
   @Test

@@ -12,8 +12,8 @@ public record TransactionRequest(
         @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @JsonFormat(pattern = "yyyy-MM-dd") LocalDate date,
         @NotBlank String merchant,
         // The desired behavior when the API request contains a null amount is for an exception to be thrown.
-        // That behavior only occurs when using Integer. If using int, the null value will deserialize to 0.
-        @NotNull @Min(0) Integer amount,
+        // That behavior only occurs when using Double. If using double, the null value will deserialize to 0.0.
+        @NotNull @Min(0) Double amount,
         Long lineItemId,
         String description) {
 }

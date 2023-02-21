@@ -27,7 +27,7 @@ class TransactionRequestTest {
 
   @Test
   void dateMustNotBeNull() {
-    TransactionRequest request = new TransactionRequest(null, "Merchant", 1, 1L, "Description");
+    TransactionRequest request = new TransactionRequest(null, "Merchant", 1.00, 1L, "Description");
 
     Set<ConstraintViolation<TransactionRequest>> violations = validator.validate(request);
 
@@ -37,7 +37,7 @@ class TransactionRequestTest {
 
   @Test
   void merchantMustNotBeNull() {
-    TransactionRequest request = new TransactionRequest(LocalDate.now(), null, 1, 1L, "Description");
+    TransactionRequest request = new TransactionRequest(LocalDate.now(), null, 1.00, 1L, "Description");
 
     Set<ConstraintViolation<TransactionRequest>> violations = validator.validate(request);
 
@@ -47,7 +47,7 @@ class TransactionRequestTest {
 
   @Test
   void merchantMustNotBeEmpty() {
-    TransactionRequest request = new TransactionRequest(LocalDate.now(), " ", 1, 1L, "Description");
+    TransactionRequest request = new TransactionRequest(LocalDate.now(), " ", 1.00, 1L, "Description");
 
     Set<ConstraintViolation<TransactionRequest>> violations = validator.validate(request);
 
@@ -57,7 +57,7 @@ class TransactionRequestTest {
 
   @Test
   void amountMustNotBeNegative() {
-    TransactionRequest request = new TransactionRequest(LocalDate.now(), "Merchant", -1, 1L, "Description");
+    TransactionRequest request = new TransactionRequest(LocalDate.now(), "Merchant", -1.00, 1L, "Description");
 
     Set<ConstraintViolation<TransactionRequest>> violations = validator.validate(request);
 
