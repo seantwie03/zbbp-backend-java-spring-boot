@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Qualifier
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
-public @interface DollarsToCentsMapper {
+@interface DollarsToCentsMapper {
 }
 
 class DollarsToCentsConverter {
