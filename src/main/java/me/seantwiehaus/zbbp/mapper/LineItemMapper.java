@@ -9,11 +9,12 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(uses = TransactionMapper.class, componentModel = "spring")
+@Mapper(uses = { DollarsToCentsConverter.class, TransactionMapper.class }, componentModel = "spring")
 public interface LineItemMapper {
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "lastModifiedAt", ignore = true)
   @Mapping(target = "transactions", ignore = true)
+  @Mapping(target = "plannedAmount", qualifiedBy = DollarsToCentsMapper.class)
   LineItem mapToDomain(LineItemRequest request);
 
   LineItemEntity mapToEntity(LineItem domain);

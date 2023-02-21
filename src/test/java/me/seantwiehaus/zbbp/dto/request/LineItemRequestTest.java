@@ -28,7 +28,7 @@ class LineItemRequestTest {
 
   @Test
   void budgetDateMustNotBeNull() {
-    LineItemRequest request = new LineItemRequest(null, "Name", 100, Category.FOOD, "Description");
+    LineItemRequest request = new LineItemRequest(null, "Name", 1.00, Category.FOOD, "Description");
 
     Set<ConstraintViolation<LineItemRequest>> violations = validator.validate(request);
 
@@ -38,7 +38,7 @@ class LineItemRequestTest {
 
   @Test
   void nameMustNotBeNull() {
-    LineItemRequest request = new LineItemRequest(YearMonth.now(), null, 100, Category.FOOD, "Description");
+    LineItemRequest request = new LineItemRequest(YearMonth.now(), null, 1.00, Category.FOOD, "Description");
 
     Set<ConstraintViolation<LineItemRequest>> violations = validator.validate(request);
 
@@ -48,7 +48,7 @@ class LineItemRequestTest {
 
   @Test
   void nameMustNotBeEmpty() {
-    LineItemRequest request = new LineItemRequest(YearMonth.now(), " ", 100, Category.FOOD, "Description");
+    LineItemRequest request = new LineItemRequest(YearMonth.now(), " ", 1.00, Category.FOOD, "Description");
 
     Set<ConstraintViolation<LineItemRequest>> violations = validator.validate(request);
 
@@ -58,7 +58,7 @@ class LineItemRequestTest {
 
   @Test
   void plannedAmountMustNotBeNegative() {
-    LineItemRequest request = new LineItemRequest(YearMonth.now(), "Name", -100, Category.FOOD, "Description");
+    LineItemRequest request = new LineItemRequest(YearMonth.now(), "Name", -1.00, Category.FOOD, "Description");
 
     Set<ConstraintViolation<LineItemRequest>> violations = validator.validate(request);
 
@@ -68,7 +68,7 @@ class LineItemRequestTest {
 
   @Test
   void categoryMustNotBeNull() {
-    LineItemRequest request = new LineItemRequest(YearMonth.now(), "Name", 100, null, "Description");
+    LineItemRequest request = new LineItemRequest(YearMonth.now(), "Name", 1.00, null, "Description");
 
     Set<ConstraintViolation<LineItemRequest>> violations = validator.validate(request);
 

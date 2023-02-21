@@ -7,6 +7,7 @@ import me.seantwiehaus.zbbp.domain.LineItem;
 import me.seantwiehaus.zbbp.domain.Transaction;
 import me.seantwiehaus.zbbp.dto.request.LineItemRequest;
 import me.seantwiehaus.zbbp.dto.response.LineItemResponse;
+import me.seantwiehaus.zbbp.exception.BadRequestException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { LineItemMapperImpl.class, TransactionMapperImpl.class })
@@ -35,7 +37,7 @@ class LineItemMapperIT {
     LineItemRequest request = new LineItemRequest(
             YearMonth.now(),
             "Name",
-            120000,
+            1200.00,
             Category.FOOD,
             "description");
     // And an expected domain object
@@ -56,6 +58,20 @@ class LineItemMapperIT {
     assertThat(expectedDomain)
             .usingRecursiveComparison()
             .isEqualTo(returned);
+  }
+
+  @Test
+  void mapRequestToDomainThrowsExceptionWhenAmountIsTooBig() {
+    // Given a request object
+    LineItemRequest request = new LineItemRequest(
+            YearMonth.now(),
+            "Name",
+            21_474_837.00,
+            Category.FOOD,
+            "description");
+    // When the request is mapped to a domain object
+    // Then an exception should be thrown
+    assertThrows(BadRequestException.class, () -> mapper.mapToDomain(request));
   }
 
   @Test
