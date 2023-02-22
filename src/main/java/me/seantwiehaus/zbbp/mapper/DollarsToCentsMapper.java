@@ -1,6 +1,5 @@
 package me.seantwiehaus.zbbp.mapper;
 
-import me.seantwiehaus.zbbp.exception.BadRequestException;
 import org.mapstruct.Qualifier;
 
 import java.lang.annotation.ElementType;
@@ -20,9 +19,6 @@ class DollarsToCentsConverter {
 
   @DollarsToCentsMapper
   public static int convertDollarsToCents(double dollars) {
-    if (dollars > Integer.MAX_VALUE / 100.0) {
-      throw new BadRequestException("Dollars cannot be greater than " + Integer.MAX_VALUE / 100);
-    }
     return Math.toIntExact(Math.round(dollars * 100));
   }
 }

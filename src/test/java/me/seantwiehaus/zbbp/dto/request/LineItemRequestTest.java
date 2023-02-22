@@ -7,6 +7,8 @@ import jakarta.validation.ValidatorFactory;
 import me.seantwiehaus.zbbp.domain.Category;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.time.YearMonth;
 import java.util.Set;
@@ -36,19 +38,10 @@ class LineItemRequestTest {
     assertTrue(violations.stream().allMatch(v -> v.getMessage().equals("must not be null")));
   }
 
-  @Test
-  void nameMustNotBeNull() {
-    LineItemRequest request = new LineItemRequest(YearMonth.now(), null, 1.00, Category.FOOD, "Description");
-
-    Set<ConstraintViolation<LineItemRequest>> violations = validator.validate(request);
-
-    assertEquals(1, violations.size());
-    assertTrue(violations.stream().allMatch(v -> v.getMessage().equals("must not be blank")));
-  }
-
-  @Test
-  void nameMustNotBeEmpty() {
-    LineItemRequest request = new LineItemRequest(YearMonth.now(), " ", 1.00, Category.FOOD, "Description");
+  @ParameterizedTest
+  @NullAndEmptySource
+  void nameMustBeValid(String name) {
+    LineItemRequest request = new LineItemRequest(YearMonth.now(), name, 1.00, Category.FOOD, "Description");
 
     Set<ConstraintViolation<LineItemRequest>> violations = validator.validate(request);
 
@@ -64,6 +57,16 @@ class LineItemRequestTest {
 
     assertEquals(1, violations.size());
     assertTrue(violations.stream().allMatch(v -> v.getMessage().equals("must be greater than or equal to 0")));
+  }
+
+  @Test
+  void plannedAmountMustNotBeGreaterThanMaxIntegerWhenConvertedToCents() {
+    LineItemRequest request = new LineItemRequest(YearMonth.now(), "Name", 21_474_835.01, Category.FOOD, "Description");
+
+    Set<ConstraintViolation<LineItemRequest>> violations = validator.validate(request);
+
+    assertEquals(1, violations.size());
+    assertTrue(violations.stream().allMatch(v -> v.getMessage().equals("must be less than or equal to 21474835")));
   }
 
   @Test
