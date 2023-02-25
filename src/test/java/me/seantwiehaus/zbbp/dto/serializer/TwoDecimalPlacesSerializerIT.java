@@ -15,18 +15,18 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @JsonTest
-class CentsToDollarsSerializerIT {
+class TwoDecimalPlacesSerializerIT {
   @Autowired
-  JacksonTester<RecordResponse> jacksonTester;
+  JacksonTester<AmountResponse> jacksonTester;
 
-  private record RecordResponse(@JsonSerialize(using = CentsToDollarsSerializer.class) Integer amount) {}
+  private record AmountResponse(@JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double amount) {}
 
-  @ParameterizedTest(name = "{index} => {0} cents converts to {1} dollars")
+  @ParameterizedTest(name = "{index} => {0} rounded to two decimal places {1}")
   @MethodSource
-  void serializeCentsToDollars(int cents, double dollars) throws IOException {
-    RecordResponse recordResponse = new RecordResponse(cents);
+  void serializeCentsToDollars(double cents, double dollars) throws IOException {
+    AmountResponse amountResponse = new AmountResponse(cents);
 
-    JsonContent<RecordResponse> json = jacksonTester.write(recordResponse);
+    JsonContent<AmountResponse> json = jacksonTester.write(amountResponse);
 
     assertThat(json)
             .extractingJsonPathNumberValue("$.amount")
@@ -35,10 +35,12 @@ class CentsToDollarsSerializerIT {
 
   private static Stream<Arguments> serializeCentsToDollars() {
     return Stream.of(
-            Arguments.of(0, 0.00),
-            Arguments.of(1, 0.01),
-            Arguments.of(10, 0.10),
-            Arguments.of(100, 1.00)
+            Arguments.of((double) 1, 1.00),
+            Arguments.of(1.0, 1.00),
+            Arguments.of(1.00, 1.00),
+            Arguments.of(1.000, 1.00),
+            Arguments.of(1.006, 1.01),
+            Arguments.of(1.0006, 1.00)
     );
   }
 }

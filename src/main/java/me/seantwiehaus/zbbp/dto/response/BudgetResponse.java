@@ -3,7 +3,7 @@ package me.seantwiehaus.zbbp.dto.response;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.seantwiehaus.zbbp.dto.serializer.CentsToDollarsSerializer;
+import me.seantwiehaus.zbbp.dto.serializer.TwoDecimalPlacesSerializer;
 
 import java.time.YearMonth;
 import java.util.List;
@@ -22,14 +22,14 @@ public class BudgetResponse {
   private final List<LineItemResponse> health;
   private final List<LineItemResponse> lifestyle;
 
-  @JsonSerialize(using = CentsToDollarsSerializer.class)
-  private final int totalPlannedIncome;
-  @JsonSerialize(using = CentsToDollarsSerializer.class)
-  private final int totalPlannedExpense;
-  @JsonSerialize(using = CentsToDollarsSerializer.class)
-  private final int totalLeftToBudget;
-  @JsonSerialize(using = CentsToDollarsSerializer.class)
-  private final int totalSpent;
-  @JsonSerialize(using = CentsToDollarsSerializer.class)
-  private final int totalLeftToSpend;
+  @JsonSerialize(using = TwoDecimalPlacesSerializer.class)
+  private final Double totalPlannedIncome;
+  @JsonSerialize(using = TwoDecimalPlacesSerializer.class)
+  private final Double totalPlannedExpense;
+  @JsonSerialize(using = TwoDecimalPlacesSerializer.class)
+  private final Double totalLeftToBudget;
+  @JsonSerialize(using = TwoDecimalPlacesSerializer.class)
+  private final Double totalSpent;
+  @JsonSerialize(using = TwoDecimalPlacesSerializer.class)
+  private final Double totalLeftToSpend;
 }

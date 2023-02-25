@@ -2,7 +2,7 @@ package me.seantwiehaus.zbbp.dto.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import me.seantwiehaus.zbbp.domain.Category;
-import me.seantwiehaus.zbbp.dto.serializer.CentsToDollarsSerializer;
+import me.seantwiehaus.zbbp.dto.serializer.TwoDecimalPlacesSerializer;
 
 import java.time.Instant;
 import java.time.YearMonth;
@@ -15,15 +15,40 @@ public record LineItemResponse(
         Long id,
         YearMonth budgetDate,
         String name,
-        @JsonSerialize(using = CentsToDollarsSerializer.class) Integer plannedAmount,
+        @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double plannedAmount,
         Category category,
         String description,
         Instant lastModifiedAt,
-        @JsonSerialize(using = CentsToDollarsSerializer.class) Integer totalTransactions,
+        @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalTransactions,
         Double percentageOfPlanned,
-        @JsonSerialize(using = CentsToDollarsSerializer.class) Integer totalRemaining,
+        @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalRemaining,
         List<TransactionResponse> transactions) {
   public LineItemResponse {
     transactions = transactions != null ? List.copyOf(transactions) : List.of();
+  }
+
+  public LineItemResponse(Long id,
+                          YearMonth budgetDate,
+                          String name,
+                          Integer plannedAmount,
+                          Category category,
+                          String description,
+                          Instant lastModifiedAt,
+                          Integer totalTransactions,
+                          Double percentageOfPlanned,
+                          Integer totalRemaining,
+                          List<TransactionResponse> transactions) {
+    this(
+            id,
+            budgetDate,
+            name,
+            CentsToDollarsConverter.convert(plannedAmount),
+            category,
+            description,
+            lastModifiedAt,
+            CentsToDollarsConverter.convert(totalTransactions),
+            percentageOfPlanned,
+            CentsToDollarsConverter.convert(totalRemaining),
+            transactions);
   }
 }
