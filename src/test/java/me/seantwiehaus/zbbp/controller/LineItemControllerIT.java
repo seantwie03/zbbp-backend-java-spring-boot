@@ -57,7 +57,7 @@ public class LineItemControllerIT {
   // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Last-Modified.
   // The DateTimeFormatter.RFC_1123_DATE_TIME does not add the leading zero, so I have to specify the pattern myself.
   // https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#RFC_1123_DATE_TIME
-  private final DateTimeFormatter lastModifiedFormatter =
+  private final DateTimeFormatter httpHeaderDateTimeFormatter =
           DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss O").withZone(ZoneOffset.UTC);
   private final ObjectMapper objectMapper = new ObjectMapper()
           // With the JavaTimeModule registered to handle the budgetDate
@@ -303,7 +303,7 @@ public class LineItemControllerIT {
               // And the response should contain the correct Location header
               .andExpect(header().string("Location", "/line-items/%d".formatted(id)))
               // And the response should contain the correct Last-Modified header
-              .andExpect(header().string("Last-Modified", lastModifiedFormatter.format(lastModifiedAt)));
+              .andExpect(header().string("Last-Modified", httpHeaderDateTimeFormatter.format(lastModifiedAt)));
     }
 
     // The next three tests are redundant. They all cover the deserialization of the response body.
@@ -453,7 +453,7 @@ public class LineItemControllerIT {
               // And the response should contain the correct Location header
               .andExpect(header().string("Location", "/line-items/%d".formatted(id)))
               // And the response should contain the correct Last-Modified header
-              .andExpect(header().string("Last-Modified", lastModifiedFormatter.format(lastModifiedAt)));
+              .andExpect(header().string("Last-Modified", httpHeaderDateTimeFormatter.format(lastModifiedAt)));
     }
 
     // The next three tests are redundant. They all cover the deserialization of the response body.
@@ -565,7 +565,7 @@ public class LineItemControllerIT {
       // When the request is made
       mockMvc.perform(put("/line-items/-1")
                       .contentType(MediaType.APPLICATION_JSON)
-                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
+                      .header("If-Unmodified-Since", httpHeaderDateTimeFormatter.format(lastModifiedAt))
                       .content(validContent))
               // Then the response should be a 400
               .andExpect(status().isBadRequest());
@@ -606,14 +606,14 @@ public class LineItemControllerIT {
       // When the request is made
       mockMvc.perform(put("/line-items/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
-                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
+                      .header("If-Unmodified-Since", httpHeaderDateTimeFormatter.format(lastModifiedAt))
                       .content(validContent))
               // Then the response should be a 200
               .andExpect(status().isOk())
               // And the response should contain the correct Location header
               .andExpect(header().string("Location", "/line-items/%d".formatted(id)))
               // And the response should contain the correct Last-Modified header
-              .andExpect(header().string("Last-Modified", lastModifiedFormatter.format(lastModifiedAt)));
+              .andExpect(header().string("Last-Modified", httpHeaderDateTimeFormatter.format(lastModifiedAt)));
     }
 
     // The next three tests are redundant. They all cover the deserialization of the response body.
@@ -627,7 +627,7 @@ public class LineItemControllerIT {
       // When the request is made
       mockMvc.perform(put("/line-items/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
-                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
+                      .header("If-Unmodified-Since", httpHeaderDateTimeFormatter.format(lastModifiedAt))
                       .content(validContent))
               // Then the response should be a 200
               .andExpect(status().isOk())
@@ -653,7 +653,7 @@ public class LineItemControllerIT {
       // When the request is made
       mockMvc.perform(put("/line-items/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
-                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
+                      .header("If-Unmodified-Since", httpHeaderDateTimeFormatter.format(lastModifiedAt))
                       .content(validContent))
               // Then the response should be a 200
               .andExpect(status().isOk())
@@ -669,7 +669,7 @@ public class LineItemControllerIT {
       // When the request is made
       String jsonBody = mockMvc.perform(put("/line-items/%d".formatted(id))
                       .contentType(MediaType.APPLICATION_JSON)
-                      .header("If-Unmodified-Since", lastModifiedFormatter.format(lastModifiedAt))
+                      .header("If-Unmodified-Since", httpHeaderDateTimeFormatter.format(lastModifiedAt))
                       .content(validContent))
               // Then the response should be a 200
               .andExpect(status().isOk())
