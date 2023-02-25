@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dto.response.ExceptionResponse;
 import me.seantwiehaus.zbbp.exception.BadRequestException;
 import me.seantwiehaus.zbbp.exception.InternalServerException;
-import me.seantwiehaus.zbbp.exception.ResourceConflictException;
+import me.seantwiehaus.zbbp.exception.PreconditionFailedException;
 import me.seantwiehaus.zbbp.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,12 +50,12 @@ public class GlobalExceptionHandler {
             .body(new ExceptionResponse(404, exception.getMessage(), request));
   }
 
-  @ExceptionHandler(ResourceConflictException.class)
-  protected ResponseEntity<ExceptionResponse> handleResourceConflictException(ResourceConflictException exception,
+  @ExceptionHandler(PreconditionFailedException.class)
+  protected ResponseEntity<ExceptionResponse> handleResourceConflictException(PreconditionFailedException exception,
                                                                               HttpServletRequest request) {
     return ResponseEntity
-            .status(HttpStatus.CONFLICT)
-            .body(new ExceptionResponse(409, exception.getMessage(), request));
+            .status(HttpStatus.PRECONDITION_FAILED)
+            .body(new ExceptionResponse(412, exception.getMessage(), request));
   }
 
   @ExceptionHandler(BadRequestException.class)

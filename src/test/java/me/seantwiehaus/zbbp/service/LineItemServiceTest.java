@@ -4,7 +4,7 @@ import me.seantwiehaus.zbbp.dao.entity.LineItemEntity;
 import me.seantwiehaus.zbbp.dao.repository.LineItemRepository;
 import me.seantwiehaus.zbbp.domain.Category;
 import me.seantwiehaus.zbbp.domain.LineItem;
-import me.seantwiehaus.zbbp.exception.ResourceConflictException;
+import me.seantwiehaus.zbbp.exception.PreconditionFailedException;
 import me.seantwiehaus.zbbp.exception.ResourceNotFoundException;
 import me.seantwiehaus.zbbp.mapper.LineItemMapper;
 import org.junit.jupiter.api.Nested;
@@ -202,7 +202,7 @@ class LineItemServiceTest {
 
       // When the method under test is called
       // Then a ResourceConflictException should be thrown
-      assertThrows(ResourceConflictException.class, () -> service.update(id, ifUnmodifiedSince, parameter));
+      assertThrows(PreconditionFailedException.class, () -> service.update(id, ifUnmodifiedSince, parameter));
     }
 
     @Test

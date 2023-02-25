@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dao.entity.LineItemEntity;
 import me.seantwiehaus.zbbp.dao.repository.LineItemRepository;
 import me.seantwiehaus.zbbp.domain.LineItem;
-import me.seantwiehaus.zbbp.exception.ResourceConflictException;
+import me.seantwiehaus.zbbp.exception.PreconditionFailedException;
 import me.seantwiehaus.zbbp.exception.ResourceNotFoundException;
 import me.seantwiehaus.zbbp.mapper.LineItemMapper;
 import org.springframework.stereotype.Service;
@@ -50,7 +50,9 @@ public class LineItemService {
     LineItemEntity entity = repository.findLineItemEntityById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Line Item", id));
     if (entity.modifiedAfter(ifUnmodifiedSince)) {
-      throw new ResourceConflictException(
+      // MDN: If the resource has been modified after the specified date, the response will be a 412 Precondition
+      // Failed error. https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Unmodified-Since
+      throw new PreconditionFailedException(
               "%s with ID %d was modified after the provided If-Unmodified-Since header value of %s"
                       .formatted(entity.getClass().getSimpleName(), entity.getId(), ifUnmodifiedSince));
     }

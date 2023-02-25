@@ -3,7 +3,7 @@ package me.seantwiehaus.zbbp.service;
 import me.seantwiehaus.zbbp.dao.entity.TransactionEntity;
 import me.seantwiehaus.zbbp.dao.repository.TransactionRepository;
 import me.seantwiehaus.zbbp.domain.Transaction;
-import me.seantwiehaus.zbbp.exception.ResourceConflictException;
+import me.seantwiehaus.zbbp.exception.PreconditionFailedException;
 import me.seantwiehaus.zbbp.exception.ResourceNotFoundException;
 import me.seantwiehaus.zbbp.mapper.TransactionMapper;
 import org.junit.jupiter.api.Nested;
@@ -200,7 +200,7 @@ class TransactionServiceTest {
 
       // When the method under test is called
       // Then a ResourceConflictException should be thrown
-      assertThrows(ResourceConflictException.class, () -> service.update(id, ifUnmodifiedSince, parameter));
+      assertThrows(PreconditionFailedException.class, () -> service.update(id, ifUnmodifiedSince, parameter));
     }
 
     @Test
