@@ -55,11 +55,11 @@ public class Budget {
    */
   private final List<LineItem> lifestyle;
 
-  private final int totalPlannedIncome;
-  private final int totalPlannedExpense;
-  private final int totalLeftToBudget;
-  private final int totalSpent;
-  private final int totalLeftToSpend;
+  private final double totalPlannedIncome;
+  private final double totalPlannedExpense;
+  private final double totalLeftToBudget;
+  private final double totalSpent;
+  private final double totalLeftToSpend;
 
   public Budget(YearMonth budgetDate, List<LineItem> lineItems) {
     this.budgetDate = budgetDate;
@@ -165,18 +165,18 @@ public class Budget {
             .sum();
   }
 
-  private int calculateTotalSpent() {
+  private double calculateTotalSpent() {
     return allExpenseItems
             .stream()
-            .mapToInt(LineItem::calculateTotalTransactions)
+            .mapToDouble(LineItem::calculateTotalTransactions)
             .sum();
   }
 
-  private int calculateTotalLeftToBudget() {
+  private double calculateTotalLeftToBudget() {
     return totalPlannedIncome - totalPlannedExpense;
   }
 
-  private int calculateTotalLeftToSpend() {
+  private double calculateTotalLeftToSpend() {
     return totalPlannedExpense - totalSpent;
   }
 }

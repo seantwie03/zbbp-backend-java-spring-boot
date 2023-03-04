@@ -96,11 +96,10 @@ class TransactionControllerIT {
       verify(service, times(1)).getAllBetween(defaultStartingDate, defaultEndingDate);
     }
 
-    @Test
-    void returns400WhenStartingDateIsNotCorrectlyFormatted() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "2023.01.02", "2023.1.2", "23-1-2", "2023/01/02", "2023/1/2", "01-02-23" })
+    void returns400WhenStartingDateIsNotCorrectlyFormatted(String badStartingDate) throws Exception {
       // Given a request with an invalid starting date
-      String badStartingDate = "20230204";
-
       // When the request is made
       mockMvc.perform(get("/transactions?startingDate=%s".formatted(badStartingDate)))
               // Then the response should be a 400
@@ -109,11 +108,10 @@ class TransactionControllerIT {
       verify(service, never()).getAllBetween(any(), any());
     }
 
-    @Test
-    void returns400WhenEndingDateIsNotCorrectlyFormatted() throws Exception {
-      // Given a request with an invalid starting date
-      String badEndingDate = "20230204";
-
+    @ParameterizedTest
+    @ValueSource(strings = { "2023.01.02", "2023.1.2", "23-1-2", "2023/01/02", "2023/1/2", "01-02-23" })
+    void returns400WhenEndingDateIsNotCorrectlyFormatted(String badEndingDate) throws Exception {
+      // Given a request with an invalid ending date
       // When the request is made
       mockMvc.perform(get("/transactions?endingDate=%s".formatted(badEndingDate)))
               // Then the response should be a 400
@@ -122,11 +120,10 @@ class TransactionControllerIT {
       verify(service, never()).getAllBetween(any(), any());
     }
 
-    @Test
-    void callsServiceMethodWithStartingDateFromParameter() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "2023-02-04", "2023-2-4" })
+    void callsServiceMethodWithStartingDateFromParameter(String startingDate) throws Exception {
       // Given a correctly formatted startingDate
-      String startingDate = "2023-02-04";
-
       // When the request is made
       mockMvc.perform(get("/transactions?startingDate=%s".formatted(startingDate)));
 
@@ -134,11 +131,10 @@ class TransactionControllerIT {
       verify(service, times(1)).getAllBetween(LocalDate.of(2023, 2, 4), defaultEndingDate);
     }
 
-    @Test
-    void callsServiceMethodWithEndingDateFromParameter() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "2023-02-04", "2023-2-4" })
+    void callsServiceMethodWithEndingDateFromParameter(String endingDate) throws Exception {
       // Given a correctly formatted endingDate
-      String endingDate = "2023-02-04";
-
       // When the request is made
       mockMvc.perform(get("/transactions?endingDate=%s".formatted(endingDate)));
 

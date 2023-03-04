@@ -31,14 +31,15 @@ public class TransactionController {
   /**
    * @param startingDate The first Date to include in the list of results.
    *                     The default value is the first day of current month.
+   *                     Formats: yyyy-MM-dd 2023-01-09 ; yyyy-M-d 2023-1-9
    * @param endingDate   The last Date to include in the list of results.
    *                     The default value is the current Date.
    * @return All Transactions between the starting and ending Dates (inclusive).
    */
   @GetMapping("/transactions")
   public List<TransactionResponse> getAllTransactionsBetween(
-          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> startingDate,
-          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> endingDate) {
+          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, fallbackPatterns = { "yyyy-M-d" }) Optional<LocalDate> startingDate,
+          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, fallbackPatterns = { "yyyy-M-d" }) Optional<LocalDate> endingDate) {
     return service.getAllBetween(
                     startingDate.orElse(LocalDate.now().withDayOfMonth(1)),
                     endingDate.orElse(LocalDate.now()))

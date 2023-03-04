@@ -14,6 +14,9 @@ public record TransactionResponse(
         Long lineItemId,
         String description,
         Instant lastModifiedAt) {
+  /**
+   * Additional Constructor to convert amount from cents to dollars
+   */
   public TransactionResponse(Long id,
                              LocalDate date,
                              String merchant,

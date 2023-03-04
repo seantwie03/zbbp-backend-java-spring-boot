@@ -15,15 +15,9 @@
   <description>Zero-Based Budget Planner</description>
   <properties>
     <java.version>17</java.version>
-    <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
     <org.projectlombok.version>1.18.24</org.projectlombok.version>
   </properties>
   <dependencies>
-    <dependency>
-      <groupId>org.mapstruct</groupId>
-      <artifactId>mapstruct</artifactId>
-      <version>${org.mapstruct.version}</version>
-    </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>postgresql</artifactId>
@@ -92,11 +86,6 @@
               <artifactId>lombok</artifactId>
               <version>${org.projectlombok.version}</version>
             </path>
-            <path>
-              <groupId>org.mapstruct</groupId>
-              <artifactId>mapstruct-processor</artifactId>
-              <version>${org.mapstruct.version}</version>
-            </path>
           </annotationProcessorPaths>
         </configuration>
       </plugin>
@@ -132,5 +121,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

@@ -27,6 +27,9 @@ public record LineItemResponse(
     transactions = transactions != null ? List.copyOf(transactions) : List.of();
   }
 
+  /**
+   * Additional constructor to convert monetary amounts from cents to dollars
+   */
   public LineItemResponse(Long id,
                           YearMonth budgetDate,
                           String name,

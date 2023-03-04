@@ -1,6 +1,7 @@
 package me.seantwiehaus.zbbp.domain;
 
 import lombok.Builder;
+import me.seantwiehaus.zbbp.dto.response.DollarsToCentsConverter;
 
 import java.time.Instant;
 import java.time.YearMonth;
@@ -25,6 +26,17 @@ public record LineItem(
 
   public static LineItemBuilder builder(YearMonth budgetDate, String name, int plannedAmount, Category category) {
     return new LineItemBuilder().budgetDate(budgetDate).name(name).plannedAmount(plannedAmount).category(category);
+  }
+
+  /**
+   * Additional builder to convert plannedAmount from dollars to cents
+   */
+  public static LineItemBuilder builder(YearMonth budgetDate, String name, double plannedAmount, Category category) {
+    return new LineItemBuilder()
+            .budgetDate(budgetDate)
+            .name(name)
+            .plannedAmount(DollarsToCentsConverter.convert(plannedAmount))
+            .category(category);
   }
 
   public int calculateTotalTransactions() {
