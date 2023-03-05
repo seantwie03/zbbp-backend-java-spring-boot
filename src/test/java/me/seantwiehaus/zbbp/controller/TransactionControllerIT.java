@@ -352,29 +352,6 @@ class TransactionControllerIT {
             }
             """;
 
-    // Testing the DateTimeFormat and JsonFormat here. These annotation deal with deserialization, not validation. So
-    // it is appropriate to test them here.
-    @ParameterizedTest
-    @NullAndEmptySource
-    @ValueSource(strings = { "01-02-2023", "1, 2, 2023", "01/02/2023", "2023/01/02", "2023-1-2" })
-    void returnsBadRequestWhenInvalidDateString(String date) throws Exception {
-      String requestContent = """
-                 {
-                 "date": "%s",
-                 "merchant": "Merchant",
-                 "amount": 2500,
-                 "description": "Description"
-               }
-              """.formatted(date);
-
-      // When the request is made
-      mockMvc.perform(post("/transactions")
-                      .contentType(MediaType.APPLICATION_JSON)
-                      .content(requestContent))
-              // Then the response should be a 400
-              .andExpect(status().isBadRequest());
-    }
-
     // One test to ensure the request object is validated.
     // The validation tests are in another file. If I were to check each validation annotation at this level, I would
     // have to duplicate the checks for each endpoint that accepts a Request object.
@@ -397,6 +374,53 @@ class TransactionControllerIT {
                       .content(invalidContent))
               // Then the response should be a 400
               .andExpect(status().isBadRequest());
+    }
+
+    // Testing the JsonFormat here. This annotation deals with deserialization, not validation. So it is appropriate
+    // to test it here.
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = { "01-02-2023", "1, 2, 2023", "01/02/2023", "2023/01/02" })
+    void returnsBadRequestWhenInvalidDateString(String invalidDateString) throws Exception {
+      // Given request content with an invalid date string
+      String requestContent = """
+                 {
+                 "date": "%s",
+                 "merchant": "Merchant",
+                 "amount": 2500,
+                 "description": "Description"
+               }
+              """.formatted(invalidDateString);
+
+      // When the request is made
+      mockMvc.perform(post("/transactions")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(requestContent))
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "2023-01-02", "2023-1-2" })
+    void returnsCreatedWhenValidDateString(String validDateString) throws Exception {
+      // Given valid dates in request content
+      String requestContent = """
+                 {
+                 "date": "%s",
+                 "merchant": "Merchant",
+                 "amount": 2500,
+                 "description": "Description"
+               }
+              """.formatted(validDateString);
+      // And a response dto returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      mockMvc.perform(post("/transactions")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(requestContent))
+              // Then the response should be a 201
+              .andExpect(status().isCreated());
     }
 
     @Test
