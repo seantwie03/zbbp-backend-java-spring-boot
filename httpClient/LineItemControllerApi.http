@@ -1,0 +1,60 @@
+## LineItemControllerApi
+
+###
+# @name getAllLineItemsBetween
+< {%
+  const now = new Date();
+  request.variables.set("startingDate", `"${now.getFullYear()}-${now.getMonth() + 1}"`)
+  request.variables.set("endingDate", `"${now.getFullYear()}-${now.getMonth() + 1}"`)
+%}
+GET http://{{host}}/line-items?startingDate={{startingDate}}&endingDate={{endingDate}}
+
+###
+# @name getLineItemById
+< {%
+  request.variables.set("id", "110")
+%}
+GET http://{{host}}/line-items/{{id}}
+
+###
+# @name createLineItem
+< {%
+  const now = new Date();
+  request.variables.set("budgetDate", `"${now.getFullYear()}-${now.getMonth() + 1}"`);
+%}
+POST http://{{host}}/line-items
+Content-Type: application/json
+
+{
+  "budgetDate": "2023-03",
+  "name": "Interest Payments",
+  "plannedAmount": 0.13,
+  "category": "INCOME"
+}
+
+###
+# @name updateLineItem
+< {%
+  request.variables.set("id", "110")
+  const now = new Date();
+  request.variables.set("budgetDate", `"${now.getFullYear()}-${now.getMonth() + 1}"`);
+  request.variables.set("lastModifiedAt", new Date().toISOString());
+%}
+PUT http://{{host}}/line-items/{{id}}
+Content-Type: application/json
+If-Unmodified-Since: {{lastModifiedAt}}
+
+{
+  "budgetDate": {{budgetDate}},
+  "name": "Spouse 1 Income-1",
+  "plannedAmount": 3000.01,
+  "category": "INCOME",
+  "description": "Paid on the 1st and 15th of every month-1"
+}
+
+###
+# @name deleteLineItem
+< {%
+  request.variables.set("id", "110")
+%}
+DELETE http://{{host}}/line-items/{{id}}
