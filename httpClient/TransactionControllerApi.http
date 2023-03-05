@@ -1,0 +1,59 @@
+## TransactionControllerApi
+
+###
+# @name getAllTransactionsBetween
+< {%
+  const now = new Date();
+  request.variables.set("transactionStartingDate", now.getFullYear() + "-" + (now.getMonth() + 1) + "-1")
+  request.variables.set("transactionEndingDate", now.getFullYear() + "-" + (now.getMonth() + 1) + "-3")
+%}
+GET http://{{host}}/transactions?startingDate={{transactionStartingDate}}&endingDate={{transactionEndingDate}}
+
+### 
+# @name getTransactionById
+< {%
+  request.variables.set("id", "2100")
+%}
+GET http://{{host}}/transactions/{{id}}
+
+###
+# @name createTransaction
+< {%
+  const now = new Date();
+  request.variables.set("date", `"${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}"`);
+%}
+POST http://{{host}}/transactions
+Content-Type: application/json
+
+{
+  "date": {{date}},
+  "merchant": "Scarbucks",
+  "amount": 15.00
+}
+
+###
+# @name updateTransaction
+< {%
+  request.variables.set("id", "2100")
+  const now = new Date();
+  request.variables.set("date", `"${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}"`);
+  request.variables.set("lastModifiedAt", new Date().toISOString());
+%}
+PUT http://{{host}}/transactions/{{id}}
+Content-Type: application/json
+If-Unmodified-Since: {{lastModifiedAt}}
+
+{
+  "date": {{date}},
+    "merchant": "Scarbucks1",
+    "amount": 1500.01,
+    "lineItemId": 111,
+    "description": "Spouse 1 Paycheck 1-1"
+}
+
+###
+# @name deleteTransaction
+< {%
+  request.variables.set("id", "2100")
+%}
+DELETE http://{{host}}/transactions/{{id}}
