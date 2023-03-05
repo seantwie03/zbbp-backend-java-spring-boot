@@ -8,6 +8,7 @@ import me.seantwiehaus.zbbp.dto.request.LineItemRequest;
 import me.seantwiehaus.zbbp.dto.response.LineItemResponse;
 import me.seantwiehaus.zbbp.mapper.LineItemMapper;
 import me.seantwiehaus.zbbp.service.LineItemService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -36,8 +37,8 @@ public class LineItemController {
    */
   @GetMapping("/line-items")
   public List<LineItemResponse> getAllLineItemsBetween(
-          @RequestParam Optional<YearMonth> startingBudgetDate,
-          @RequestParam Optional<YearMonth> endingBudgetDate) {
+          @RequestParam @DateTimeFormat(pattern = "yyyy-M") Optional<YearMonth> startingBudgetDate,
+          @RequestParam @DateTimeFormat(pattern = "yyyy-M") Optional<YearMonth> endingBudgetDate) {
     return service.getAllBetween(
                     startingBudgetDate.orElse(YearMonth.now()),
                     endingBudgetDate.orElse(YearMonth.now()))

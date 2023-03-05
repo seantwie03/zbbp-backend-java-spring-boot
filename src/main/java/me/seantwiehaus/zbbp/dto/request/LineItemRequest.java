@@ -1,5 +1,6 @@
 package me.seantwiehaus.zbbp.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -9,7 +10,8 @@ import me.seantwiehaus.zbbp.domain.Category;
 import java.time.YearMonth;
 
 public record LineItemRequest(
-        @NotNull YearMonth budgetDate,
+        // This pattern works for both "2023-3" and "2023-03"
+        @NotNull @JsonFormat(pattern = "yyyy-M") YearMonth budgetDate,
         @NotBlank String name,
         // The desired behavior when the API request contains a null amount is for an exception to be thrown.
         // That behavior only occurs when using Double. If using double, the null value will deserialize to 0.0.

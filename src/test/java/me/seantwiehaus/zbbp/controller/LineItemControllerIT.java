@@ -105,11 +105,10 @@ public class LineItemControllerIT {
       verify(service, times(1)).getAllBetween(defaultStartingDate, defaultEndingDate);
     }
 
-    @Test
-    void returns400WhenStartingDateIsNotCorrectlyFormatted() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "2023-09-01", "2023.01", "2023.1", "23-1", "2023/01", "2023/1", "01-23" })
+    void returns400WhenStartingDateIsNotCorrectlyFormatted(String badStartingDate) throws Exception {
       // Given a request with an invalid starting date
-      String badStartingDate = "202109";
-
       // When the request is made
       mockMvc.perform(get("/line-items?startingBudgetDate=%s".formatted(badStartingDate)))
               // Then the response should be a 400
@@ -118,24 +117,22 @@ public class LineItemControllerIT {
       verify(service, never()).getAllBetween(any(), any());
     }
 
-    @Test
-    void returns400WhenEndingDateIsNotCorrectlyFormatted() throws Exception {
-      // Given a request with an invalid starting date
-      String badEndingDate = "202109";
-
+    @ParameterizedTest
+    @ValueSource(strings = { "2023-09-01", "2023.01", "2023.1", "23-1", "2023/01", "2023/1", "01-23" })
+    void returns400WhenEndingDateIsNotCorrectlyFormatted(String badEndingDate) throws Exception {
+      // Given a request with an invalid ending date
       // When the request is made
-      mockMvc.perform(get("/line-items?endingBudgetDate=%s".formatted(badEndingDate)))
+      mockMvc.perform(get("/line-items?startingBudgetDate=%s".formatted(badEndingDate)))
               // Then the response should be a 400
               .andExpect(status().isBadRequest());
       // And the service should not be called
       verify(service, never()).getAllBetween(any(), any());
     }
 
-    @Test
-    void callsServiceMethodWithStartingDateFromParameter() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "2021-09", "2021-9" })
+    void callsServiceMethodWithStartingDateFromParameter(String startingDate) throws Exception {
       // Given a correctly formatted startingDate
-      String startingDate = "2021-09";
-
       // When the request is made
       mockMvc.perform(get("/line-items").param("startingBudgetDate", startingDate));
 
@@ -143,11 +140,10 @@ public class LineItemControllerIT {
       verify(service, times(1)).getAllBetween(YearMonth.of(2021, 9), defaultEndingDate);
     }
 
-    @Test
-    void callsServiceMethodWithEndingDateFromParameter() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "2021-09", "2021-9" })
+    void callsServiceMethodWithEndingDateFromParameter(String endingDate) throws Exception {
       // Given a correctly formatted endingDate
-      String endingDate = "2021-09";
-
       // When the request is made
       mockMvc.perform(get("/line-items").param("endingBudgetDate", endingDate));
 
@@ -390,30 +386,6 @@ public class LineItemControllerIT {
             }
             """;
 
-    // Testing the DateTimeFormat here. These annotation deal with deserialization, not validation. So
-    // it is appropriate to test them here.
-    @ParameterizedTest
-    @NullAndEmptySource
-    @ValueSource(strings = { "01-2023", "1, 2023", "01/2023", "2023/01", "2023-1" })
-    void returnsBadRequestWhenInvalidDateString(String date) throws Exception {
-      String requestContent = """
-              {
-                "budgetDate": "%s",
-                "name": "Name",
-                "plannedAmount": 2500.00,
-                "category": "FOOD",
-                "description": "description"
-              }
-              """.formatted(date);
-
-      // When the request is made
-      mockMvc.perform(post("/line-items")
-                      .contentType(MediaType.APPLICATION_JSON)
-                      .content(requestContent))
-              // Then the response should be a 400
-              .andExpect(status().isBadRequest());
-    }
-
     // One test to ensure the request object is validated.
     // The validation tests are in another file. If I were to check each validation annotation at this level, I would
     // have to duplicate the checks for each endpoint that accepts a Request object.
@@ -437,6 +409,55 @@ public class LineItemControllerIT {
                       .content(invalidContent))
               // Then the response should be a 400
               .andExpect(status().isBadRequest());
+    }
+
+    // Testing the JsonFormat here. This annotation deals with deserialization, not validation. So it is appropriate
+    // to test it here.
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = { "2023-01-02", "01-2023", "1, 2023", "01/2023", "2023/01" })
+    void returnsBadRequestWhenInvalidDateString(String invalidDateString) throws Exception {
+      // Given request content with an invalid budgetDate string
+      String requestContent = """
+              {
+                "budgetDate": "%s",
+                "name": "Name",
+                "plannedAmount": 2500.00,
+                "category": "FOOD",
+                "description": "description"
+              }
+              """.formatted(invalidDateString);
+
+      // When the request is made
+      mockMvc.perform(post("/line-items")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(requestContent))
+              // Then the response should be a 400
+              .andExpect(status().isBadRequest());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "2023-01", "2023-1" })
+    void returnsCreatedWhenValidDateString(String date) throws Exception {
+      // Given valid budgetDate in the request content
+      String requestContent = """
+              {
+                "budgetDate": "%s",
+                "name": "Name",
+                "plannedAmount": 2500.00,
+                "category": "FOOD",
+                "description": "description"
+              }
+              """.formatted(date);
+      // And a response dto returned from the mapper (declared at class-level)
+      when(mapper.mapToResponse(any())).thenReturn(responseDto);
+
+      // When the request is made
+      mockMvc.perform(post("/line-items")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(requestContent))
+              // Then the response should be a 201
+              .andExpect(status().isCreated());
     }
 
     @Test

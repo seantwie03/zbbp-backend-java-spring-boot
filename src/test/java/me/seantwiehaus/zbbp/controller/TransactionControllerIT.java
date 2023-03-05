@@ -97,7 +97,7 @@ class TransactionControllerIT {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "2023.01.02", "2023.1.2", "23-1-2", "2023/01/02", "2023/1/2", "01-02-23" })
+    @ValueSource(strings = { "2023.01.02", "2023.1.2", "23-1-2", "2023/01/02", "2023/1/2", "01-02-23", "2023-01" })
     void returns400WhenStartingDateIsNotCorrectlyFormatted(String badStartingDate) throws Exception {
       // Given a request with an invalid starting date
       // When the request is made
@@ -109,7 +109,7 @@ class TransactionControllerIT {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "2023.01.02", "2023.1.2", "23-1-2", "2023/01/02", "2023/1/2", "01-02-23" })
+    @ValueSource(strings = { "2023.01.02", "2023.1.2", "23-1-2", "2023/01/02", "2023/1/2", "01-02-23", "2023-01" })
     void returns400WhenEndingDateIsNotCorrectlyFormatted(String badEndingDate) throws Exception {
       // Given a request with an invalid ending date
       // When the request is made
@@ -380,7 +380,7 @@ class TransactionControllerIT {
     // to test it here.
     @ParameterizedTest
     @NullAndEmptySource
-    @ValueSource(strings = { "01-02-2023", "1, 2, 2023", "01/02/2023", "2023/01/02" })
+    @ValueSource(strings = { "01-02-2023", "1, 2, 2023", "01/02/2023", "2023/01/02", "2023-01" })
     void returnsBadRequestWhenInvalidDateString(String invalidDateString) throws Exception {
       // Given request content with an invalid date string
       String requestContent = """
