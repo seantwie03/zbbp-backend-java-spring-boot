@@ -51,7 +51,7 @@ class LineItemServiceTest {
     void callMapperWithCorrectEntity() {
       // Given one entity returned from the repository
       LineItemEntity entityFromRepo = createEntity().budgetDate(startDate).build();
-      when(repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAsc(startDate, endDate))
+      when(repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAscPlannedAmountDesc(startDate, endDate))
               .thenReturn(List.of(entityFromRepo));
 
       // When the method under test is called
@@ -73,7 +73,7 @@ class LineItemServiceTest {
       LineItemEntity entity1 = createEntity().id(1L).budgetDate(startDate).build();
       LineItemEntity entity2 = createEntity().id(2L).budgetDate(endDate).build();
       List<LineItemEntity> orderedByDate = List.of(entity1, entity2);
-      when(repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAsc(startDate, endDate))
+      when(repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAscPlannedAmountDesc(startDate, endDate))
               .thenReturn(orderedByDate);
 
       // When the method under test is called

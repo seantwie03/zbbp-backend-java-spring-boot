@@ -27,7 +27,7 @@ public class LineItemService {
    * @return All Line Items between the starting and ending budgetDates (inclusive).
    */
   public List<LineItem> getAllBetween(YearMonth startBudgetDate, YearMonth endBudgetDate) {
-    return repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAsc(startBudgetDate, endBudgetDate)
+    return repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAscPlannedAmountDesc(startBudgetDate, endBudgetDate)
             .stream()
             .map(mapper::mapToDomain)
             .toList();

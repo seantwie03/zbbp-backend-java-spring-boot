@@ -36,8 +36,7 @@ class LineItemRepositoryIT {
   private final YearMonth endDate = YearMonth.of(2021, 2);
 
   @Nested
-  class FindAllByBudgetDateBetweenOrderByBudgetDateDesc {
-
+  class FindAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAscPlannedAmountDesc {
     @Test
     void returnEntitiesBetweenTwoDatesInclusive() {
       // Given two entities inside the inclusive date range
@@ -51,7 +50,7 @@ class LineItemRepositoryIT {
 
       // When the method under test is called
       List<LineItemEntity> returned =
-              repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAsc(startDate, endDate);
+              repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAscPlannedAmountDesc(startDate, endDate);
 
       // Then two entities should be returned
       assertEquals(2, returned.size());
@@ -66,11 +65,17 @@ class LineItemRepositoryIT {
     @Test
     void returnEntitiesInCorrectOrder() {
       // Given two entities with different dates
-      LineItemEntity highestDateFirstHighestCategoryFirst = createLineItemEntity()
+      LineItemEntity highestDateFirstHighestCategoryHighestPlannedAmountFirst = createLineItemEntity()
               .budgetDate(endDate)
               .category(Category.FOOD)
+              .plannedAmount(12000)
               .build();
-      LineItemEntity highestDateLowestCategorySecond = createLineItemEntity()
+      LineItemEntity highestDateFirstHighestCategoryLowestPlannedAmountSecond = createLineItemEntity()
+              .budgetDate(endDate)
+              .category(Category.FOOD)
+              .plannedAmount(11000)
+              .build();
+      LineItemEntity highestDateLowestCategoryThird = createLineItemEntity()
               .budgetDate(endDate)
               .category(Category.HEALTH)
               .build();
@@ -80,18 +85,20 @@ class LineItemRepositoryIT {
               .build();
       // That are persisted out of order
       persistAndFlushList(List.of(
+              highestDateFirstHighestCategoryLowestPlannedAmountSecond,
               lowestDateLast,
-              highestDateLowestCategorySecond,
-              highestDateFirstHighestCategoryFirst));
+              highestDateLowestCategoryThird,
+              highestDateFirstHighestCategoryHighestPlannedAmountFirst));
 
       // When the method under test is called
       List<LineItemEntity> returned =
-              repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAsc(startDate, endDate);
+              repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAscPlannedAmountDesc(startDate, endDate);
 
       // Then the LineItems should be returned in the correct order
-      assertEquals(highestDateFirstHighestCategoryFirst, returned.get(0));
-      assertEquals(highestDateLowestCategorySecond, returned.get(1));
-      assertEquals(lowestDateLast, returned.get(2));
+      assertEquals(highestDateFirstHighestCategoryHighestPlannedAmountFirst, returned.get(0));
+      assertEquals(highestDateFirstHighestCategoryLowestPlannedAmountSecond, returned.get(1));
+      assertEquals(highestDateLowestCategoryThird, returned.get(2));
+      assertEquals(lowestDateLast, returned.get(3));
     }
   }
 
