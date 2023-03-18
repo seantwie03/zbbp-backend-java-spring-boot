@@ -7,6 +7,7 @@ public enum Category {
   HOUSING("HOUSING"),
   TRANSPORTATION("TRANSPORTATION"),
   FOOD("FOOD"),
+  // TODO: Add Utilities?
   PERSONAL("PERSONAL"),
   HEALTH("HEALTH"),
   LIFESTYLE("LIFESTYLE");

@@ -1,0 +1,9 @@
+## BudgetControllerApi
+
+###
+# @name getBudgetFor
+GET http://localhost:8080/budgets
+
+###
+# @name createBudgetFor
+POST http://localhost:8080/budgets/{{budgetDate}}
