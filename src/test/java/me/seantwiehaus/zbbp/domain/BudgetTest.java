@@ -11,57 +11,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BudgetTest {
-
-  private static List<LineItem> incomeLineItems;
-  private static List<LineItem> savingsLineItems;
-  private static List<LineItem> investmentsLineItems;
-  private static List<LineItem> housingLineItems;
-  private static List<LineItem> utilitiesLineItems;
-  private static List<LineItem> transportationLineItems;
-  private static List<LineItem> foodLineItems;
-  private static List<LineItem> personalLineItems;
-  private static List<LineItem> healthLineItems;
-  private static List<LineItem> lifestyleLineItems;
-
-//  @BeforeAll
-//  static void setup() {
-//    List<Transaction> transactions = List.of(
-//            new Transaction(
-//                    1L,
-//                    LocalDate.now(),
-//                    "Merchant 1",
-//                    10_50,
-//                    null,
-//                    "Transaction 1",
-//                    null),
-//            new Transaction(
-//                    1L,
-//                    LocalDate.now(),
-//                    "Merchant 2",
-//                    11_00,
-//                    null,
-//                    "Transaction 2",
-//                    null),
-//            new Transaction(
-//                    1L,
-//                    LocalDate.now(),
-//                    "Merchant 3",
-//                    4_00,
-//                    null,
-//                    "Transaction 3",
-//                    null)
-//    );
-//    lineItem = new LineItem(
-//            1L,
-//            YearMonth.now(),
-//            "Groceries",
-//            50_00,
-//            Category.FOOD,
-//            "Description",
-//            null,
-//            transactions);
-//  }
-
   @Test
   void sortsLineItemsCorrectlyByCategory() {
     // Given a List of LineItems with one from every Category
