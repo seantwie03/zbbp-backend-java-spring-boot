@@ -11,13 +11,11 @@ import java.util.List;
 @Getter
 public class Budget {
   @Getter(AccessLevel.NONE)
-  private final List<LineItem> uncategorized;
-  @Getter(AccessLevel.NONE)
   private final List<LineItem> allIncomeItems;
   @Getter(AccessLevel.NONE)
   private final List<LineItem> allExpenseItems;
 
-  private final YearMonth budgetDate;
+  private final YearMonth yearMonth;
   /**
    * Immutable List
    */
@@ -34,6 +32,10 @@ public class Budget {
    * Immutable List
    */
   private final List<LineItem> housing;
+  /**
+   * Immutable List
+   */
+  private final List<LineItem> utilities;
   /**
    * Immutable List
    */
@@ -54,20 +56,21 @@ public class Budget {
    * Immutable List
    */
   private final List<LineItem> lifestyle;
+  /**
+   * Immutable List
+   */
+  private final List<LineItem> debts;
 
-  private final double totalPlannedIncome;
-  private final double totalPlannedExpense;
-  private final double totalLeftToBudget;
-  private final double totalSpent;
-  private final double totalLeftToSpend;
+  private final int totalPlannedIncome;
+  private final int totalPlannedExpense;
+  private final int totalLeftToBudget;
+  private final int totalSpent;
+  private final int totalLeftToSpend;
 
-  public Budget(YearMonth budgetDate, List<LineItem> lineItems) {
-    this.budgetDate = budgetDate;
-    this.uncategorized = lineItems;
+  public Budget(YearMonth yearMonth, List<LineItem> lineItems) {
+    this.yearMonth = yearMonth;
 
-    if (notAllLineItemsHaveCorrectBudgetMonth()) {
-      throw new InternalServerException("Unable to instantiate a Budget with lineItems from different months");
-    }
+    throwIfNotAllLineItemsHaveCorrectYearMonth(lineItems, yearMonth);
 
     // Mutable local variables
     List<LineItem> allIncomes = new ArrayList<>();
@@ -76,11 +79,13 @@ public class Budget {
     List<LineItem> savingItems = new ArrayList<>();
     List<LineItem> investmentItems = new ArrayList<>();
     List<LineItem> housingItems = new ArrayList<>();
+    List<LineItem> utilityItems = new ArrayList<>();
     List<LineItem> transportationItems = new ArrayList<>();
     List<LineItem> foodItems = new ArrayList<>();
     List<LineItem> personalItems = new ArrayList<>();
     List<LineItem> healthItems = new ArrayList<>();
     List<LineItem> lifestyleItems = new ArrayList<>();
+    List<LineItem> debtItems = new ArrayList<>();
 
     lineItems.forEach(lineItem -> {
       switch (lineItem.category()) {
@@ -99,6 +104,10 @@ public class Budget {
         case HOUSING -> {
           allExpenses.add(lineItem);
           housingItems.add(lineItem);
+        }
+        case UTILITIES -> {
+          allExpenses.add(lineItem);
+          utilityItems.add(lineItem);
         }
         case TRANSPORTATION -> {
           allExpenses.add(lineItem);
@@ -120,6 +129,10 @@ public class Budget {
           allExpenses.add(lineItem);
           lifestyleItems.add(lineItem);
         }
+        case DEBT -> {
+          allExpenses.add(lineItem);
+          debtItems.add(lineItem);
+        }
         default ->
                 throw new InternalServerException("LineItem with ID: " + lineItem.id() + " has an invalid Category.");
       }
@@ -132,11 +145,13 @@ public class Budget {
     this.savings = List.copyOf(savingItems);
     this.investments = List.copyOf(investmentItems);
     this.housing = List.copyOf(housingItems);
+    this.utilities = List.copyOf(utilityItems);
     this.transportation = List.copyOf(transportationItems);
     this.food = List.copyOf(foodItems);
     this.personal = List.copyOf(personalItems);
     this.health = List.copyOf(healthItems);
     this.lifestyle = List.copyOf(lifestyleItems);
+    this.debts = List.copyOf(debtItems);
 
     this.totalPlannedIncome = calculateTotalPlannedIncome();
     this.totalPlannedExpense = calculateTotalPlannedExpense();
@@ -145,10 +160,10 @@ public class Budget {
     this.totalLeftToSpend = calculateTotalLeftToSpend();
   }
 
-  private boolean notAllLineItemsHaveCorrectBudgetMonth() {
-    return uncategorized
-            .stream()
-            .anyMatch(lineItem -> !lineItem.budgetDate().equals(budgetDate));
+  private void throwIfNotAllLineItemsHaveCorrectYearMonth(List<LineItem> lineItems, YearMonth yearMonth) {
+    if (lineItems.stream().anyMatch(lineItem -> !lineItem.budgetDate().equals(yearMonth))) {
+      throw new InternalServerException("Unable to instantiate a Budget with lineItems from different months");
+    }
   }
 
   private int calculateTotalPlannedIncome() {
@@ -165,18 +180,18 @@ public class Budget {
             .sum();
   }
 
-  private double calculateTotalSpent() {
+  private int calculateTotalSpent() {
     return allExpenseItems
             .stream()
-            .mapToDouble(LineItem::calculateTotalTransactions)
+            .mapToInt(LineItem::calculateTotalTransactions)
             .sum();
   }
 
-  private double calculateTotalLeftToBudget() {
+  private int calculateTotalLeftToBudget() {
     return totalPlannedIncome - totalPlannedExpense;
   }
 
-  private double calculateTotalLeftToSpend() {
+  private int calculateTotalLeftToSpend() {
     return totalPlannedExpense - totalSpent;
   }
 }
