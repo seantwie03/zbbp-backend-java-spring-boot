@@ -10,7 +10,8 @@ public enum Category {
   TRANSPORTATION("TRANSPORTATION"),
   PERSONAL("PERSONAL"),
   HEALTH("HEALTH"),
-  LIFESTYLE("LIFESTYLE");
+  LIFESTYLE("LIFESTYLE"),
+  DEBT("DEBT");
 
   private final String name;
 
