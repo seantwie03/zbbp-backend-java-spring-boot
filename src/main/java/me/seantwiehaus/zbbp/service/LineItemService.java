@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.seantwiehaus.zbbp.dao.entity.LineItemEntity;
 import me.seantwiehaus.zbbp.dao.repository.LineItemRepository;
 import me.seantwiehaus.zbbp.domain.LineItem;
+import me.seantwiehaus.zbbp.exception.BadRequestException;
 import me.seantwiehaus.zbbp.exception.PreconditionFailedException;
 import me.seantwiehaus.zbbp.exception.ResourceNotFoundException;
 import me.seantwiehaus.zbbp.mapper.LineItemMapper;
@@ -12,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.YearMonth;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -22,12 +25,21 @@ public class LineItemService {
   private final LineItemMapper mapper;
 
   /**
-   * @param startBudgetDate The first budgetDate to include in the list of results.
-   * @param endBudgetDate   The last budgetDate to include in the list of results.
+   * @param startYearMonth The first budgetDate to include in the list of results.
+   * @param endYearMonth   The last budgetDate to include in the list of results.
    * @return All Line Items between the starting and ending budgetDates (inclusive).
    */
-  public List<LineItem> getAllBetween(YearMonth startBudgetDate, YearMonth endBudgetDate) {
-    return repository.findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAscPlannedAmountDesc(startBudgetDate, endBudgetDate)
+  public List<LineItem> getAllBetween(YearMonth startYearMonth, YearMonth endYearMonth) {
+    return repository
+            .findAllByBudgetDateBetweenOrderByBudgetDateDescCategoryAscPlannedAmountDesc(startYearMonth, endYearMonth)
+            .stream()
+            .map(mapper::mapToDomain)
+            .toList();
+  }
+
+  public List<LineItem> getAllByYearMonth(YearMonth yearMonth) {
+    return repository
+            .findAllByBudgetDateOrderByCategoryAscPlannedAmountDesc(yearMonth)
             .stream()
             .map(mapper::mapToDomain)
             .toList();
@@ -71,5 +83,52 @@ public class LineItemService {
             .orElseThrow(() -> new ResourceNotFoundException("Line Item", id));
     log.info("Deleting Line Item with ID=%d -> %s".formatted(id, entity));
     repository.delete(entity);
+  }
+
+  // TODO: Test
+  // TODO: BudgetDate or BudgetYearMonth or monthlyBudgetDate? BudgetYearMonth
+  public List<LineItem> copyMostRecentLineItemsTo(YearMonth yearMonth) {
+    throwIfLineItemsAlreadyExistFor(yearMonth);
+    Optional<YearMonth> mostRecentYearMonth = findYearMonthOfMostRecentLineItem();
+    if (mostRecentYearMonth.isEmpty()) {
+      log.info("No previous Line Items found. Nothing to copy.");
+      return Collections.emptyList();
+    }
+    List<LineItemEntity> previousEntities =
+            repository.findAllByBudgetDateOrderByCategoryAscPlannedAmountDesc(mostRecentYearMonth.get());
+    return copyLineItemsTo(yearMonth, previousEntities)
+            .stream()
+            .map(mapper::mapToDomain)
+            .toList();
+  }
+
+  private void throwIfLineItemsAlreadyExistFor(YearMonth yearMonth) {
+    List<LineItemEntity> existingEntities =
+            repository.findAllByBudgetDateOrderByCategoryAscPlannedAmountDesc(yearMonth);
+    if (!existingEntities.isEmpty()) {
+      throw new BadRequestException("Line Items for: %s already exists.".formatted(yearMonth));
+    }
+  }
+
+  private Optional<YearMonth> findYearMonthOfMostRecentLineItem() {
+    Optional<LineItemEntity> topLineItemOptional = repository.findTopByOrderByBudgetDateDesc();
+    return topLineItemOptional.map(LineItemEntity::getBudgetDate);
+  }
+
+  private List<LineItemEntity> copyLineItemsTo(YearMonth budgetDate,
+                                               List<LineItemEntity> previousLineItems) {
+    List<LineItemEntity> copiedLineItems = previousLineItems
+            .stream()
+            .map(previous -> {
+              LineItemEntity newEntity = new LineItemEntity();
+              newEntity.setBudgetDate(budgetDate);
+              newEntity.setName(previous.getName());
+              newEntity.setPlannedAmount(previous.getPlannedAmount());
+              newEntity.setCategory(previous.getCategory());
+              newEntity.setDescription(previous.getDescription());
+              return newEntity;
+            })
+            .toList();
+    return repository.saveAll(copiedLineItems);
   }
 }

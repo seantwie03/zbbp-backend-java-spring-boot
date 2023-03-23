@@ -95,6 +95,57 @@ class LineItemServiceTest {
   }
 
   @Nested
+  class GetAllByYearMonth {
+    private final YearMonth yearMonth = YearMonth.of(2022, 1);
+
+    @Test
+    void callMapperWithCorrectEntity() {
+      // Given one entity returned from the repository
+      LineItemEntity entityFromRepo = createEntity().budgetDate(yearMonth).build();
+      when(repository.findAllByBudgetDateOrderByCategoryAscPlannedAmountDesc(yearMonth))
+              .thenReturn(List.of(entityFromRepo));
+
+      // When the method under test is called
+      service.getAllByYearMonth(yearMonth);
+
+      // Then the mapper should be called one time
+      verify(mapper, times(1)).mapToDomain(entityCaptor.capture());
+      // And the entity passed to the mapper should be the same as the one returned from the repository
+      assertEquals(entityFromRepo, entityCaptor.getValue());
+      // And all the properties should be the same
+      assertThat(entityFromRepo)
+              .usingRecursiveComparison()
+              .isEqualTo(entityCaptor.getValue());
+    }
+
+    @Test
+    void callsMapperWithEntitiesInOrder() {
+      // Given two entities returned from the repository in order category
+      LineItemEntity entity1 = createEntity().id(1L).budgetDate(yearMonth).category(Category.FOOD).build();
+      LineItemEntity entity2 = createEntity().id(2L).budgetDate(yearMonth).category(Category.HEALTH).build();
+      List<LineItemEntity> orderedByDate = List.of(entity1, entity2);
+      when(repository.findAllByBudgetDateOrderByCategoryAscPlannedAmountDesc(yearMonth))
+              .thenReturn(orderedByDate);
+
+      // When the method under test is called
+      service.getAllByYearMonth(yearMonth);
+
+      // Then the mapper should be called two times
+      verify(mapper, times(2)).mapToDomain(entityCaptor.capture());
+      // And the entities passed to the mapper should be in the same order as the ones returned from the repository
+      assertEquals(orderedByDate.get(0), entityCaptor.getAllValues().get(0));
+      assertEquals(orderedByDate.get(1), entityCaptor.getAllValues().get(1));
+      // And all the properties should be the same
+      assertThat(entity1)
+              .usingRecursiveComparison()
+              .isEqualTo(entityCaptor.getAllValues().get(0));
+      assertThat(entity2)
+              .usingRecursiveComparison()
+              .isEqualTo(entityCaptor.getAllValues().get(1));
+    }
+  }
+
+  @Nested
   class FindById {
     @Test
     void throwsResourceNotFoundExceptionWhenNotFoundById() {
