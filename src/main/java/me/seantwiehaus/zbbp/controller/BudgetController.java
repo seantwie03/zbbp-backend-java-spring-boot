@@ -8,6 +8,7 @@ import me.seantwiehaus.zbbp.mapper.BudgetMapper;
 import me.seantwiehaus.zbbp.service.BudgetService;
 import me.seantwiehaus.zbbp.validation.MustBeCurrentOrFutureBudgetDate;
 import me.seantwiehaus.zbbp.validation.MustNotBeMoreThanSixMonthsInFuture;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,15 +24,15 @@ public class BudgetController {
   private final BudgetMapper mapper;
 
   /**
-   * @param budgetDate The date of the budget you are requesting.
-   *                   BudgetDates are always on the 1st day of the month.
-   *                   If no value is supplied, the default value will be the current month and year
-   * @return A Budget for the specified budgetDate.
+   * @param budgetYearMonth The Year and Month of the budget you are requesting.
+   *                        Format: yyyy-M (2023-1) or yyyy-MM (2023-01)
+   *                        The default value is the current year-month.
+   * @return A Budget for the specified year and month.
    */
   @GetMapping("/budgets")
-  public BudgetResponse getBudgetFor(
-          @RequestParam Optional<YearMonth> budgetDate) {
-    Budget budget = budgetService.getForBudgetMonth(budgetDate.orElse(YearMonth.now()));
+  public BudgetResponse getBudget(
+          @RequestParam @DateTimeFormat(pattern = "yyyy-M") Optional<YearMonth> budgetYearMonth) {
+    Budget budget = budgetService.getFor(budgetYearMonth.orElse(YearMonth.now()));
     return mapper.mapToResponse(budget);
   }
 
@@ -44,7 +45,7 @@ public class BudgetController {
   @PostMapping("/budgets/{budgetDate}")
   public BudgetResponse createBudgetFor(
           @PathVariable @MustBeCurrentOrFutureBudgetDate @MustNotBeMoreThanSixMonthsInFuture YearMonth budgetDate) {
-    Budget budget = budgetService.create(budgetDate);
+    Budget budget = budgetService.createFor(budgetDate);
     return mapper.mapToResponse(budget);
   }
 }
