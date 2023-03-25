@@ -16,16 +16,18 @@ public class BudgetMapper {
     }
 
     return new BudgetResponse(
-            domain.getBudgetDate(),
+            domain.getYearMonth(),
             lineItemMapper.mapToResponses(domain.getIncomes()),
             lineItemMapper.mapToResponses(domain.getSavings()),
             lineItemMapper.mapToResponses(domain.getInvestments()),
             lineItemMapper.mapToResponses(domain.getHousing()),
+            lineItemMapper.mapToResponses(domain.getUtilities()),
             lineItemMapper.mapToResponses(domain.getTransportation()),
             lineItemMapper.mapToResponses(domain.getFood()),
             lineItemMapper.mapToResponses(domain.getPersonal()),
             lineItemMapper.mapToResponses(domain.getHealth()),
             lineItemMapper.mapToResponses(domain.getLifestyle()),
+            lineItemMapper.mapToResponses(domain.getDebts()),
             domain.getTotalPlannedIncome(),
             domain.getTotalPlannedExpense(),
             domain.getTotalLeftToBudget(),

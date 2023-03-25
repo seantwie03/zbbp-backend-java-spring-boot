@@ -1,35 +1,83 @@
 package me.seantwiehaus.zbbp.dto.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import me.seantwiehaus.zbbp.dto.serializer.TwoDecimalPlacesSerializer;
 
 import java.time.YearMonth;
 import java.util.List;
 
-@Getter
-@AllArgsConstructor
-public class BudgetResponse {
-  private final YearMonth budgetDate;
-  private final List<LineItemResponse> incomes;
-  private final List<LineItemResponse> savings;
-  private final List<LineItemResponse> investments;
-  private final List<LineItemResponse> housing;
-  private final List<LineItemResponse> transportation;
-  private final List<LineItemResponse> food;
-  private final List<LineItemResponse> personal;
-  private final List<LineItemResponse> health;
-  private final List<LineItemResponse> lifestyle;
+public record BudgetResponse(
+        YearMonth budgetDate,
+        List<LineItemResponse> incomes,
+        List<LineItemResponse> savings,
+        List<LineItemResponse> investments,
+        List<LineItemResponse> housing,
+        List<LineItemResponse> utilities,
+        List<LineItemResponse> transportation,
+        List<LineItemResponse> food,
+        List<LineItemResponse> personal,
+        List<LineItemResponse> health,
+        List<LineItemResponse> lifestyle,
+        List<LineItemResponse> debts,
 
-  @JsonSerialize(using = TwoDecimalPlacesSerializer.class)
-  private final Double totalPlannedIncome;
-  @JsonSerialize(using = TwoDecimalPlacesSerializer.class)
-  private final Double totalPlannedExpense;
-  @JsonSerialize(using = TwoDecimalPlacesSerializer.class)
-  private final Double totalLeftToBudget;
-  @JsonSerialize(using = TwoDecimalPlacesSerializer.class)
-  private final Double totalSpent;
-  @JsonSerialize(using = TwoDecimalPlacesSerializer.class)
-  private final Double totalLeftToSpend;
+        @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalPlannedIncome,
+        @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalPlannedExpense,
+        @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalLeftToBudget,
+        @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalSpent,
+        @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalLeftToSpend
+) {
+  public BudgetResponse {
+    incomes = incomes != null ? List.copyOf(incomes) : List.of();
+    savings = savings != null ? List.copyOf(savings) : List.of();
+    investments = investments != null ? List.copyOf(investments) : List.of();
+    housing = housing != null ? List.copyOf(housing) : List.of();
+    utilities = utilities != null ? List.copyOf(utilities) : List.of();
+    transportation = transportation != null ? List.copyOf(transportation) : List.of();
+    food = food != null ? List.copyOf(food) : List.of();
+    personal = personal != null ? List.copyOf(personal) : List.of();
+    health = health != null ? List.copyOf(health) : List.of();
+    lifestyle = lifestyle != null ? List.copyOf(lifestyle) : List.of();
+    debts = debts != null ? List.copyOf(debts) : List.of();
+  }
+
+  /**
+   * Additional constructor to convert monetary amounts from cents to dollars
+   */
+  public BudgetResponse(YearMonth budgetDate,
+                        List<LineItemResponse> incomes,
+                        List<LineItemResponse> savings,
+                        List<LineItemResponse> investments,
+                        List<LineItemResponse> housing,
+                        List<LineItemResponse> utilities,
+                        List<LineItemResponse> transportation,
+                        List<LineItemResponse> food,
+                        List<LineItemResponse> personal,
+                        List<LineItemResponse> health,
+                        List<LineItemResponse> lifestyle,
+                        List<LineItemResponse> debts,
+                        Integer totalPlannedIncome,
+                        Integer totalPlannedExpense,
+                        Integer totalLeftToBudget,
+                        Integer totalSpent,
+                        Integer totalLeftToSpend) {
+    this(
+            budgetDate,
+            incomes,
+            savings,
+            investments,
+            housing,
+            utilities,
+            transportation,
+            food,
+            personal,
+            health,
+            lifestyle,
+            debts,
+            CentsToDollarsConverter.convert(totalPlannedIncome),
+            CentsToDollarsConverter.convert(totalPlannedExpense),
+            CentsToDollarsConverter.convert(totalLeftToBudget),
+            CentsToDollarsConverter.convert(totalSpent),
+            CentsToDollarsConverter.convert(totalLeftToSpend)
+    );
+  }
 }

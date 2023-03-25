@@ -41,7 +41,7 @@ class BudgetTest {
     assertTrue(budget.getPersonal().stream().allMatch(lineItem -> lineItem.category() == Category.PERSONAL));
     assertTrue(budget.getHealth().stream().allMatch(lineItem -> lineItem.category() == Category.HEALTH));
     assertTrue(budget.getLifestyle().stream().allMatch(lineItem -> lineItem.category() == Category.LIFESTYLE));
-    assertTrue(budget.getDebts().stream().allMatch(lineItem -> lineItem.category() == Category.DEBT));
+    assertTrue(budget.getDebts().stream().allMatch(lineItem -> lineItem.category() == Category.DEBTS));
   }
 
   @Test

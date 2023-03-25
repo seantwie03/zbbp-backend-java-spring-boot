@@ -129,7 +129,7 @@ public class Budget {
           allExpenses.add(lineItem);
           lifestyleItems.add(lineItem);
         }
-        case DEBT -> {
+        case DEBTS -> {
           allExpenses.add(lineItem);
           debtItems.add(lineItem);
         }

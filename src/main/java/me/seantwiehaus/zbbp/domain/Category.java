@@ -11,7 +11,7 @@ public enum Category {
   PERSONAL("PERSONAL"),
   HEALTH("HEALTH"),
   LIFESTYLE("LIFESTYLE"),
-  DEBT("DEBT");
+  DEBTS("DEBTS");
 
   private final String name;
 
