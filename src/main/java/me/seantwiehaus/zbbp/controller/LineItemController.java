@@ -19,7 +19,6 @@ import java.net.URI;
 import java.time.Instant;
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -37,11 +36,13 @@ public class LineItemController {
    */
   @GetMapping("/line-items")
   public List<LineItemResponse> getAllLineItemsBetween(
-          @RequestParam @DateTimeFormat(pattern = "yyyy-M") Optional<YearMonth> startingBudgetDate,
-          @RequestParam @DateTimeFormat(pattern = "yyyy-M") Optional<YearMonth> endingBudgetDate) {
-    return service.getAllBetween(
-                    startingBudgetDate.orElse(YearMonth.now()),
-                    endingBudgetDate.orElse(YearMonth.now()))
+          @RequestParam(defaultValue = "#{T(java.time.YearMonth).now()}")
+          @DateTimeFormat(pattern = "yyyy-M")
+          YearMonth startingBudgetDate,
+          @RequestParam(defaultValue = "#{T(java.time.YearMonth).now()}")
+          @DateTimeFormat(pattern = "yyyy-M")
+          YearMonth endingBudgetDate) {
+    return service.getAllBetween(startingBudgetDate, endingBudgetDate)
             .stream()
             .map(mapper::mapToResponse)
             .toList();

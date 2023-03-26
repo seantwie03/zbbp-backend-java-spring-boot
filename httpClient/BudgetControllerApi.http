@@ -5,5 +5,13 @@
 GET http://localhost:8080/budgets
 
 ###
+# @name getBudgetFor
+< {%
+  const now = new Date();
+  request.variables.set("budgetYearMonth", `${now.getFullYear()}-${now.getMonth() + 1}`)
+%}
+GET http://localhost:8080/budgets?budgetYearMonth={{budgetYearMonth}}
+
+###
 # @name createBudgetFor
 POST http://localhost:8080/budgets/{{budgetDate}}

@@ -13,7 +13,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.YearMonth;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -31,8 +30,10 @@ public class BudgetController {
    */
   @GetMapping("/budgets")
   public BudgetResponse getBudget(
-          @RequestParam @DateTimeFormat(pattern = "yyyy-M") Optional<YearMonth> budgetYearMonth) {
-    Budget budget = budgetService.getFor(budgetYearMonth.orElse(YearMonth.now()));
+          @RequestParam(defaultValue = "#{T(java.time.YearMonth).now()}")
+          @DateTimeFormat(pattern = "yyyy-M")
+          YearMonth budgetYearMonth) {
+    Budget budget = budgetService.getFor(budgetYearMonth);
     return mapper.mapToResponse(budget);
   }
 

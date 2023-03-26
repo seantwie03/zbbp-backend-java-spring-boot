@@ -2,10 +2,15 @@
 
 ###
 # @name getAllLineItemsBetween
+# With no query parameters, this will return all LineItems for the current month.
+GET http://{{host}}/line-items
+
+###
+# @name getAllLineItemsBetween
 < {%
   const now = new Date();
-  request.variables.set("startingDate", `"${now.getFullYear()}-${now.getMonth() + 1}"`)
-  request.variables.set("endingDate", `"${now.getFullYear()}-${now.getMonth() + 1}"`)
+  request.variables.set("startingDate", `${now.getFullYear()}-${now.getMonth() + 1}`)
+  request.variables.set("endingDate", `${now.getFullYear()}-${now.getMonth() + 1}`)
 %}
 GET http://{{host}}/line-items?startingDate={{startingDate}}&endingDate={{endingDate}}
 
@@ -26,7 +31,7 @@ POST http://{{host}}/line-items
 Content-Type: application/json
 
 {
-  "budgetDate": "2023-03",
+  "budgetDate": {{budgetDate}},
   "name": "Interest Payments",
   "plannedAmount": 0.13,
   "category": "INCOME"
