@@ -159,7 +159,8 @@ public class BudgetControllerIT {
               0,
               100,
               0,
-              100
+              0,
+              0
       );
       when(mapper.mapToResponse(any())).thenReturn(response);
 
@@ -176,8 +177,9 @@ public class BudgetControllerIT {
               "\"lastModifiedAt\":\"2022-09-21T23:31:04.206157Z\",\"totalTransactions\":0.00," +
               "\"percentageOfPlanned\":0.0,\"totalRemaining\":1.00,\"transactions\":[]}],\"savings\":[]," +
               "\"investments\":[],\"housing\":[],\"utilities\":[],\"transportation\":[],\"food\":[],\"personal\":[]," +
-              "\"health\":[],\"lifestyle\":[],\"debts\":[],\"totalPlannedIncome\":1.00,\"totalPlannedExpense\":0.00," +
-              "\"totalLeftToBudget\":1.00,\"totalSpent\":0.00,\"totalLeftToSpend\":1.00}", jsonBody);
+              "\"health\":[],\"lifestyle\":[],\"debts\":[],\"totalPlannedIncome\":1.00,\"totalReceived\":0.00," +
+              "\"totalPlannedExpense\":1.00,\"totalSpent\":0.00,\"totalRemaining\":0.00," +
+              "\"totalLeftToBudget\":0.00}", jsonBody);
     }
   }
 

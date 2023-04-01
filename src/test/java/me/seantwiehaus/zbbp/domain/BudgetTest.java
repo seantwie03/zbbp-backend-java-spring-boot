@@ -77,6 +77,33 @@ class BudgetTest {
   }
 
   @Test
+  void getTotalReceived() {
+    // Given a List of Income LineItems whose totalTransactions sum to 100_00
+    List<LineItem> lineItems = List.of(
+            createLineItem()
+                    .category(Category.INCOME)
+                    .transactions(
+                            List.of(
+                                    createTransaction().amount(20_00).build(),
+                                    createTransaction().amount(30_00).build()
+                            )).build(),
+            createLineItem()
+                    .category(Category.INCOME)
+                    .transactions(
+                            List.of(
+                                    createTransaction().amount(10_00).build(),
+                                    createTransaction().amount(40_00).build()
+                            )).build()
+    );
+
+    // When the Budget is created
+    Budget budget = new Budget(YearMonth.of(2023, 3), lineItems);
+
+    // Then the total received is 100_00
+    assertEquals(100_00, budget.getTotalReceived());
+  }
+
+  @Test
   void getTotalPlannedExpense() {
     // Given a List of Expense LineItems whose plannedAmounts sum to 100_00
     List<LineItem> lineItems = List.of(
@@ -94,7 +121,7 @@ class BudgetTest {
 
   @Test
   void getTotalSpent() {
-    // Given a List of Expense LineItems whose plannedAmounts sum to 100_00
+    // Given a List of Expense LineItems whose totalTransactions sum to 100_00
     List<LineItem> lineItems = List.of(
             createLineItem()
                     .category(Category.FOOD)
@@ -120,33 +147,8 @@ class BudgetTest {
   }
 
   @Test
-  void getTotalLeftToBudget() {
-    // Given a List of LineItems
-    List<LineItem> lineItems = List.of(
-            // whose Income plannedAmounts sum to 100_00
-            createLineItem().category(Category.INCOME).plannedAmount(10_00).build(),
-            createLineItem().category(Category.INCOME).plannedAmount(20_00).build(),
-            createLineItem().category(Category.INCOME).plannedAmount(30_00).build(),
-            createLineItem().category(Category.INCOME).plannedAmount(40_00).build(),
-            // And whose Expense plannedAmounts sum to 80_00
-            createLineItem().category(Category.FOOD).plannedAmount(20_00).build(),
-            createLineItem().category(Category.HOUSING).plannedAmount(20_00).build(),
-            createLineItem().category(Category.TRANSPORTATION).plannedAmount(40_00).build());
-
-    // When the Budget is created
-    Budget budget = new Budget(YearMonth.of(2023, 3), lineItems);
-
-    // Then the total planned Income is 100_00
-    assertEquals(100_00, budget.getTotalPlannedIncome());
-    // And the total planned Expense is 80_00
-    assertEquals(80_00, budget.getTotalPlannedExpense());
-    // And the total left to budget is 20_00
-    assertEquals(20_00, budget.getTotalLeftToBudget());
-  }
-
-  @Test
-  void getTotalLeftToSpend() {
-    // Given a List of LineItems whose plannedAmounts sum to 100_00 and whose transactions amounts sum to 60_00
+  void getTotalRemaining() {
+    // Given a List of LineItems whose plannedAmounts sum to 100_00 and whose totalTransactions sum to 60_00
     List<LineItem> lineItems = List.of(
             createLineItem()
                     .category(Category.FOOD)
@@ -171,8 +173,33 @@ class BudgetTest {
     // When the Budget is created
     Budget budget = new Budget(YearMonth.of(2023, 3), lineItems);
 
-    // Then the total left to spend is 40_00
-    assertEquals(40_00, budget.getTotalLeftToSpend());
+    // Then the total remaining is 40_00
+    assertEquals(40_00, budget.getTotalRemaining());
+  }
+
+  @Test
+  void getTotalLeftToBudget() {
+    // Given a List of LineItems
+    List<LineItem> lineItems = List.of(
+            // whose Income plannedAmounts sum to 100_00
+            createLineItem().category(Category.INCOME).plannedAmount(10_00).build(),
+            createLineItem().category(Category.INCOME).plannedAmount(20_00).build(),
+            createLineItem().category(Category.INCOME).plannedAmount(30_00).build(),
+            createLineItem().category(Category.INCOME).plannedAmount(40_00).build(),
+            // And whose Expense plannedAmounts sum to 80_00
+            createLineItem().category(Category.FOOD).plannedAmount(20_00).build(),
+            createLineItem().category(Category.HOUSING).plannedAmount(20_00).build(),
+            createLineItem().category(Category.TRANSPORTATION).plannedAmount(40_00).build());
+
+    // When the Budget is created
+    Budget budget = new Budget(YearMonth.of(2023, 3), lineItems);
+
+    // Then the total planned Income is 100_00
+    assertEquals(100_00, budget.getTotalPlannedIncome());
+    // And the total planned Expense is 80_00
+    assertEquals(80_00, budget.getTotalPlannedExpense());
+    // And the total left to budget is 20_00
+    assertEquals(20_00, budget.getTotalLeftToBudget());
   }
 
   private LineItem.LineItemBuilder createLineItem() {

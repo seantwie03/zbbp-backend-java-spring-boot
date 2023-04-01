@@ -29,9 +29,10 @@ public class BudgetMapper {
             lineItemMapper.mapToResponses(domain.getLifestyle()),
             lineItemMapper.mapToResponses(domain.getDebts()),
             domain.getTotalPlannedIncome(),
+            domain.getTotalReceived(),
             domain.getTotalPlannedExpense(),
-            domain.getTotalLeftToBudget(),
             domain.getTotalSpent(),
-            domain.getTotalLeftToSpend());
+            domain.getTotalRemaining(),
+            domain.getTotalLeftToBudget());
   }
 }

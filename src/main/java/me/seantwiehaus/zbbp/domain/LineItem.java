@@ -39,6 +39,10 @@ public record LineItem(
             .category(category);
   }
 
+  /**
+   * This is the total amount spent or received for this line item.
+   * Spent if this is an expense, received if this is an income.
+   */
   public int calculateTotalTransactions() {
     return transactions
             .stream()
@@ -55,6 +59,11 @@ public record LineItem(
     return calculateTotalTransactions() * 100.0 / plannedAmount;
   }
 
+  /**
+   * This is the difference between the planned amount and the total transactions.
+   * If this amount is positive, then it shows how much is left to transact in order to meet the planned amount.
+   * If this amount is negative, then it shows how much less should've been transacted to stay within the planned amount.
+   */
   public int calculateTotalRemaining() {
     return plannedAmount - calculateTotalTransactions();
   }

@@ -21,10 +21,11 @@ public record BudgetResponse(
         List<LineItemResponse> debts,
 
         @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalPlannedIncome,
+        @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalReceived,
         @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalPlannedExpense,
-        @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalLeftToBudget,
         @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalSpent,
-        @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalLeftToSpend
+        @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalRemaining,
+        @JsonSerialize(using = TwoDecimalPlacesSerializer.class) Double totalLeftToBudget
 ) {
   public BudgetResponse {
     incomes = incomes != null ? List.copyOf(incomes) : List.of();
@@ -56,10 +57,11 @@ public record BudgetResponse(
                         List<LineItemResponse> lifestyle,
                         List<LineItemResponse> debts,
                         Integer totalPlannedIncome,
+                        Integer totalReceived,
                         Integer totalPlannedExpense,
-                        Integer totalLeftToBudget,
                         Integer totalSpent,
-                        Integer totalLeftToSpend) {
+                        Integer totalRemaining,
+                        Integer totalLeftToBudget) {
     this(
             budgetDate,
             incomes,
@@ -74,10 +76,11 @@ public record BudgetResponse(
             lifestyle,
             debts,
             CentsToDollarsConverter.convert(totalPlannedIncome),
+            CentsToDollarsConverter.convert(totalReceived),
             CentsToDollarsConverter.convert(totalPlannedExpense),
-            CentsToDollarsConverter.convert(totalLeftToBudget),
             CentsToDollarsConverter.convert(totalSpent),
-            CentsToDollarsConverter.convert(totalLeftToSpend)
+            CentsToDollarsConverter.convert(totalRemaining),
+            CentsToDollarsConverter.convert(totalLeftToBudget)
     );
   }
 }

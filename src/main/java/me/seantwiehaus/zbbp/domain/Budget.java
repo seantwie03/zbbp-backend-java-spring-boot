@@ -62,10 +62,11 @@ public class Budget {
   private final List<LineItem> debts;
 
   private final int totalPlannedIncome;
+  private final int totalReceived;
   private final int totalPlannedExpense;
-  private final int totalLeftToBudget;
   private final int totalSpent;
-  private final int totalLeftToSpend;
+  private final int totalRemaining;
+  private final int totalLeftToBudget;
 
   public Budget(YearMonth yearMonth, List<LineItem> lineItems) {
     this.yearMonth = yearMonth;
@@ -138,7 +139,7 @@ public class Budget {
       }
     });
 
-    // Set fields as immutable lists
+    // Set fields as immutable lists. This eliminates the need to update the calculated totals after instantiation.
     this.allIncomeItems = List.copyOf(allIncomes);
     this.allExpenseItems = List.copyOf(allExpenses);
     this.incomes = List.copyOf(incomeItems);
@@ -154,10 +155,11 @@ public class Budget {
     this.debts = List.copyOf(debtItems);
 
     this.totalPlannedIncome = calculateTotalPlannedIncome();
+    this.totalReceived = calculateTotalReceived();
     this.totalPlannedExpense = calculateTotalPlannedExpense();
     this.totalSpent = calculateTotalSpent();
-    this.totalLeftToBudget = calculateTotalLeftToBudget();
-    this.totalLeftToSpend = calculateTotalLeftToSpend();
+    this.totalRemaining = calculateTotalRemaining(this.totalPlannedExpense, this.totalSpent);
+    this.totalLeftToBudget = calculateTotalLeftToBudget(this.totalPlannedIncome, this.totalPlannedExpense);
   }
 
   private void throwIfNotAllLineItemsHaveCorrectYearMonth(List<LineItem> lineItems, YearMonth yearMonth) {
@@ -166,6 +168,9 @@ public class Budget {
     }
   }
 
+  /**
+   * This is the total planned amount of all incomes.
+   */
   private int calculateTotalPlannedIncome() {
     return allIncomeItems
             .stream()
@@ -173,6 +178,19 @@ public class Budget {
             .sum();
   }
 
+  /**
+   * This is the total amount received.
+   */
+  private int calculateTotalReceived() {
+    return allIncomeItems
+            .stream()
+            .mapToInt(LineItem::calculateTotalTransactions)
+            .sum();
+  }
+
+  /**
+   * This is the total planned amount of all expenses.
+   */
   private int calculateTotalPlannedExpense() {
     return allExpenseItems
             .stream()
@@ -180,6 +198,9 @@ public class Budget {
             .sum();
   }
 
+  /**
+   * This is the total amount spent.
+   */
   private int calculateTotalSpent() {
     return allExpenseItems
             .stream()
@@ -187,11 +208,21 @@ public class Budget {
             .sum();
   }
 
-  private int calculateTotalLeftToBudget() {
-    return totalPlannedIncome - totalPlannedExpense;
+  /**
+   * This is the difference between the planned expenses and the amount spent.
+   * If this number is positive, then it shows how much is left to spend in order to meet the planned expense.
+   * If this number is negative, then it shows how much less should've been spent to stay within the planned expense.
+   */
+  private int calculateTotalRemaining(int totalPlannedExpense, int totalSpent) {
+    return totalPlannedExpense - totalSpent;
   }
 
-  private int calculateTotalLeftToSpend() {
-    return totalPlannedExpense - totalSpent;
+  /**
+   * This is the difference between the planned income and the planned expense.
+   * If this number is positive, then it shows how much is left to budget in order to zero out the budget.
+   * If this number is negative, then it shows how much less should be budgeted to stay within the planned income.
+   */
+  private int calculateTotalLeftToBudget(int totalPlannedIncome, int totalPlannedExpense) {
+    return totalPlannedIncome - totalPlannedExpense;
   }
 }
